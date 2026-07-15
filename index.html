@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.2.6 -->
+<!-- Skörda v0.2.8 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -183,7 +183,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
     <div class="top"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</div><div class="sub" id="mapSub">Söker nära dig</div></div>
       <div class="toggle"><button class="on" onclick="setView('map')">Karta</button><button onclick="setView('list')">Lista</button></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="1" max="20" value="5" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="0" max="12" value="8" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
       <div class="hchip" id="chips"></div>
     </div>
     <div id="map"></div>
@@ -193,7 +193,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
     <div class="top"><div><div class="ttl">Nära dig</div><div class="sub" id="listSub"></div></div>
       <div class="toggle"><button onclick="setView('map')">Karta</button><button class="on" onclick="setView('list')">Lista</button></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="1" max="20" value="5" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="0" max="12" value="8" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
       <div class="hchip" id="chips2"></div>
     </div>
     <div class="sortrow"><span class="sortlbl">Sortera</span>
@@ -243,7 +243,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.2.6';
+const APP_VERSION='0.2.8';
 const CONFIG={SUPABASE_URL:'',SUPABASE_ANON_KEY:'',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -273,7 +273,8 @@ const STATUS={ready:{label:'Klar nu',cls:'now'},ripening:{label:'Mognar snart',c
 const UNIT={piece:'st',kg:'kg',bunch:'knippe',sixpack:'6-pack',liter:'liter'};
 const BG={'i-apple':'#EFE3C7','i-egg':'#F0E7D0','i-honey':'#F2E4C0','i-greens':'#DDE7CE','i-berry':'#E7D6DE','i-squash':'#F0DEBE','i-potato':'#E9DFC8','i-tomato':'#F1D9C9'};
 function badgeFor(it){ if(it.kind==='spot')return{label:'Allmän yta',cls:'public'}; if(it.deal==='giveaway')return{label:'Skänkes',cls:'gift'}; return STATUS[it.status]||STATUS.ready; }
-function priceShort(it){ if(it.kind==='spot')return'Fritt'; if(it.deal==='giveaway')return'Skänkes'; if(it.status==='ripening')return'Mognar'; return it.price+' kr'+(it.unit?'/'+(UNIT[it.unit]||''):''); }
+function shortTitle(it){ let t=(it.title||'').split(',')[0].split(' — ')[0].trim(); return t.length>15?t.slice(0,14)+'…':t; }
+function priceShort(it){ if(it.kind==='spot')return shortTitle(it); if(it.deal==='giveaway')return shortTitle(it); if(it.status==='ripening')return'Mognar'; return it.price+' kr'+(it.unit?'/'+(UNIT[it.unit]||''):''); }
 function pinCls(it){ if(it.kind==='spot')return'public'; if(it.deal==='giveaway')return'gift'; const c=badgeFor(it).cls; return c==='now'?'':c; }
 function fmtRating(r){ return r.toFixed(1).replace('.',','); }
 
@@ -291,6 +292,8 @@ function allItems(){ return DEMO.concat(Store.userListings); }
 
 const CATS=[{f:'allt',label:'Allt',c:'#1F3A29'},{f:'fruit_berries',label:'Frukt & bär',c:'#D9432B'},{f:'vegetables',label:'Grönt',c:'#3F7D53'},{f:'eggs',label:'Ägg',c:'#A9884F'},{f:'honey',label:'Honung',c:'#EBAF2E',dark:true},{f:'giveaway',label:'Skänkes',c:'#2E6BE6'},{f:'allman',label:'Allmän yta',c:'#0E9E9E'}];
 let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:5,cat:'allt',sort:'dist',view:'map'};
+const DIST_STOPS=[0.4,0.6,0.8,1,1.5,2,3,4,5,7,10,15,20];
+function distLabel(km){ return km<1 ? Math.round(km*1000)+' m' : (String(km).replace('.',',')+' km'); }
 let map,markerLayer,radiusCircle,meMarker,createMap,createMarker;
 
 function matchesCat(it){ const f=STATE.cat; if(f==='allt')return true; if(f==='giveaway')return it.deal==='giveaway'; if(f==='allman')return it.kind==='spot'; return it.category===f; }
@@ -334,7 +337,7 @@ function renderList(){
   if(STATE.sort==='rating')items.sort((a,b)=>(b.rating||0)-(a.rating||0));
   else if(STATE.sort==='new')items.sort((a,b)=>(a.id<b.id?1:-1));
   else items.sort((a,b)=>a.dist-b.dist);
-  const sub=document.getElementById('listSub'); if(sub)sub.textContent=items.length+(items.length===1?' annons':' annonser')+' inom '+STATE.radiusKm+' km';
+  const sub=document.getElementById('listSub'); if(sub)sub.textContent=items.length+(items.length===1?' annons':' annonser')+' inom '+distLabel(STATE.radiusKm);
   if(!items.length){ box.innerHTML='<div class="empty"><b>Inget här ännu</b>Prova ett större avstånd eller ett annat filter.</div>'; return; }
   box.innerHTML=items.map(it=>{
     const b=badgeFor(it), ic=iconFor(it);
@@ -537,8 +540,8 @@ function renderWatch(){
   let html='<p class="k" style="margin:14px 0 8px">Bevaka en gröda</p><div class="hchip" style="flex-wrap:wrap">'+
     cats.map(c=>'<span class="chip" onclick="addWatch(\''+c[0]+'\',\''+c[1]+'\')">+ '+c[1]+'</span>').join('')+'</div>';
   html+='<p class="k" style="margin:20px 0 8px">Du bevakar</p>';
-  if(!Store.watches.length){ html+='<div class="empty" style="padding:20px"><b>Inga bevakningar än</b>Lägg till en gröda ovan så plingar vi när något dyker upp inom '+STATE.radiusKm+' km.</div>'; }
-  else { html+=Store.watches.map(w=>'<div class="arow"><div class="at">'+w.label+'</div><div class="as" style="margin-left:auto;margin-right:10px">inom '+w.radius+' km</div><span onclick="removeWatch(\''+w.id+'\')" style="color:var(--muted);font-size:20px;cursor:pointer">×</span></div>').join(''); }
+  if(!Store.watches.length){ html+='<div class="empty" style="padding:20px"><b>Inga bevakningar än</b>Lägg till en gröda ovan så plingar vi när något dyker upp inom '+distLabel(STATE.radiusKm)+'.</div>'; }
+  else { html+=Store.watches.map(w=>'<div class="arow"><div class="at">'+w.label+'</div><div class="as" style="margin-left:auto;margin-right:10px">inom '+distLabel(w.radius)+'</div><span onclick="removeWatch(\''+w.id+'\')" style="color:var(--muted);font-size:20px;cursor:pointer">×</span></div>').join(''); }
   html+='<div class="privacy" style="margin-top:14px">'+svg('i-pin',18)+'<div>Riktiga pling-notiser kräver backend (Supabase). Här sparas bevakningarna lokalt så länge.</div></div>';
   box.innerHTML=html;
 }
@@ -631,9 +634,10 @@ function setView(v){
   if(v==='account')renderAccount();
 }
 function fitRadius(){ if(map&&radiusCircle){ try{ map.fitBounds(radiusCircle.getBounds(),{padding:[18,18],animate:false}); }catch(e){} } }
-function onDist(v){ v=+v; STATE.radiusKm=v;
-  ['distVal','distVal2'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=v+' km';});
-  ['dist','dist2'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=v; const pct=((v-1)/19)*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
+function onDist(idx){ idx=+idx; if(idx<0)idx=0; if(idx>DIST_STOPS.length-1)idx=DIST_STOPS.length-1;
+  const km=DIST_STOPS[idx]; STATE.radiusKm=km;
+  ['distVal','distVal2'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=distLabel(km);});
+  ['dist','dist2'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=idx; const pct=(idx/(DIST_STOPS.length-1))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
   refresh(); fitRadius();
 }
 function setSort(s){ STATE.sort=s; document.querySelectorAll('.sortbtn').forEach(b=>b.classList.toggle('on',b.dataset.sort===s)); renderList(); }
@@ -643,7 +647,7 @@ function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg
 function boot(){
   renderChips();
   try{ initMap(); }catch(e){ console.warn('Kartan kunde inte starta:',e); }
-  onDist(5); refresh(); renderAccount();
+  onDist(8); refresh(); renderAccount();
   setTimeout(()=>{ if(map)map.invalidateSize(); },250);
   setTimeout(()=>{ if(map)map.invalidateSize(); },900);
   if(navigator.geolocation){

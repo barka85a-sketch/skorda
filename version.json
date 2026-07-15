@@ -1,6 +1,6 @@
 {
   "name": "Skörda",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "date": "2026-07-15",
-  "notes": "Hemfliken och rubriken heter nu Skörda med groddmärke istället för Utforska."
+  "notes": "Kartnålar för skänkes och allmän yta visar nu grödans namn (t.ex. Äpplen) i stället för Skänkes/Fritt — färgen säger redan typen. Säljs visar pris som förut."
 }
