@@ -1,6 +1,6 @@
 {
   "name": "Skörda",
-  "version": "0.3.2",
+  "version": "0.5.7",
   "date": "2026-07-15",
-  "notes": "Fix: bara en overlay öppen åt gången (dubbla tillbakaknappar borta). Lade till 20 demo-annonser runt Duvbo/Sundbyberg och på Singö."
+  "notes": "Bildtaket sänkt till 5. Klicka på en bild (galleri eller hanterare) för helbild med bläddring; tryck för att stänga."
 }

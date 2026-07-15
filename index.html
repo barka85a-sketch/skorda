@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.3.2 -->
+<!-- Skörda v0.5.7 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -52,13 +52,9 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .pin .prate svg{width:9px;height:9px}
 .mepin{width:18px;height:18px;border-radius:99px;background:var(--sky);border:3px solid #fff;box-shadow:0 0 0 6px rgba(46,107,230,.18)}
 .mpin{position:relative;width:40px;height:40px}
-.mpin .c{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid var(--tomato);box-shadow:0 5px 12px rgba(31,58,41,.3);display:grid;place-items:center}
+.mpin .c{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid #D9432B;box-shadow:0 5px 12px rgba(31,58,41,.3);display:grid;place-items:center}
 .mpin .c svg{width:24px;height:24px}
-.mpin:after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--tomato)}
-.mpin.soon .c{border-color:var(--yolk)}.mpin.soon:after{border-top-color:var(--yolk)}
-.mpin.gift .c{border-color:var(--sky)}.mpin.gift:after{border-top-color:var(--sky)}
-.mpin.order .c{border-color:var(--kraft-dk)}.mpin.order:after{border-top-color:var(--kraft-dk)}
-.mpin.public .c{border-color:var(--teal)}.mpin.public:after{border-top-color:var(--teal)}
+.mpin .pt{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid #D9432B}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sortrow{display:flex;align-items:center;gap:8px;padding:2px 16px 10px}
 .sortrow .sortlbl{font-size:12px;font-weight:700;color:var(--muted)}
@@ -91,8 +87,9 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .overlay{position:absolute;inset:0;background:var(--white);z-index:1200;display:none;flex-direction:column;overflow:hidden}
 .overlay.on{display:flex}
 .hero{height:220px;display:flex;align-items:center;justify-content:center;position:relative;flex:0 0 auto}
-.hero svg{width:120px;height:120px}
+.hero>svg{width:120px;height:120px}
 .back{position:absolute;top:12px;left:12px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.92);display:grid;place-items:center;cursor:pointer;border:1px solid var(--line);z-index:5}
+.back svg{width:18px;height:18px}
 .sec{padding:16px 18px;border-top:8px solid var(--paper)}
 .sec:first-of-type{border-top:none}
 .k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:0 0 8px}
@@ -112,6 +109,11 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .nav a.on{color:var(--kale)}.nav a.on svg{stroke:var(--kale)}
 .nav a .plus{width:46px;height:46px;border-radius:16px;background:var(--tomato);display:grid;place-items:center;box-shadow:0 8px 18px rgba(217,67,43,.34);margin-top:-18px}
 .view{display:none;flex:1;flex-direction:column;min-height:0}
+#view-map{position:relative}
+.recenter{position:absolute;left:14px;bottom:14px;width:46px;height:46px;border-radius:14px;background:var(--white);border:1px solid var(--line);box-shadow:0 5px 14px rgba(31,58,41,.2);display:grid;place-items:center;cursor:pointer;z-index:600}
+.recenter:active{background:var(--paper-2)}
+.chip svg{vertical-align:middle;margin-right:5px}
+.ed{border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-family:inherit;font-size:13px;background:var(--white);color:var(--ink);width:100%}
 .view.on{display:flex}
 .banner{background:#FBF6E7;border-bottom:1px solid #E7D59A;color:#6a5312;font-size:11px;padding:5px 16px;text-align:center;flex:0 0 auto}
 .field{margin-bottom:14px}
@@ -152,10 +154,45 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .tier li{font-size:13px;color:var(--ink);padding:4px 0 4px 22px;position:relative}
 .tier li:before{content:"";position:absolute;left:0;top:9px;width:12px;height:7px;border-left:2px solid var(--leaf);border-bottom:2px solid var(--leaf);transform:rotate(-45deg)}
 .sf-cover{height:118px;position:relative;overflow:hidden;background:linear-gradient(120deg,#26452F,#3F7D53);flex:0 0 auto}
+.gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;height:220px;background:#0d0d0d}
+.gallery::-webkit-scrollbar{display:none}
+.gallery .gi{position:relative;flex:0 0 100%;scroll-snap-align:center;height:220px}
+.gallery .gi img{width:100%;height:220px;object-fit:cover;display:block}
+.gdots{position:absolute;bottom:12px;left:0;right:0;display:flex;gap:6px;justify-content:center;z-index:3}
+.gdots i{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.55);transition:width .2s}
+.gdots i.on{background:#fff;width:18px}
+.sf-tools{position:absolute;top:12px;right:12px;display:flex;gap:8px;z-index:4}
+.sf-tool{height:40px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.94);display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:1px solid var(--line);font-family:'Bricolage Grotesque';font-weight:700;font-size:12px;color:var(--kale)}
+.sf-tool svg{width:16px;height:16px}
+.imgrm{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:99px;background:rgba(0,0,0,.55);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:17px;z-index:3}
+.sf-actions{display:flex;gap:8px;margin-top:14px}
+.sf-actions .sf-tool{position:static}
+.imgmgr{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.imgcell{position:relative;border-radius:12px;overflow:hidden;background:#eee;aspect-ratio:4/3}
+.imgcell img{width:100%;height:100%;object-fit:cover;display:block}
+.imgcell .ord{position:absolute;left:7px;top:7px;background:rgba(0,0,0,.62);color:#fff;font-size:11px;font-weight:800;border-radius:99px;padding:2px 8px;font-family:'Bricolage Grotesque'}
+.imgcell .rm{position:absolute;top:7px;right:7px;width:26px;height:26px;border-radius:99px;background:rgba(0,0,0,.62);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:16px}
+.imgcell .ctrls{position:absolute;bottom:7px;left:7px;right:7px;display:flex;gap:6px;justify-content:center}
+.imgcell .ctrls button{background:rgba(255,255,255,.94);border:none;border-radius:8px;width:34px;height:28px;font-size:16px;cursor:pointer;display:grid;place-items:center;color:var(--kale)}
+.imgcell .ctrls button:disabled{opacity:.35}
+#lightbox{position:fixed;inset:0;background:#000;z-index:3000;display:flex;flex-direction:column}
+.lb-close{position:absolute;top:14px;right:16px;color:#fff;font-size:32px;z-index:2;cursor:pointer;line-height:1;width:44px;height:44px;display:grid;place-items:center}
+.lb-track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.lb-track::-webkit-scrollbar{display:none}
+.lb-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;padding:12px}
+.lb-slide img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.cal{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cal .cm{border:1px solid var(--line);border-radius:12px;padding:9px 4px 8px;text-align:center;cursor:pointer;background:var(--white);min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px}
+.cal .cm .cmn{font-family:'Bricolage Grotesque';font-weight:800;font-size:13px;letter-spacing:.03em}
+.cal .cm .cmw{font-size:8.5px;line-height:1.15;color:var(--muted)}
+.cal .cm.on .cmw{color:rgba(255,255,255,.85)}
+.tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tsw{height:52px;border-radius:12px;cursor:pointer;border:2px solid transparent;display:flex;align-items:flex-end;padding:7px 9px;color:#fff;font-family:'Bricolage Grotesque';font-weight:700;font-size:12px}
+.tsw.on{border-color:var(--ink);box-shadow:0 0 0 2px #fff inset}
 .sf-cover .motif{position:absolute;inset:0;display:flex;gap:20px;align-items:center;justify-content:center;opacity:.16}
 .sf-cover .motif svg{width:54px;height:54px}
 .sf-body{padding:0 18px 6px}
-.sf-av{width:74px;height:74px;border-radius:22px;background:#fff;border:4px solid #fff;margin-top:-40px;display:grid;place-items:center;font-family:'Bricolage Grotesque';font-weight:800;color:var(--kale);font-size:30px;box-shadow:0 8px 18px rgba(0,0,0,.14)}
+.sf-av{width:74px;height:74px;border-radius:22px;background:#fff;border:4px solid #fff;margin-top:-40px;position:relative;z-index:3;display:grid;place-items:center;font-family:'Bricolage Grotesque';font-weight:800;color:var(--kale);font-size:30px;box-shadow:0 8px 18px rgba(0,0,0,.14)}
 .sf-name{font-family:'Bricolage Grotesque';font-weight:800;font-size:21px;color:var(--kale);margin:10px 0 2px}
 .sf-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;background:var(--leaf-soft);color:var(--kale);padding:6px 11px;border-radius:99px;font-weight:600}
 .season{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
@@ -190,27 +227,32 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="view on" id="view-map">
     <div class="top"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</div><div class="sub" id="mapSub">Söker nära dig</div></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="5000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
       <div class="hchip" id="chips"></div>
+      <div class="hchip" id="subchips" style="display:none;margin-top:8px"></div>
     </div>
     <div id="map"></div>
+    <button class="recenter" onclick="recenterMap()" title="Centrera"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
   </div>
 
   <div class="view" id="view-list">
     <div class="top"><div><div class="ttl">Nära dig</div><div class="sub" id="listSub"></div></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="5000" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
       <div class="hchip" id="chips2"></div>
+      <div class="hchip" id="subchips2" style="display:none;margin-top:8px"></div>
     </div>
     <div class="sortrow"><span class="sortlbl">Sortera</span>
       <button class="sortbtn on" data-sort="dist" onclick="setSort('dist')">Avstånd</button>
       <button class="sortbtn" data-sort="rating" onclick="setSort('rating')">Betyg</button>
-      <button class="sortbtn" data-sort="new" onclick="setSort('new')">Senaste</button></div>
+      <button class="sortbtn" data-sort="new" onclick="setSort('new')">Senaste</button>
+      <button class="sortbtn" data-sort="price" id="sortPrice" onclick="setSort('price')">Pris</button></div>
     <div class="scroll"><div class="list" id="list"></div></div>
   </div>
 
   <div class="view" id="view-watch">
     <div class="top"><div><div class="ttl">Bevakningar</div><div class="sub">Få en pling när något är klart nära dig</div></div></div>
+    <div class="filterbar"><div class="distrow"><span class="lbl">Bevaka inom</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist3" oninput="onDist(this.value)"><span class="val" id="distVal3">5 km</span></div></div>
     <div class="scroll" style="padding:0 16px 24px"><div id="watchBody"></div></div>
   </div>
 
@@ -276,7 +318,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.3.2';
+const APP_VERSION='0.5.7';
 const CONFIG={SUPABASE_URL:'',SUPABASE_ANON_KEY:'',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -295,8 +337,9 @@ const Store={
   watches:LS.get('watches',[]),
   orders:LS.get('orders',[]),
   messages:LS.get('messages',{}),
+  page:LS.get('page',{images:[],theme:'kale',story:'',months:{}}),
   save(){ LS.set('session',this.session); LS.set('premium',this.premium); LS.set('userListings',this.userListings);
-    LS.set('watches',this.watches); LS.set('orders',this.orders); LS.set('messages',this.messages); }
+    LS.set('watches',this.watches); LS.set('orders',this.orders); LS.set('messages',this.messages); LS.set('page',this.page); }
 };
 
 function svg(id,size){ const el=document.getElementById(id); return el?'<svg width="'+size+'" height="'+size+'" viewBox="'+el.getAttribute('viewBox')+'">'+el.innerHTML+'</svg>':''; }
@@ -323,56 +366,132 @@ function priceShort(it){ if(it.kind==='spot')return shortTitle(it); if(it.deal==
 function pinCls(it){ if(it.kind==='spot')return'public'; if(it.deal==='giveaway')return'gift'; const c=badgeFor(it).cls; return c==='now'?'':c; }
 function fmtRating(r){ return r.toFixed(1).replace('.',','); }
 
-const DEMO=[
-  {id:'1',title:'Soltomater, blandade sorter',category:'vegetables',icon:'i-tomato',kind:'listing',deal:'sale',status:'ready',price:18,unit:'piece',area_label:'Sunnersta, Uppsala',seller:'Karins gårdsstånd',sellerId:'karin',premiumSeller:true,rating:4.9,lat:59.836,lng:17.646,desc:'San Marzano, Sungold och bifftomat. Solmogna i växthus.'},
-  {id:'2',title:'Ägg från frigående höns',category:'eggs',kind:'listing',deal:'sale',status:'ready',price:45,unit:'sixpack',area_label:'Gården vid ån',seller:'Gården vid ån',sellerId:'garden',rating:5.0,lat:59.870,lng:17.610,desc:'Färska ägg, 6-pack.'},
-  {id:'3',title:'Äpplen — Aroma & Ingrid Marie',category:'fruit_berries',kind:'listing',deal:'sale',status:'ripening',price:25,unit:'kg',area_label:'Norrby',seller:'Trädgården Norrby',sellerId:'norrby',rating:4.7,lat:59.845,lng:17.680,desc:'Mognar v.38. Förbeställ gärna.'},
-  {id:'4',title:'Rabarber — plocka själv',category:'fruit_berries',icon:'i-rhubarb',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Sunnersta',seller:'Bertil',sellerId:'bertil',rating:4.8,lat:59.862,lng:17.630,desc:'Mer än vi hinner. Kom och plocka. Lådan står vid grinden.'},
-  {id:'5',title:'Sommarhonung 500 g',category:'honey',kind:'listing',deal:'sale',status:'on_order',price:70,unit:'piece',area_label:'Sunnersta',seller:'Bertils bigård',sellerId:'bertil',rating:4.8,lat:59.855,lng:17.650,desc:'Slungas på beställning.'},
-  {id:'6',title:'Färskpotatis',category:'vegetables',kind:'listing',deal:'sale',status:'ready',price:30,unit:'kg',area_label:'Norrby',seller:'Trädgården Norrby',sellerId:'norrby',rating:4.6,lat:59.840,lng:17.665,icon:'i-potato',desc:'Nyskördad.'},
-  {id:'7',title:'Grönkål, knippe',category:'vegetables',kind:'listing',deal:'sale',status:'ready',price:15,unit:'bunch',area_label:'Sunnersta',seller:'Åsas köksträdgård',sellerId:'asa',premiumSeller:true,rating:4.9,lat:59.837,lng:17.648,desc:'Plockad idag.'},
-  {id:'8',title:'Krusbärsbuske vid ån — fritt att plocka',category:'fruit_berries',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Allmänning',seller:'Tipsad av Eva',sellerId:null,rating:null,lat:59.859,lng:17.635,icon:'i-berry',desc:'Växer på allmän mark. Fritt att plocka.'},
-  {id:'d1',title:'Soltomater',category:'vegetables',produce:'Tomat',icon:'i-tomato',kind:'listing',deal:'sale',status:'ready',price:30,unit:'kg',area_label:'Duvbo, Sundbyberg',seller:'Familjen Lund',sellerId:'lund',rating:4.8,lat:59.3635,lng:17.9575,desc:'Solmogna tomater, flera sorter.'},
-  {id:'d2',title:'Zucchini, färska',category:'vegetables',produce:'Zucchini',icon:'i-squash',kind:'listing',deal:'sale',status:'ready',price:12,unit:'piece',area_label:'Sundbyberg',seller:'Majas täppa',sellerId:'maja',premiumSeller:true,rating:4.9,lat:59.3605,lng:17.9705,desc:'Gröna och gula.'},
-  {id:'d3',title:'Äpplen — Aroma',category:'fruit_berries',produce:'Äpple',icon:'i-apple',kind:'listing',deal:'sale',status:'ripening',price:20,unit:'kg',area_label:'Storskogen, Sundbyberg',seller:'Görans trädgård',sellerId:'goran',rating:4.7,lat:59.3662,lng:17.9648,desc:'Mognar i september.'},
-  {id:'d4',title:'Ägg från egna höns',category:'eggs',produce:'Hönsägg',icon:'i-egg',kind:'listing',deal:'sale',status:'ready',price:45,unit:'sixpack',area_label:'Bromma',seller:'Bromma gårdshöns',sellerId:'bromma',rating:5.0,lat:59.3452,lng:17.9390,desc:'Frigående höns.'},
-  {id:'d5',title:'Sommarhonung',category:'honey',produce:'Honung',icon:'i-honey',kind:'listing',deal:'sale',status:'on_order',price:75,unit:'piece',area_label:'Solna',seller:'Solna bigård',sellerId:'solnabi',rating:4.9,lat:59.3585,lng:17.9805,desc:'500 g, slungas på beställning.'},
-  {id:'d6',title:'Rabarber — plocka själv',category:'fruit_berries',produce:'Rabarber',icon:'i-rhubarb',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Duvbo',seller:'Inger',sellerId:'inger',rating:4.6,lat:59.3648,lng:17.9602,desc:'Massor kvar, kom och ta.'},
-  {id:'d7',title:'Krusbär vid Lötsjön',category:'fruit_berries',produce:'Krusbär',icon:'i-berry',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Lötsjön',seller:'Tipsat',sellerId:null,rating:null,lat:59.3712,lng:17.9655,desc:'Buskar på allmänningen.'},
-  {id:'d8',title:'Krispsallad',category:'vegetables',produce:'Sallad',icon:'i-lettuce',kind:'listing',deal:'sale',status:'ready',price:15,unit:'piece',area_label:'Ör, Sundbyberg',seller:'Majas täppa',sellerId:'maja',premiumSeller:true,rating:4.9,lat:59.3670,lng:17.9722,desc:'Plockas vid hämtning.'},
-  {id:'d9',title:'Färska örter, blandat',category:'herbs',produce:'Basilika',icon:'i-herb',kind:'listing',deal:'sale',status:'ready',price:15,unit:'piece',area_label:'Hallonbergen',seller:'Kryddkrukan',sellerId:'krydda',rating:4.8,lat:59.3752,lng:17.9648,desc:'Basilika, persilja, dill.'},
-  {id:'d10',title:'Färskpotatis',category:'vegetables',produce:'Potatis',icon:'i-potato',kind:'listing',deal:'sale',status:'ready',price:30,unit:'kg',area_label:'Ursvik',seller:'Ursviks odling',sellerId:'ursvik',rating:4.7,lat:59.3835,lng:17.9662,desc:'Nyskördad.'},
-  {id:'d11',title:'Jordgubbar',category:'fruit_berries',produce:'Jordgubbar',icon:'i-strawberry',kind:'listing',deal:'sale',status:'ready',price:45,unit:'liter',area_label:'Bromma',seller:'Bromma gårdshöns',sellerId:'bromma',rating:5.0,lat:59.3405,lng:17.9305,desc:'Söta och solmogna.'},
-  {id:'d12',title:'Sommarbukett',category:'plants',produce:'Snittblommor',icon:'i-flower',kind:'listing',deal:'sale',status:'ready',price:60,unit:'piece',area_label:'Sundbyberg',seller:'Majas täppa',sellerId:'maja',premiumSeller:true,rating:4.9,lat:59.3622,lng:17.9688,desc:'Plockas färskt.'},
-  {id:'d13',title:'Färskpotatis, Singö',category:'vegetables',produce:'Potatis',icon:'i-potato',kind:'listing',deal:'sale',status:'ready',price:35,unit:'kg',area_label:'Singö',seller:'Singö gård',sellerId:'singogard',premiumSeller:true,rating:4.9,lat:60.1812,lng:18.7625,desc:'Öns egen mandelpotatis.'},
-  {id:'d14',title:'Ägg från Singö',category:'eggs',produce:'Hönsägg',icon:'i-egg',kind:'listing',deal:'sale',status:'ready',price:50,unit:'sixpack',area_label:'Singö',seller:'Hönshuset Singö',sellerId:'singohons',rating:5.0,lat:60.1752,lng:18.7502,desc:'Frigående, utomhus.'},
-  {id:'d15',title:'Skärgårdshonung',category:'honey',produce:'Honung',icon:'i-honey',kind:'listing',deal:'sale',status:'ready',price:85,unit:'piece',area_label:'Singö',seller:'Singö bigård',sellerId:'singobi',rating:4.9,lat:60.1885,lng:18.7702,desc:'Från öns blommor.'},
-  {id:'d16',title:'Kantareller i Singöskogen',category:'vegetables',produce:'Svamp',icon:'i-mushroom',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Singöskogen',seller:'Tipsat',sellerId:null,rating:null,lat:60.1902,lng:18.7548,desc:'Bra ställe i augusti–september.'},
-  {id:'d17',title:'Rabarber skänkes',category:'fruit_berries',produce:'Rabarber',icon:'i-rhubarb',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Singö',seller:'Ella',sellerId:'ella',rating:4.7,lat:60.1778,lng:18.7682,desc:'Vid röda ladan.'},
-  {id:'d18',title:'Morötter',category:'vegetables',produce:'Morötter',icon:'i-carrot',kind:'listing',deal:'sale',status:'ready',price:25,unit:'kg',area_label:'Singö',seller:'Singö gård',sellerId:'singogard',premiumSeller:true,rating:4.9,lat:60.1725,lng:18.7452,desc:'Söta sandjordsmorötter.'},
-  {id:'d19',title:'Hallon',category:'fruit_berries',produce:'Hallon',icon:'i-raspberry',kind:'listing',deal:'sale',status:'ready',price:45,unit:'liter',area_label:'Singö',seller:'Hönshuset Singö',sellerId:'singohons',rating:5.0,lat:60.1852,lng:18.7602,desc:'Handplockade.'},
-  {id:'d20',title:'Svarta vinbär',category:'fruit_berries',produce:'Svarta vinbär',icon:'i-berry',kind:'listing',deal:'sale',status:'ripening',price:40,unit:'liter',area_label:'Singö',seller:'Ella',sellerId:'ella',rating:4.7,lat:60.1832,lng:18.7722,desc:'Klara om ett par veckor.'}
+let DEMO=[];
+const DEMO_T=[
+{produce:'Basilika',category:'herbs',icon:'i-herb',status:'ready',price:15,unit:'piece',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:'Krukad, färsk.'},
+{produce:'Persilja',category:'herbs',icon:'i-herb',status:'ready',price:12,unit:'bunch',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:''},
+{produce:'Gräslök',category:'herbs',icon:'i-herb',status:'ready',price:10,unit:'bunch',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:''},
+{produce:'Koriander',category:'herbs',icon:'i-herb',status:'ready',price:12,unit:'piece',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:''},
+{produce:'Basilika',category:'herbs',icon:'i-herb',status:'ready',price:15,unit:'piece',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:''},
+{produce:'Mynta',category:'herbs',icon:'i-herb',deal:'giveaway',status:'ready',price:null,unit:null,seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:'Tar över krukan — hämta gärna.'},
+{produce:'Timjan',category:'herbs',icon:'i-herb',status:'ready',price:12,unit:'piece',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:''},
+{produce:'Rosmarin',category:'herbs',icon:'i-herb',status:'ready',price:15,unit:'piece',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:''},
+{produce:'Dill',category:'herbs',icon:'i-herb',status:'ready',price:10,unit:'bunch',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Tomat',category:'vegetables',icon:'i-tomato',status:'ready',price:30,unit:'kg',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:'Flera sorter, solmogna.'},
+{produce:'Tomat',category:'vegetables',icon:'i-tomato',status:'ready',price:25,unit:'kg',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:'Balkongtomater, körsbär.'},
+{produce:'Tomat',category:'vegetables',icon:'i-tomato',status:'ready',price:28,unit:'kg',seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:'Plommontomater.'},
+{produce:'Tomat',category:'vegetables',icon:'i-tomato',status:'ripening',price:30,unit:'kg',seller:'Villan på höjden',sellerId:'hojd',rating:4.7,area:'Villaträdgård',desc:'Mognar i växthus.'},
+{produce:'Äpple',category:'fruit_berries',icon:'i-apple',status:'ready',price:20,unit:'kg',seller:'Äppellunden',sellerId:'applund',premium:true,rating:4.9,area:'Villaträdgård',desc:'Aroma, Ingrid Marie, Cox.'},
+{produce:'Äpple',category:'fruit_berries',icon:'i-apple',status:'ready',price:12,unit:'kg',seller:'Äppellunden',sellerId:'applund',premium:true,rating:4.9,area:'Villaträdgård',desc:'Fallfrukt — bra till must.'},
+{produce:'Äpple',category:'fruit_berries',icon:'i-apple',deal:'giveaway',status:'self_pick',price:null,unit:null,seller:'Grannens träd',sellerId:'grann',rating:4.7,area:'Villaträdgård',desc:'Trädet svämmar över — plocka fritt.'},
+{produce:'Äpple',category:'fruit_berries',icon:'i-apple',deal:'giveaway',status:'ready',price:null,unit:null,seller:'Villan på höjden',sellerId:'hojd',rating:4.7,area:'Villaträdgård',desc:'Låda vid grinden.'},
+{produce:'Äpple',category:'fruit_berries',icon:'i-apple',status:'ripening',price:22,unit:'kg',seller:'Villan på höjden',sellerId:'hojd',rating:4.7,area:'Villaträdgård',desc:'Höstäpplen, snart klara.'},
+{produce:'Päron',category:'fruit_berries',icon:'i-pear',status:'ready',price:24,unit:'kg',seller:'Äppellunden',sellerId:'applund',premium:true,rating:4.9,area:'Villaträdgård',desc:''},
+{produce:'Plommon',category:'fruit_berries',icon:'i-plum',status:'ripening',price:28,unit:'kg',seller:'Äppellunden',sellerId:'applund',premium:true,rating:4.9,area:'Villaträdgård',desc:'Victoria.'},
+{produce:'Rabarber',category:'fruit_berries',icon:'i-rhubarb',deal:'giveaway',status:'self_pick',price:null,unit:null,seller:'Grannens träd',sellerId:'grann',rating:4.7,area:'Villaträdgård',desc:'Massor kvar.'},
+{produce:'Rabarber',category:'fruit_berries',icon:'i-rhubarb',deal:'giveaway',status:'self_pick',price:null,unit:null,seller:'Villan på höjden',sellerId:'hojd',rating:4.7,area:'Villaträdgård',desc:''},
+{produce:'Rabarber',category:'fruit_berries',icon:'i-rhubarb',deal:'giveaway',status:'ready',price:null,unit:null,seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Jordgubbar',category:'fruit_berries',icon:'i-strawberry',status:'ready',price:45,unit:'liter',seller:'Solgläntans kolonilott',sellerId:'sol',premium:true,rating:4.9,area:'Kolonilott',desc:'Solmogna.'},
+{produce:'Hallon',category:'fruit_berries',icon:'i-raspberry',status:'ready',price:40,unit:'liter',seller:'Solgläntans kolonilott',sellerId:'sol',premium:true,rating:4.9,area:'Kolonilott',desc:'Handplockade.'},
+{produce:'Svarta vinbär',category:'fruit_berries',icon:'i-berry',status:'ready',price:35,unit:'liter',seller:'Solgläntans kolonilott',sellerId:'sol',premium:true,rating:4.9,area:'Kolonilott',desc:''},
+{produce:'Röda vinbär',category:'fruit_berries',icon:'i-berry',status:'ready',price:35,unit:'liter',seller:'Solgläntans kolonilott',sellerId:'sol',premium:true,rating:4.9,area:'Kolonilott',desc:''},
+{produce:'Krusbär',category:'fruit_berries',icon:'i-berry',status:'ready',price:35,unit:'liter',seller:'Villan på höjden',sellerId:'hojd',rating:4.7,area:'Villaträdgård',desc:''},
+{produce:'Jordgubbar',category:'fruit_berries',icon:'i-strawberry',status:'ready',price:50,unit:'liter',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Sallad',category:'vegetables',icon:'i-lettuce',status:'ready',price:15,unit:'piece',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:'Plockas vid hämtning.'},
+{produce:'Grönkål',category:'vegetables',icon:'i-greens',status:'ready',price:15,unit:'bunch',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Spenat',category:'vegetables',icon:'i-greens',status:'ready',price:15,unit:'bunch',seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:''},
+{produce:'Chili',category:'vegetables',icon:'i-chili',status:'ready',price:10,unit:'piece',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:'Starka!'},
+{produce:'Paprika',category:'vegetables',icon:'i-pepper',status:'ready',price:15,unit:'piece',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:''},
+{produce:'Zucchini',category:'vegetables',icon:'i-squash',deal:'giveaway',status:'ready',price:null,unit:null,seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:'För mycket i år!'},
+{produce:'Pumpa',category:'vegetables',icon:'i-squash',status:'ripening',price:35,unit:'piece',seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:''},
+{produce:'Squash',category:'vegetables',icon:'i-squash',status:'ready',price:12,unit:'piece',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Gurka',category:'vegetables',icon:'i-cucumber',status:'ready',price:12,unit:'piece',seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:''},
+{produce:'Gurka',category:'vegetables',icon:'i-cucumber',status:'ready',price:10,unit:'piece',seller:'Balkongodlarna',sellerId:'balk',rating:4.6,area:'Balkongodling',desc:'Frilandsgurka.'},
+{produce:'Potatis',category:'vegetables',icon:'i-potato',status:'ready',price:30,unit:'kg',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:'Färskpotatis.'},
+{produce:'Morötter',category:'vegetables',icon:'i-carrot',status:'ready',price:25,unit:'kg',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Rödbetor',category:'vegetables',icon:'i-beet',status:'ready',price:22,unit:'kg',seller:'Kolonilotten 14',sellerId:'kol',rating:4.6,area:'Kolonilott',desc:''},
+{produce:'Tomatplantor',category:'plants',icon:'i-plant',status:'ready',price:25,unit:'piece',seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:'Förodlade.'},
+{produce:'Örtplantor',category:'plants',icon:'i-plant',status:'ready',price:20,unit:'piece',seller:'Karins köksträdgård',sellerId:'karin',premium:true,rating:4.9,area:'Villaträdgård',desc:''},
+{produce:'Snittblommor',category:'plants',icon:'i-flower',status:'ready',price:60,unit:'piece',seller:'Gröna fingrar',sellerId:'grona',premium:true,rating:4.8,area:'Kolonilott',desc:'Färsk bukett.'},
+{produce:'Blomsterlökar',category:'plants',icon:'i-flower',status:'ready',price:30,unit:'piece',seller:'Solgläntans kolonilott',sellerId:'sol',premium:true,rating:4.9,area:'Kolonilott',desc:'Tulpanlökar.'},
+{produce:'Hönsägg',category:'eggs',icon:'i-egg',status:'ready',price:45,unit:'sixpack',seller:'Familjen Berg',sellerId:'berg',rating:5.0,area:'Radhusträdgården',desc:'Frigående höns, några få i kvarteret.'},
+{produce:'Honung',category:'honey',icon:'i-honey',status:'ready',price:85,unit:'piece',seller:'Stadsbigården',sellerId:'bi',rating:4.9,area:'Villaträdgård',desc:'Stadshonung från kvarterets blommor.'},
+{produce:'Blåbär',category:'fruit_berries',icon:'i-berry',kind:'spot',area:'Stadsskogen',seller:'Tipsat',desc:'Blåbärsris i parkskogen.'},
+{produce:'Björnbär',category:'fruit_berries',icon:'i-berry',kind:'spot',area:'Cykelvägen',seller:'Tipsat',desc:'Snår längs cykelbanan.'},
+{produce:'Nypon',category:'fruit_berries',icon:'i-berry',kind:'spot',area:'Parken',seller:'Tipsat',desc:'Nyponbuskar i parken.'},
+{produce:'Svamp',category:'vegetables',icon:'i-mushroom',kind:'spot',area:'Skogsbrynet',seller:'Tipsat',desc:'Kantareller i utkanten.'}
 ];
-function allItems(){ return DEMO.concat(Store.userListings); }
+function makeDemo(lat,lng){ const cl=Math.cos(lat*Math.PI/180)||1;
+  const bases={}; let si=0;
+  DEMO_T.forEach((t,idx)=>{ const key=t.sellerId||('spot'+idx);
+    if(!(key in bases)){ const ang=si*2.399963; const r=0.5+((si*3.3)%14);
+      bases[key]={dx:r*Math.cos(ang),dy:r*Math.sin(ang)}; si++; } });
+  DEMO=DEMO_T.map((t,i)=>{ const key=t.sellerId||('spot'+i); const b=bases[key]||{dx:0,dy:0};
+    const dx=b.dx+((i*0.37)%1-0.5)*0.4, dy=b.dy+((i*0.53)%1-0.5)*0.4;
+    return {id:'x'+i,title:t.produce,produce:t.produce,category:t.category,icon:t.icon,
+      kind:t.kind||'listing',deal:t.kind==='spot'?null:(t.deal||'sale'),status:t.status||'ready',
+      price:(t.price!==undefined?t.price:null),unit:(t.unit!==undefined?t.unit:null),
+      area_label:t.area||'I närheten',seller:t.seller,sellerId:(t.kind==='spot'?null:(t.sellerId||null)),
+      premiumSeller:!!t.premium,rating:(t.kind==='spot'?null:(t.rating!==undefined?t.rating:null)),
+      lat:lat+(dy/111),lng:lng+(dx/(111*cl)),desc:t.desc||''}; });
+}
+function activePlanned(){ if(!Store.session)return [];
+  const m=(new Date().getMonth()+1), mo=Store.page.months[m]; if(!mo||!mo.listings||!mo.listings.length)return [];
+  const c=STATE.center, cl=Math.cos(c.lat*Math.PI/180)||1;
+  return mo.listings.map((p,i)=>({ id:'pl'+m+'_'+i, title:p.title||p.produce, produce:p.produce, category:p.category, icon:p.icon,
+    kind:'listing', deal:p.deal||'sale', status:p.status||'ready',
+    price:p.deal==='giveaway'?null:(p.price!=null?p.price:0), unit:p.deal==='giveaway'?null:(p.unit||'piece'),
+    area_label:'Min sida', seller:Store.session.name, sellerId:Store.session.id, premiumSeller:Store.premium.active, rating:null,
+    lat:c.lat+((i%3-1)*0.12/111), lng:c.lng+((Math.floor(i/3)-1)*0.12/(111*cl)), exactLat:c.lat, exactLng:c.lng, desc:p.desc||'', planned:true })); }
+function allItems(){ return DEMO.concat(Store.userListings, activePlanned()); }
 
 const CATS=[{f:'allt',label:'Allt',c:'#1F3A29'},{f:'fruit_berries',label:'Frukt & bär',c:'#D9432B'},{f:'vegetables',label:'Grönt',c:'#3F7D53'},{f:'eggs',label:'Ägg',c:'#A9884F'},{f:'honey',label:'Honung',c:'#EBAF2E',dark:true},{f:'giveaway',label:'Skänkes',c:'#2E6BE6'},{f:'allman',label:'Allmän yta',c:'#0E9E9E'}];
-let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:5,cat:'allt',sort:'dist',view:'map'};
+const CAT_COLOR={fruit_berries:'#D9432B',vegetables:'#3F7D53',herbs:'#4F8F53',eggs:'#A9884F',honey:'#EBAF2E',plants:'#B0568A',other:'#C9A876'};
+function pinColor(it){ if(it.kind==='spot')return '#0E9E9E'; if(it.deal==='giveaway')return '#2E6BE6'; return CAT_COLOR[it.category]||'#C9A876'; }
+let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:5,cats:[],subs:[],sort:'dist',view:'map'};
 function distLabel(km){ return km<1 ? Math.round(km*1000)+' m' : (String(Math.round(km*10)/10).replace('.',',')+' km'); }
 let map,markerLayer,radiusCircle,meMarker,createMap,createMarker;
 
-function matchesCat(it){ const f=STATE.cat; if(f==='allt')return true; if(f==='giveaway')return it.deal==='giveaway'; if(f==='allman')return it.kind==='spot'; return it.category===f; }
+function matchesCat(it){
+  const cats=STATE.cats;
+  let catOk;
+  if(!cats.length) catOk=true;
+  else catOk=cats.some(f=> f==='giveaway'?it.deal==='giveaway' : f==='allman'?it.kind==='spot' : it.category===f);
+  if(!catOk)return false;
+  if(STATE.subs.length) return STATE.subs.includes(it.produce);
+  return true;
+}
 function withDist(list){ const c=L.latLng(STATE.center.lat,STATE.center.lng); return list.map(it=>({...it,dist:c.distanceTo(L.latLng(it.lat,it.lng))})); }
 function visibleItems(){ return withDist(allItems()).filter(it=>matchesCat(it)&&it.dist<=STATE.radiusKm*1000); }
 
 function renderChips(){ ['chips','chips2'].forEach(id=>{ const box=document.getElementById(id); if(!box)return;
   box.innerHTML=CATS.map(c=>{
-    const on=c.f===STATE.cat;
+    const on = c.f==='allt' ? STATE.cats.length===0 : STATE.cats.includes(c.f);
     const txt=on?(c.dark?'#4a3708':'#fff'):'var(--kale)';
     const style=on?('background:'+c.c+';border-color:'+c.c+';color:'+txt):'';
     const dot=on?'':'<span style="width:8px;height:8px;border-radius:99px;background:'+c.c+';display:inline-block;margin-right:6px;vertical-align:middle"></span>';
-    return '<span class="chip'+(on?' on':'')+'" style="'+style+'" onclick="setCat(\''+c.f+'\')">'+dot+c.label+'</span>';
+    return '<span class="chip'+(on?' on':'')+'" style="'+style+'" onclick="toggleCat(\''+c.f+'\')">'+dot+c.label+'</span>';
   }).join(''); }); }
-function setCat(f){ STATE.cat=f; renderChips(); refresh(); }
+function toggleCat(f){
+  if(f==='allt'){ STATE.cats=[]; STATE.subs=[]; }
+  else { const i=STATE.cats.indexOf(f); if(i<0)STATE.cats.push(f); else STATE.cats.splice(i,1);
+    STATE.subs=STATE.subs.filter(p=>STATE.cats.some(c=>SUBCATS.includes(c)&&produceFor(c).some(pp=>pp[0]===p))); }
+  renderChips(); renderSubChips(); refresh();
+}
+const SUBCATS=['fruit_berries','vegetables','eggs','honey','herbs','plants'];
+function renderSubChips(){ ['subchips','subchips2'].forEach(id=>{ const box=document.getElementById(id); if(!box)return;
+  const selCats=STATE.cats.filter(c=>SUBCATS.includes(c));
+  if(!selCats.length){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='flex';
+  const c=L.latLng(STATE.center.lat,STATE.center.lng);
+  const inCat=allItems().filter(it=>selCats.includes(it.category)&&c.distanceTo(L.latLng(it.lat,it.lng))<=STATE.radiusKm*1000);
+  const counts={}; inCat.forEach(it=>{ if(it.produce)counts[it.produce]=(counts[it.produce]||0)+1; });
+  const opts=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  let html='<span class="chip'+(STATE.subs.length===0?' on':'')+'" onclick="toggleSub(null)">Alla ('+inCat.length+')</span>';
+  html+=opts.map(o=>{ const cat=selCats.find(cc=>produceFor(cc).some(p=>p[0]===o))||selCats[0]; const ic=iconForProduce(o,cat); const esc=o.replace(/'/g,"\\'");
+    return '<span class="chip'+(STATE.subs.includes(o)?' on':'')+'" onclick="toggleSub(\''+esc+'\')">'+svg(ic,16)+o+' ('+counts[o]+')</span>'; }).join('');
+  box.innerHTML=html; }); }
+function toggleSub(p){ if(p===null){ STATE.subs=[]; } else { const i=STATE.subs.indexOf(p); if(i<0)STATE.subs.push(p); else STATE.subs.splice(i,1); } renderSubChips(); refresh(); }
 
 function initMap(){
   map=L.map('map',{zoomControl:true}).setView([STATE.center.lat,STATE.center.lng],13);
@@ -389,7 +508,8 @@ function renderMap(){
   meMarker.setLatLng([STATE.center.lat,STATE.center.lng]);
   visibleItems().forEach(it=>{
     const ic=iconFor(it);
-    const html='<div class="mpin '+pinCls(it)+'"><div class="c">'+svg(ic,24)+'</div></div>';
+    const col=pinColor(it);
+    const html='<div class="mpin"><div class="c" style="border-color:'+col+'">'+svg(ic,24)+'</div><div class="pt" style="border-top-color:'+col+'"></div></div>';
     const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html,iconSize:[40,49],iconAnchor:[20,47]})});
     m.on('click',()=>openDetail(it.id)); m.addTo(markerLayer);
   });
@@ -400,6 +520,8 @@ function renderList(){
   let items=visibleItems();
   if(STATE.sort==='rating')items.sort((a,b)=>(b.rating||0)-(a.rating||0));
   else if(STATE.sort==='new')items.sort((a,b)=>(a.id<b.id?1:-1));
+  else if(STATE.sort==='price_asc')items.sort((a,b)=>priceVal(a)-priceVal(b));
+  else if(STATE.sort==='price_desc')items.sort((a,b)=>priceVal(b)-priceVal(a));
   else items.sort((a,b)=>a.dist-b.dist);
   const sub=document.getElementById('listSub'); if(sub)sub.textContent=items.length+(items.length===1?' annons':' annonser')+' inom '+distLabel(STATE.radiusKm);
   if(!items.length){ box.innerHTML='<div class="empty"><b>Inget här ännu</b>Prova ett större avstånd eller ett annat filter.</div>'; return; }
@@ -495,28 +617,154 @@ function sendMsg(orderId){
   Store.save(); openChat(orderId);
 }
 
-function openStorefront(sellerId){
-  const items=allItems().filter(x=>x.sellerId===sellerId);
-  if(!items.length){ toast('Inga annonser på detta stånd än'); return; }
-  const s=items[0], prem=!!s.premiumSeller;
-  const avatar=(s.seller||'S').trim().charAt(0).toUpperCase();
-  const grid=items.map(it=>{ const ic=iconFor(it);
-    const price=it.kind==='spot'?'Fritt':(it.deal==='giveaway'?'Skänkes':it.price+' kr');
-    return '<div class="mini" onclick="closeOverlay(\'sheet\');openDetail(\''+it.id+'\')"><div class="mt" style="background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,44)+'</div><div class="mb"><div class="mn">'+it.title.split(',')[0].split(' — ')[0]+'</div><div class="mp">'+price+'</div></div></div>'; }).join('');
-  const head=prem
-    ? '<div class="sf-cover"><div class="motif">'+svg('i-apple',54)+svg('i-greens',54)+svg('i-honey',54)+svg('i-berry',54)+'</div><div class="back" onclick="closeOverlay(\'sheet\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div></div>'
-    : '<div class="top"><div class="back" style="position:static" onclick="closeOverlay(\'sheet\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl" style="font-size:18px">'+s.seller+'</div><div style="width:40px"></div></div>';
-  const premBlocks=prem
-    ? '<div class="sec"><p class="k">Om trädgården</p><p style="font-size:13.5px;line-height:1.6;margin:0">Liten köksträdgård i '+(s.area_label||'trakten')+'. Odlar utan bekämpningsmedel och säljer överskottet. Kom gärna och plocka.</p></div>'+
-      '<div class="sec"><p class="k">På gång i år</p><div class="season"><div class="smonth on"><div class="m">JUL</div>'+svg('i-honey',28)+'<div class="w">Honung, örter</div></div><div class="smonth"><div class="m">AUG</div>'+svg('i-berry',28)+'<div class="w">Tomater, bär</div></div><div class="smonth"><div class="m">SEP</div>'+svg('i-apple',28)+'<div class="w">Äpplen</div></div><div class="smonth"><div class="m">OKT</div>'+svg('i-squash',28)+'<div class="w">Pumpa, potatis</div></div></div></div>'
-    : '';
+const THEMES=[
+ {k:'kale',n:'Kål',c1:'#26452F',c2:'#3F7D53',a:'#3F7D53'},
+ {k:'tomato',n:'Tomat',c1:'#7A1F12',c2:'#D9432B',a:'#D9432B'},
+ {k:'honey',n:'Honung',c1:'#7A4E10',c2:'#EBAF2E',a:'#C98F1E'},
+ {k:'plum',n:'Plommon',c1:'#4A1F3A',c2:'#8B2C5A',a:'#8B2C5A'},
+ {k:'teal',n:'Teal',c1:'#0A4A4A',c2:'#0E9E9E',a:'#0E9E9E'},
+ {k:'sky',n:'Himmel',c1:'#14346B',c2:'#2E6BE6',a:'#2E6BE6'},
+ {k:'rust',n:'Höst',c1:'#6B2E12',c2:'#C85A2B',a:'#C85A2B'},
+ {k:'lavender',n:'Lavendel',c1:'#3A2A5A',c2:'#7A5A9A',a:'#7A5A9A'},
+ {k:'forest',n:'Skog',c1:'#14261A',c2:'#2C5A3A',a:'#2C5A3A'},
+ {k:'sand',n:'Sand',c1:'#7A6A44',c2:'#C9A876',a:'#A9884F'}
+];
+function themeOf(k){ return THEMES.find(t=>t.k===k)||THEMES[0]; }
+const MONTHS=['JAN','FEB','MAR','APR','MAJ','JUN','JUL','AUG','SEP','OKT','NOV','DEC'];
+const plusSvg='<svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>';
+const themeSvg='<svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1"/><circle cx="12" cy="8" r="1"/><circle cx="15.5" cy="10" r="1"/></svg>';
+function pickImages(){ const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple=true; inp.onchange=function(){ handleImages(inp.files); }; inp.click(); }
+function handleImages(files){
+  const room=5-Store.page.images.length; const arr=Array.prototype.slice.call(files,0,Math.max(0,room));
+  if(!arr.length){ toast('Max 5 bilder'); return; }
+  let pending=arr.length;
+  arr.forEach(function(f){ const r=new FileReader(); r.onload=function(){ const img=new Image(); img.onload=function(){
+    const max=900; let w=img.width,h=img.height; if(w>h&&w>max){h=Math.round(h*max/w);w=max;} else if(h>max){w=Math.round(w*max/h);h=max;}
+    const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+    try{ Store.page.images.push(cv.toDataURL('image/jpeg',0.72)); }catch(e){}
+    if(--pending===0){ try{ Store.save(); }catch(e){ toast('Utrymmet räcker inte för alla bilder.'); } openImages(); }
+  }; img.src=r.result; }; r.readAsDataURL(f); });
+}
+function removePageImage(i){ Store.page.images.splice(i,1); Store.save(); openImages(); }
+function moveImage(i,dir){ const a=Store.page.images, j=i+dir; if(j<0||j>=a.length)return; const t=a[i]; a[i]=a[j]; a[j]=t; Store.save(); openImages(); }
+function openImages(){
+  const imgs=Store.page.images;
+  const cells = imgs.length ? imgs.map(function(src,i){
+    return '<div class="imgcell"><img src="'+src+'" onclick="openLightbox('+i+')"><div class="ord">'+(i+1)+(i===0?' · omslag':'')+'</div><div class="rm" onclick="removePageImage('+i+')">×</div>'+
+      '<div class="ctrls"><button onclick="moveImage('+i+',-1)"'+(i===0?' disabled':'')+'>‹</button><button onclick="moveImage('+i+',1)"'+(i===imgs.length-1?' disabled':'')+'>›</button></div></div>';
+  }).join('') : '<div class="empty" style="padding:24px;grid-column:1/-1"><b>Inga bilder än</b>Lägg till upp till 5.</div>';
   document.getElementById('sheet').innerHTML=
-    '<div class="scroll">'+head+
-    '<div class="sf-body"><div class="sf-av">'+avatar+'</div><div class="sf-name">'+s.seller+(prem?' <span class="pill">Verifierad</span>':'')+'</div>'+
-      '<div style="font-size:13px;color:var(--muted)">'+(s.area_label||'')+'</div>'+(prem?'<div class="sf-link">'+svg('i-pin',13)+' skorda.se/'+sellerId+'</div>':'')+'</div>'+
-    premBlocks+
+    '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+Store.session.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">Bilder ('+imgs.length+'/5)</div><div style="width:40px"></div></div>'+
+    '<div class="scroll" style="padding:14px 18px 30px">'+
+      (imgs.length<5?'<button class="btn" onclick="pickImages()" style="margin-bottom:12px">Lägg till bilder</button>':'')+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Första bilden blir omslag. Tryck ‹ › för att byta ordning, × för att ta bort.</div>'+
+      '<div class="imgmgr">'+cells+'</div>'+
+    '</div>';
+  showOverlay('sheet');
+}
+function galScroll(el){ const i=Math.round(el.scrollLeft/el.clientWidth); const box=el.parentNode.querySelector('.gdots'); if(box)box.querySelectorAll('i').forEach(function(d,di){ d.classList.toggle('on',di===i); }); }
+function openLightbox(i){ const imgs=Store.page.images; if(!imgs.length)return;
+  const el=document.createElement('div'); el.id='lightbox';
+  el.innerHTML='<div class="lb-close">×</div><div class="lb-track">'+imgs.map(function(s){return '<div class="lb-slide"><img src="'+s+'"></div>';}).join('')+'</div>';
+  el.addEventListener('click',function(e){ if(e.target.classList.contains('lb-close')||e.target.classList.contains('lb-slide')||e.target.id==='lightbox'){ el.remove(); } });
+  document.body.appendChild(el);
+  const track=el.querySelector('.lb-track'); requestAnimationFrame(function(){ track.scrollLeft=i*track.clientWidth; }); }
+function setTheme(k){ Store.page.theme=k; Store.save(); openStorefront(Store.session.id); }
+function openThemePicker(){
+  document.getElementById('sheet').innerHTML=
+    '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+Store.session.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">Välj tema</div><div style="width:40px"></div></div>'+
+    '<div class="scroll" style="padding:16px 18px 30px"><div class="tgrid">'+
+    THEMES.map(function(t){ return '<div class="tsw'+(Store.page.theme===t.k?' on':'')+'" style="background:linear-gradient(120deg,'+t.c1+','+t.c2+')" onclick="setTheme(\''+t.k+'\')">'+t.n+'</div>'; }).join('')+
+    '</div></div>';
+  showOverlay('sheet');
+}
+function saveStory(v){ Store.page.story=v; Store.save(); }
+function storyCount(el){ const c=document.getElementById('storyCnt'); if(c)c.textContent=el.value.length+'/300'; }
+function monthObj(m){ if(!Store.page.months[m])Store.page.months[m]={produce:[],listings:[]}; return Store.page.months[m]; }
+function toggleMonth(m){ if(Store.page.months[m]){ delete Store.page.months[m]; Store.save(); openStorefront(Store.session.id); } else { monthObj(m); Store.save(); openMonth(m); } }
+function toggleMonthProduce(m,label,cat,icon){ const mo=monthObj(m); const idx=mo.listings.findIndex(l=>l.produce===label);
+  if(idx>=0){ mo.listings.splice(idx,1); } else { mo.listings.push({title:label,produce:label,category:cat,icon:icon,deal:'sale',status:'ready',price:0,unit:'piece'}); }
+  Store.save(); openMonth(m); }
+function updatePlanned(m,i,field,value){ const mo=monthObj(m); const p=mo.listings[i]; if(!p)return;
+  if(field==='price'){ p.price=(value===''?0:+value); Store.save(); }
+  else if(field==='deal'){ p.deal=value; if(value==='giveaway'){p.price=null;p.unit=null;} else {if(p.price==null)p.price=0; if(!p.unit)p.unit='piece';} Store.save(); openMonth(m); }
+  else { p[field]=value; Store.save(); } }
+function openMonth(m){
+  const mo=monthObj(m); const cur=(new Date().getMonth()+1)===m;
+  const groups=[['fruit_berries','Frukt & bär'],['vegetables','Grönsaker'],['herbs','Örter'],['eggs','Ägg'],['honey','Honung'],['plants','Plantor & blommor']];
+  const has=function(l){ return mo.listings.some(function(x){return x.produce===l;}); };
+  let chips='';
+  groups.forEach(function(g){ const items=produceFor(g[0]); if(!items.length)return;
+    chips+='<div style="font-family:\'Bricolage Grotesque\';font-weight:700;color:var(--kale);font-size:13px;margin:14px 0 6px">'+g[1]+'</div><div class="hchip" style="flex-wrap:wrap">'+
+      items.map(function(p){ const on=has(p[0]); const esc=p[0].replace(/'/g,"\\'"); return '<span class="chip'+(on?' on':'')+'" onclick="toggleMonthProduce('+m+',\''+esc+'\',\''+g[0]+'\',\''+p[2]+'\')">'+svg(p[2],16)+p[0]+'</span>'; }).join('')+'</div>';
+  });
+  let rows;
+  if(mo.listings.length){
+    rows=mo.listings.map(function(p,i){ const ic=p.icon||'i-basket'; const giftHide=p.deal==='giveaway'?'display:none':'display:flex'; const esc=p.produce.replace(/'/g,"\\'");
+      return '<div class="arow" style="flex-direction:column;align-items:stretch;gap:8px">'+
+        '<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,20)+'</div><div class="at" style="flex:1">'+p.produce+'</div><span onclick="toggleMonthProduce('+m+',\''+esc+'\')" style="color:var(--muted);font-size:20px;cursor:pointer">×</span></div>'+
+        '<div style="display:flex;gap:8px"><select class="ed" onchange="updatePlanned('+m+','+i+',\'deal\',this.value)"><option value="sale"'+(p.deal!=='giveaway'?' selected':'')+'>Säljs</option><option value="giveaway"'+(p.deal==='giveaway'?' selected':'')+'>Skänkes</option></select>'+
+        '<select class="ed" onchange="updatePlanned('+m+','+i+',\'status\',this.value)">'+statusOpts(p.status)+'</select></div>'+
+        '<div style="gap:8px;'+giftHide+'"><input class="ed" type="number" inputmode="numeric" value="'+(p.price!=null?p.price:'')+'" placeholder="Pris (kr)" onchange="updatePlanned('+m+','+i+',\'price\',this.value)"><select class="ed" onchange="updatePlanned('+m+','+i+',\'unit\',this.value)">'+unitOpts(p.unit)+'</select></div>'+
+      '</div>'; }).join('');
+  } else rows='<div class="empty" style="padding:16px"><b>Markera grödor ovan</b>Då dyker prissättningen upp här.</div>';
+  document.getElementById('sheet').innerHTML=
+    '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+Store.session.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">'+MONTHS[m-1]+(cur?' · nu':'')+'</div><span onclick="toggleMonth('+m+')" style="color:var(--tomato);font-weight:700;font-size:13px;cursor:pointer">Ta bort</span></div>'+
+    '<div class="scroll" style="padding:14px 18px 30px">'+
+      '<p class="k">Vad förväntas finnas? (tryck för att lägga till)</p>'+chips+
+      '<p class="k" style="margin-top:24px">Prissättning</p><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Varje markerad gröda får en rad här och tänds automatiskt på kartan i '+MONTHS[m-1]+'.</div>'+rows+
+    '</div>';
+  showOverlay('sheet');
+}
+function openStorefront(sellerId){
+  const own = Store.session && sellerId===Store.session.id;
+  const items=allItems().filter(x=>x.sellerId===sellerId);
+  if(!items.length && !own){ toast('Inga annonser på detta stånd än'); return; }
+  const prem = own ? Store.premium.active : !!(items[0]&&items[0].premiumSeller);
+  const name = own ? Store.session.name : (items[0]?items[0].seller:'Stånd');
+  const area = items[0]?items[0].area_label:'';
+  const th = themeOf(own?Store.page.theme:'kale');
+  const avatar=(name||'S').trim().charAt(0).toUpperCase();
+  const imgs = own ? Store.page.images : [];
+  let cover;
+  if(imgs && imgs.length){
+    cover='<div style="position:relative;flex:0 0 auto"><div class="gallery" onscroll="galScroll(this)">'+
+      imgs.map(function(src,i){ return '<div class="gi"><img src="'+src+'" onclick="openLightbox('+i+')"></div>'; }).join('')+
+      '</div><div class="gdots">'+imgs.map(function(_,i){return '<i class="'+(i===0?'on':'')+'"></i>';}).join('')+'</div>'+
+      '<div class="back" onclick="closeOverlay(\'sheet\')" style="z-index:4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+
+      (own?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
+    '</div>';
+  } else {
+    cover='<div class="sf-cover" style="background:linear-gradient(120deg,'+th.c1+','+th.c2+')"><div class="motif">'+svg('i-apple',54)+svg('i-greens',54)+svg('i-honey',54)+svg('i-berry',54)+'</div>'+
+      '<div class="back" onclick="closeOverlay(\'sheet\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+
+      (own&&prem?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
+    '</div>';
+  }
+  const grid=(items.map(function(it){ const ic=iconFor(it); const price=it.kind==='spot'?'Fritt':(it.deal==='giveaway'?'Skänkes':it.price+' kr'); return '<div class="mini" onclick="closeOverlay(\'sheet\');openDetail(\''+it.id+'\')"><div class="mt" style="background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,44)+'</div><div class="mb"><div class="mn">'+it.title.split(',')[0].split(' — ')[0]+'</div><div class="mp">'+price+'</div></div></div>'; }).join('')) || '<div class="empty" style="padding:16px">Inga aktiva annonser just nu</div>';
+  let story='';
+  if(prem && own) story='<div class="sec"><p class="k">Om skörden</p><textarea class="ed" id="storyText" maxlength="300" style="min-height:72px;resize:vertical" placeholder="Berätta om din odling — vad du odlar, hur, och varför…" oninput="storyCount(this)" onchange="saveStory(this.value)">'+escAttr(Store.page.story)+'</textarea><div id="storyCnt" style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px">'+(Store.page.story||'').length+'/300</div></div>';
+  else if(prem) story='<div class="sec"><p class="k">Om skörden</p><p style="font-size:13.5px;line-height:1.6;margin:0">Liten odling i '+(area||'trakten')+'. Odlar utan bekämpningsmedel och säljer överskottet. Kom gärna och plocka.</p></div>';
+  let cal='';
+  if(prem && own){
+    const curM=(new Date().getMonth()+1);
+    const cells=MONTHS.map(function(nm,idx){ const m=idx+1; const mo=Store.page.months[m]; const on=!!mo;
+      const w = on&&mo.listings&&mo.listings.length ? mo.listings.map(function(l){return l.produce;}).slice(0,2).join(', ') : (on?'tryck':'');
+      const bg = on?('background:linear-gradient(135deg,'+th.c1+','+th.c2+');border-color:transparent;color:#fff'):'';
+      return '<div class="cm'+(on?' on':'')+'" style="'+bg+'" onclick="openMonth('+m+')"><div class="cmn">'+nm+(m===curM?' •':'')+'</div><div class="cmw">'+w+'</div></div>';
+    }).join('');
+    cal='<div class="sec"><p class="k">Säsongskalender — tryck på en månad</p><div class="cal">'+cells+'</div><div style="font-size:12px;color:var(--muted);margin-top:8px">Lägg till månader, ange vad som förväntas finnas, och förbered annonser som tänds automatiskt då.</div></div>';
+  } else if(prem){
+    cal='<div class="sec"><p class="k">På gång i år</p><div class="season"><div class="smonth on"><div class="m">JUL</div>'+svg('i-honey',28)+'<div class="w">Honung, örter</div></div><div class="smonth"><div class="m">AUG</div>'+svg('i-berry',28)+'<div class="w">Tomater, bär</div></div><div class="smonth"><div class="m">SEP</div>'+svg('i-apple',28)+'<div class="w">Äpplen</div></div><div class="smonth"><div class="m">OKT</div>'+svg('i-squash',28)+'<div class="w">Pumpa</div></div></div></div>';
+  }
+  document.getElementById('sheet').innerHTML=
+    '<div class="scroll">'+cover+
+    '<div class="sf-body"><div class="sf-av" style="background:'+th.a+'">'+avatar+'</div><div class="sf-name">'+name+(prem?' <span class="pill">Verifierad</span>':'')+'</div>'+
+      '<div style="font-size:13px;color:var(--muted)">'+(area||'')+'</div>'+(prem?'<div class="sf-link">'+svg('i-pin',13)+' skorda.se/'+sellerId+'</div>':'')+
+    '</div>'+
+    story+cal+
     '<div class="sec"><p class="k">Till salu</p><div class="grid2">'+grid+'</div></div>'+
-    (!prem?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Enkel profil. Med Premium får säljaren omslag, historia, säsongskalender och delbar länk.</div></div></div>':'')+
+    (!prem&&own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Med Premium får du bildgalleri, 10 teman, "Om skörden" och en säsongskalender med förberedda annonser.</div></div><button class="btn" style="margin-top:10px" onclick="openPlan()">Uppgradera till Premium</button></div>':'')+
+    (!prem&&!own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Enkel profil.</div></div></div>':'')+
     '</div>';
   showOverlay('sheet');
 }
@@ -606,17 +854,27 @@ function saveListing(){
 
 function renderWatch(){
   const box=document.getElementById('watchBody'); if(!box)return;
-  const cats=[['fruit_berries','Frukt & bär'],['vegetables','Grönt'],['eggs','Ägg'],['honey','Honung']];
-  let html='<p class="k" style="margin:14px 0 8px">Bevaka en gröda</p><div class="hchip" style="flex-wrap:wrap">'+
-    cats.map(c=>'<span class="chip" onclick="addWatch(\''+c[0]+'\',\''+c[1]+'\')">+ '+c[1]+'</span>').join('')+'</div>';
-  html+='<p class="k" style="margin:20px 0 8px">Du bevakar</p>';
-  if(!Store.watches.length){ html+='<div class="empty" style="padding:20px"><b>Inga bevakningar än</b>Lägg till en gröda ovan så plingar vi när något dyker upp inom '+distLabel(STATE.radiusKm)+'.</div>'; }
-  else { html+=Store.watches.map(w=>'<div class="arow"><div class="at">'+w.label+'</div><div class="as" style="margin-left:auto;margin-right:10px">inom '+distLabel(w.radius)+'</div><span onclick="removeWatch(\''+w.id+'\')" style="color:var(--muted);font-size:20px;cursor:pointer">×</span></div>').join(''); }
+  const watched=Store.watches.map(w=>w.key);
+  const groups=[['fruit_berries','Frukt & bär'],['vegetables','Grönsaker'],['herbs','Örter'],['eggs','Ägg'],['honey','Honung'],['plants','Plantor & blommor']];
+  let html='<p class="k" style="margin:14px 0 4px">Bevaka en gröda</p><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Tryck för att bevaka. Vi plingar när något dyker upp inom '+distLabel(STATE.radiusKm)+'.</div>';
+  groups.forEach(g=>{
+    const items=produceFor(g[0]); if(!items.length)return;
+    html+='<div style="font-family:\'Bricolage Grotesque\';font-weight:700;color:var(--kale);font-size:13.5px;margin:14px 0 7px">'+g[1]+'</div>';
+    html+='<div class="hchip" style="flex-wrap:wrap">'+items.map(p=>{ const on=watched.indexOf(p[0])>=0; const esc=p[0].replace(/'/g,"\\'");
+      return '<span class="chip'+(on?' on':'')+'" onclick="toggleWatch(\''+esc+'\',\''+g[0]+'\')">'+svg(p[2],16)+p[0]+(on?' ✓':'')+'</span>'; }).join('')+'</div>';
+  });
+  html+='<p class="k" style="margin:22px 0 8px">Du bevakar ('+Store.watches.length+')</p>';
+  if(!Store.watches.length){ html+='<div class="empty" style="padding:20px"><b>Inga bevakningar än</b>Tryck på en gröda ovan.</div>'; }
+  else { html+=Store.watches.map(w=>'<div class="arow"><div style="width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:'+(BG[iconForProduce(w.label,w.cat)]||'#DDE7CE')+'">'+svg(iconForProduce(w.label,w.cat),20)+'</div><div class="at">'+w.label+'</div><div class="as" style="margin-left:auto;margin-right:10px">inom '+distLabel(w.radius)+'</div><span onclick="removeWatch(\''+w.id+'\')" style="color:var(--muted);font-size:20px;cursor:pointer">×</span></div>').join(''); }
   html+='<div class="privacy" style="margin-top:14px">'+svg('i-pin',18)+'<div>Riktiga pling-notiser kräver backend (Supabase). Här sparas bevakningarna lokalt så länge.</div></div>';
   box.innerHTML=html;
 }
-function addWatch(cat,label){ Store.watches.push({id:'w'+Date.now(),cat,label,radius:STATE.radiusKm}); Store.save(); toast('Bevakar '+label); renderWatch(); }
-function removeWatch(id){ Store.watches=Store.watches.filter(w=>w.id!==id); Store.save(); renderWatch(); }
+function toggleWatch(label,cat){
+  const ex=Store.watches.find(w=>w.key===label);
+  if(ex){ Store.watches=Store.watches.filter(w=>w.key!==label); toast('Slutade bevaka '+label); }
+  else { Store.watches.push({id:'w'+Date.now(),key:label,label,cat,radius:STATE.radiusKm}); toast('Bevakar '+label); }
+  Store.save(); renderWatch();
+}
 
 function requireLogin(){ if(Store.session)return true; openAuth(); return false; }
 function openAuth(){
@@ -664,6 +922,20 @@ function setBilling(mode){ planMode=mode;
   else { p.innerHTML='79 kr <small>/ mån</small>'; s.textContent='Avsluta när du vill'; }
 }
 
+let acctEdit=false;
+function toggleAcctEdit(){ acctEdit=!acctEdit; renderAccount(); }
+function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function statusOpts(cur){ return [['ready','Klar nu'],['ripening','Mognar snart'],['on_order','På beställning'],['self_pick','Självplock']].map(s=>'<option value="'+s[0]+'"'+(s[0]===cur?' selected':'')+'>'+s[1]+'</option>').join(''); }
+function unitOpts(cur){ return [['piece','per st'],['kg','per kg'],['bunch','per knippe'],['sixpack','per 6-pack'],['liter','per liter']].map(u=>'<option value="'+u[0]+'"'+(u[0]===cur?' selected':'')+'>'+u[1]+'</option>').join(''); }
+function updateListing(id,field,value){
+  const it=Store.userListings.find(l=>l.id===id); if(!it)return;
+  if(field==='price'){ it.price=(value===''?0:+value); }
+  else if(field==='deal'){ it.deal=value; if(value==='giveaway'){ it.price=null; it.unit=null; } else { if(it.price==null)it.price=0; if(!it.unit)it.unit='piece'; } renderAccount(); }
+  else it[field]=value;
+  Store.save(); refresh();
+}
+function removeOrder(id){ Store.orders=Store.orders.filter(o=>o.id!==id); if(Store.messages[id])delete Store.messages[id]; Store.save(); renderAccount(); toast('Beställning borttagen'); }
+function declineOrderDemo(id){ const o=Store.orders.find(x=>x.id===id); if(o){o.status='declined'; Store.save(); toast('Säljaren tackade nej (demo)'); renderAccount();} }
 function renderAccount(){
   const box=document.getElementById('accBody'), sub=document.getElementById('accSub'); if(!box)return;
   if(!Store.session){
@@ -676,18 +948,27 @@ function renderAccount(){
   let html='';
   html+='<div class="arow" onclick="openStorefront(\''+Store.session.id+'\')">'+svg('i-pin',22)+'<div><div class="at">Min egen sida</div><div class="as">'+(Store.premium.active?'Premium — omslag, historia, säsong':'Gratis — enkel profil')+'</div></div><span class="chev">›</span></div>';
   html+='<div class="arow" onclick="openPlan()">'+svg('i-star',22)+'<div><div class="at">Plan '+(Store.premium.active?'<span class="pill prem">Premium</span>':'<span class="pill">Gratis</span>')+'</div><div class="as">'+(Store.premium.active?('Premium ('+(Store.premium.plan==='year'?'år':'månad')+')'):'Uppgradera för egen sida & obegränsat')+'</div></div><span class="chev">›</span></div>';
-  html+='<p class="k" style="margin:20px 0 8px">Mina annonser ('+mine.length+')</p>';
+  html+='<div style="display:flex;align-items:center;margin:20px 0 8px"><p class="k" style="margin:0">Mina annonser ('+mine.length+')</p>'+(mine.length?'<button class="sortbtn'+(acctEdit?' on':'')+'" style="margin-left:auto" onclick="toggleAcctEdit()">'+(acctEdit?'Klar':'Ändra')+'</button>':'')+'</div>';
   if(!mine.length) html+='<div class="empty" style="padding:18px"><b>Inga annonser än</b>Tryck på + för att lägga upp något.</div>';
+  else if(acctEdit) html+=mine.map(it=>{ const ic=iconFor(it); const giftHide=it.deal==='giveaway'?'display:none':'display:flex';
+    return '<div class="arow" style="flex-direction:column;align-items:stretch;gap:8px">'+
+      '<div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,22)+'</div><input class="ed" value="'+escAttr(it.title)+'" onchange="updateListing(\''+it.id+'\',\'title\',this.value)"></div>'+
+      '<div style="display:flex;gap:8px"><select class="ed" onchange="updateListing(\''+it.id+'\',\'deal\',this.value)"><option value="sale"'+(it.deal!=='giveaway'?' selected':'')+'>Säljs</option><option value="giveaway"'+(it.deal==='giveaway'?' selected':'')+'>Skänkes</option></select>'+
+      '<select class="ed" onchange="updateListing(\''+it.id+'\',\'status\',this.value)">'+statusOpts(it.status)+'</select></div>'+
+      '<div style="gap:8px;'+giftHide+'"><input class="ed" type="number" inputmode="numeric" value="'+(it.price!=null?it.price:'')+'" placeholder="Pris (kr)" onchange="updateListing(\''+it.id+'\',\'price\',this.value)"><select class="ed" onchange="updateListing(\''+it.id+'\',\'unit\',this.value)">'+unitOpts(it.unit)+'</select></div>'+
+      '<button class="btn ghost sm" onclick="delListing(\''+it.id+'\')">Ta bort annons</button>'+
+    '</div>'; }).join('');
   else html+=mine.map(it=>{ const ic=iconFor(it), b=badgeFor(it);
     return '<div class="arow"><div style="width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,26)+'</div><div><div class="at">'+it.title+'</div><div class="as"><span class="st '+b.cls+'" style="padding:1px 7px">'+b.label+'</span></div></div><span onclick="event.stopPropagation();delListing(\''+it.id+'\')" style="margin-left:auto;color:var(--muted);font-size:20px;cursor:pointer">×</span></div>'; }).join('');
   html+='<p class="k" style="margin:20px 0 8px">Mina beställningar ('+orders.length+')</p>';
   if(!orders.length) html+='<div class="empty" style="padding:18px"><b>Inga beställningar</b>Beställningar du gör hamnar här.</div>';
   else html+=orders.map(o=>{
-    const st=o.status==='requested'?'<span class="status-pill wait">Väntar</span>':(o.status==='accepted'?'<span class="status-pill acc">Accepterad</span>':'<span class="status-pill acc">Hämtad</span>');
+    const st=o.status==='requested'?'<span class="status-pill wait">Väntar</span>':o.status==='accepted'?'<span class="status-pill acc">Accepterad</span>':o.status==='declined'?'<span class="status-pill" style="background:#F6E0DC;color:#B4341F">Nekad</span>':'<span class="status-pill acc">Hämtad</span>';
     let actions='';
-    if(o.status==='requested') actions='<button class="btn ghost sm" onclick="acceptOrderDemo(\''+o.id+'\')">Säljaren accepterar (demo)</button>';
+    if(o.status==='requested') actions='<div style="display:flex;gap:8px"><button class="btn ghost sm" style="flex:1" onclick="acceptOrderDemo(\''+o.id+'\')">Acceptera (demo)</button><button class="btn ghost sm" style="flex:1" onclick="declineOrderDemo(\''+o.id+'\')">Tacka nej (demo)</button></div>';
     else if(o.status==='accepted') actions='<div style="display:flex;gap:8px"><button class="btn sm" style="flex:1" onclick="directions('+o.lat+','+o.lng+')">Vägbeskrivning</button><button class="btn ghost sm" style="flex:1" onclick="markPicked(\''+o.id+'\')">Hämtad</button></div>';
-    return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto">'+st+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+o.seller+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela</button></div>'; }).join('');
+    const rm='<span onclick="removeOrder(\''+o.id+'\')" title="Ta bort" style="color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</span>';
+    return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+o.seller+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela</button></div>'; }).join('');
   html+='<button class="btn ghost sm" style="margin-top:18px" onclick="logout()">Logga ut</button>';
   box.innerHTML=html;
 }
@@ -710,26 +991,43 @@ function fitRadius(){ if(!map||!radiusCircle)return;
   z=Math.max(3,Math.min(18,z));
   map.setView([STATE.center.lat,STATE.center.lng],z,{animate:false});
 }
+function recenterMap(){
+  if(map){ fitRadius(); }
+  if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(function(pos){
+    STATE.center={lat:pos.coords.latitude,lng:pos.coords.longitude,label:'din plats'}; makeDemo(STATE.center.lat,STATE.center.lng); refresh(); fitRadius(); renderSubChips();
+  },function(){}, {enableHighAccuracy:true,timeout:8000,maximumAge:0}); }
+}
 function onDist(m){ m=+m; if(m<400)m=400; if(m>20000)m=20000; STATE.radiusKm=m/1000;
   const lbl=distLabel(STATE.radiusKm);
-  ['distVal','distVal2'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=lbl;});
-  ['dist','dist2'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=m; const pct=((m-400)/(20000-400))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
-  refresh(); fitRadius();
+  ['distVal','distVal2','distVal3'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=lbl;});
+  ['dist','dist2','dist3'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=m; const pct=((m-400)/(20000-400))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
+  refresh(); fitRadius(); renderSubChips(); if(STATE.view==='watch')renderWatch();
 }
-function setSort(s){ STATE.sort=s; document.querySelectorAll('.sortbtn').forEach(b=>b.classList.toggle('on',b.dataset.sort===s)); renderList(); }
+function priceVal(it){ return (it.price!=null)?it.price:0; }
+function setSort(s){
+  if(s==='price') STATE.sort=(STATE.sort==='price_asc')?'price_desc':'price_asc';
+  else STATE.sort=s;
+  document.querySelectorAll('.sortbtn').forEach(b=>{ const d=b.dataset.sort;
+    const active=d==='price'?(STATE.sort==='price_asc'||STATE.sort==='price_desc'):(d===STATE.sort);
+    b.classList.toggle('on',active); });
+  const pb=document.getElementById('sortPrice'); if(pb)pb.textContent=STATE.sort==='price_asc'?'Pris ↑':STATE.sort==='price_desc'?'Pris ↓':'Pris';
+  renderList();
+}
 function refresh(){ renderMap(); renderList(); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2200); }
 
 function boot(){
-  renderChips();
+  makeDemo(STATE.center.lat,STATE.center.lng);
+  renderChips(); renderSubChips();
   try{ initMap(); }catch(e){ console.warn('Kartan kunde inte starta:',e); }
-  onDist(5000); refresh(); renderAccount();
+  onDist(15000); refresh(); renderAccount();
   setTimeout(()=>{ if(map)map.invalidateSize(); },250);
   setTimeout(()=>{ if(map)map.invalidateSize(); },900);
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
       STATE.center={lat:pos.coords.latitude,lng:pos.coords.longitude,label:'din plats'};
-      refresh(); fitRadius();
+      makeDemo(STATE.center.lat,STATE.center.lng);
+      refresh(); fitRadius(); renderSubChips();
     },()=>{ const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; },{enableHighAccuracy:true,timeout:8000,maximumAge:0});
   } else { const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; }
 }
