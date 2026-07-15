@@ -1,0 +1,6 @@
+{
+  "name": "Skörda",
+  "version": "0.2.0",
+  "date": "2026-07-15",
+  "notes": "Inloggning (demo: e-post + Apple/Google), skapa annons med draggbar kartnål (säljs fuzzas, skänkes exakt), mina annonser, bevakningar, plan med Månad/År + demo-Premium, egen sida/gårdsstånd, beställning + chatt, vägbeskrivning (öppnar telefonens kart-app). Allt lokalt tills Supabase/RevenueCat kopplas."
+}
