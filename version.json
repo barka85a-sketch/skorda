@@ -1,6 +1,6 @@
 {
-  "name": "Skörda",
-  "version": "0.6.0",
+  "name": "Skörda – närodlat",
+  "version": "0.7.1",
   "date": "2026-07-15",
-  "notes": "Skarp backend påkopplad (milstolpe 1–3): Supabase-nycklar inlagda, riktig inloggning via magic link + Apple/Google, och kartan läser skarpa annonser via nearby_listings. Demodata visas som fallback tills databasen har annonser i närheten."
+  "notes": "Appens titel ändrad till Skörda – närodlat (kartrubrik, sidtitel, inloggning, manifest). Hemskärmsnamnet (short_name) förblir Skörda."
 }
