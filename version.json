@@ -1,6 +1,6 @@
 {
   "name": "Skörda",
-  "version": "0.2.1",
+  "version": "0.2.6",
   "date": "2026-07-15",
-  "notes": "Fix: kartan (Leaflet) laddas nu från cdnjs utan SRI-hash som blockerade den. Tåligare kartstart + invalidateSize."
+  "notes": "Hemfliken och rubriken heter nu Skörda med groddmärke istället för Utforska."
 }

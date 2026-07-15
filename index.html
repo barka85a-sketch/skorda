@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.2.1 -->
+<!-- Skörda v0.2.6 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -180,7 +180,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="banner" id="demoBanner">Demoläge — data sparas i din webbläsare. Koppla Supabase för skarp drift.</div>
 
   <div class="view on" id="view-map">
-    <div class="top"><div><div class="ttl">Utforska</div><div class="sub" id="mapSub">Söker nära dig</div></div>
+    <div class="top"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</div><div class="sub" id="mapSub">Söker nära dig</div></div>
       <div class="toggle"><button class="on" onclick="setView('map')">Karta</button><button onclick="setView('list')">Lista</button></div></div>
     <div class="filterbar">
       <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="1" max="20" value="5" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
@@ -219,7 +219,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="toast" id="toast"></div>
 
   <nav class="nav" id="nav">
-    <a class="on" data-nav="map" onclick="setView('map')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><path d="M9 20l-6 2V6l6-2 6 2 6-2v16l-6 2-6-2z"/><path d="M9 4v16M15 6v16"/></svg>Utforska</a>
+    <a class="on" data-nav="map" onclick="setView('map')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</a>
     <a data-nav="list" onclick="setView('list')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Bläddra</a>
     <a data-nav="create" onclick="openCreate()"><span class="plus"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></span></a>
     <a data-nav="watch" onclick="setView('watch')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>Bevaka</a>
@@ -243,7 +243,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.2.1';
+const APP_VERSION='0.2.6';
 const CONFIG={SUPABASE_URL:'',SUPABASE_ANON_KEY:'',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -289,7 +289,7 @@ const DEMO=[
 ];
 function allItems(){ return DEMO.concat(Store.userListings); }
 
-const CATS=[{f:'allt',label:'Allt'},{f:'fruit_berries',label:'Frukt & bär'},{f:'vegetables',label:'Grönt'},{f:'eggs',label:'Ägg'},{f:'honey',label:'Honung'},{f:'giveaway',label:'Skänkes'},{f:'allman',label:'Allmän yta'}];
+const CATS=[{f:'allt',label:'Allt',c:'#1F3A29'},{f:'fruit_berries',label:'Frukt & bär',c:'#D9432B'},{f:'vegetables',label:'Grönt',c:'#3F7D53'},{f:'eggs',label:'Ägg',c:'#A9884F'},{f:'honey',label:'Honung',c:'#EBAF2E',dark:true},{f:'giveaway',label:'Skänkes',c:'#2E6BE6'},{f:'allman',label:'Allmän yta',c:'#0E9E9E'}];
 let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:5,cat:'allt',sort:'dist',view:'map'};
 let map,markerLayer,radiusCircle,meMarker,createMap,createMarker;
 
@@ -298,11 +298,18 @@ function withDist(list){ const c=L.latLng(STATE.center.lat,STATE.center.lng); re
 function visibleItems(){ return withDist(allItems()).filter(it=>matchesCat(it)&&it.dist<=STATE.radiusKm*1000); }
 
 function renderChips(){ ['chips','chips2'].forEach(id=>{ const box=document.getElementById(id); if(!box)return;
-  box.innerHTML=CATS.map(c=>'<span class="chip'+(c.f===STATE.cat?' on':'')+'" onclick="setCat(\''+c.f+'\')">'+c.label+'</span>').join(''); }); }
+  box.innerHTML=CATS.map(c=>{
+    const on=c.f===STATE.cat;
+    const txt=on?(c.dark?'#4a3708':'#fff'):'var(--kale)';
+    const style=on?('background:'+c.c+';border-color:'+c.c+';color:'+txt):'';
+    const dot=on?'':'<span style="width:8px;height:8px;border-radius:99px;background:'+c.c+';display:inline-block;margin-right:6px;vertical-align:middle"></span>';
+    return '<span class="chip'+(on?' on':'')+'" style="'+style+'" onclick="setCat(\''+c.f+'\')">'+dot+c.label+'</span>';
+  }).join(''); }); }
 function setCat(f){ STATE.cat=f; renderChips(); refresh(); }
 
 function initMap(){
-  map=L.map('map',{zoomControl:false}).setView([STATE.center.lat,STATE.center.lng],13);
+  map=L.map('map',{zoomControl:true}).setView([STATE.center.lat,STATE.center.lng],13);
+  map.zoomControl.setPosition('bottomright');
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
   markerLayer=L.layerGroup().addTo(map);
   radiusCircle=L.circle([STATE.center.lat,STATE.center.lng],{radius:STATE.radiusKm*1000,color:'#3F7D53',weight:2,dashArray:'6 6',fillColor:'#3F7D53',fillOpacity:.08}).addTo(map);
@@ -457,17 +464,53 @@ function openCreate(){
       '<div class="field"><label>Status</label><div class="seg" id="f_status"><div class="opt on" onclick="pickStatus(this,\'ready\')">Klar nu</div><div class="opt" onclick="pickStatus(this,\'ripening\')">Mognar snart</div><div class="opt" onclick="pickStatus(this,\'on_order\')">På beställning</div><div class="opt" onclick="pickStatus(this,\'self_pick\')">Självplock</div></div></div>'+
       '<div class="field"><label>Typ av affär</label><div class="seg" id="f_deal"><div class="opt on" onclick="pickDeal(this,\'sale\')">Säljs</div><div class="opt" onclick="pickDeal(this,\'giveaway\')">Skänkes</div></div></div>'+
       '<div class="field" id="f_pricewrap" style="display:flex;gap:12px"><div style="flex:1"><label>Pris (kr)</label><input id="f_price" type="number" inputmode="numeric" placeholder="18"></div><div style="flex:1"><label>Enhet</label><select id="f_unit"><option value="piece">per st</option><option value="kg">per kg</option><option value="bunch">per knippe</option><option value="sixpack">per 6-pack</option><option value="liter">per liter</option></select></div></div>'+
-      '<div class="field"><label>Område (visas publikt)</label><input id="f_area" placeholder="T.ex. Sunnersta, Uppsala"></div>'+
+      '<div class="field"><label>Område (visas publikt)</label><input id="f_area" oninput="areaEdited=true" placeholder="Fylls i från kartnålen…"></div>'+
       '<div class="field"><label>Beskrivning</label><textarea id="f_desc" placeholder="Kort om varan…"></textarea></div>'+
       '<div class="field"><label>Hämtningsplats — dra nålen dit varan hämtas</label><div id="createMap"></div><div class="note" id="f_pinnote" style="text-align:left;margin-top:6px">Säljs: exakt läge döljs publikt tills du accepterat. Skänkes: nålen visas exakt.</div></div>'+
       '<button class="btn" onclick="saveListing()">Publicera annons</button>'+
     '</div>';
   showOverlay('sheet');
-  createDeal='sale'; createStatus='ready';
-  setTimeout(function(){ createMap=L.map('createMap',{zoomControl:false}).setView([STATE.center.lat,STATE.center.lng],14);
+  createDeal='sale'; createStatus='ready'; areaEdited=false; autoArea=''; pinMoved=false;
+  setTimeout(function(){ createMap=L.map('createMap',{zoomControl:false}).setView([STATE.center.lat,STATE.center.lng],15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(createMap);
     createMarker=L.marker([STATE.center.lat,STATE.center.lng],{draggable:true}).addTo(createMap);
-    createMap.invalidateSize(); },120);
+    createMap.invalidateSize();
+    fillArea(STATE.center.lat,STATE.center.lng);
+    createMarker.on('dragstart',function(){ pinMoved=true; });
+    createMarker.on('dragend',function(){ const p=createMarker.getLatLng(); fillArea(p.lat,p.lng); });
+    // hämta en FÄRSK position så nålen hamnar där du är nu, inte en gammal cachad plats
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        if(pinMoved||!createMarker)return;
+        const la=pos.coords.latitude, ln=pos.coords.longitude;
+        STATE.center={lat:la,lng:ln,label:'din plats'};
+        createMarker.setLatLng([la,ln]); createMap.setView([la,ln],15);
+        areaEdited=false; fillArea(la,ln);
+      },function(){}, {enableHighAccuracy:true,timeout:8000,maximumAge:0});
+    }
+  },120);
+}
+let pinMoved=false;
+let areaEdited=false, autoArea='';
+function areaLabelFromAddr(a){
+  const local=a.suburb||a.neighbourhood||a.city_district||a.borough||a.quarter||a.village||a.hamlet;
+  const city=a.city||a.town||a.municipality;
+  const parts=[];
+  if(local)parts.push(local);
+  if(city&&city!==local)parts.push(city);
+  if(!parts.length){ if(a.village)parts.push(a.village); else if(a.county)parts.push(a.county); }
+  return parts.join(', ');
+}
+async function reverseGeocode(lat,lng){
+  try{
+    const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&addressdetails=1&lat='+lat+'&lon='+lng,{headers:{'Accept-Language':'sv'}});
+    const j=await r.json(); return areaLabelFromAddr(j.address||{});
+  }catch(e){ return ''; }
+}
+async function fillArea(lat,lng){
+  const inp=document.getElementById('f_area'); if(!inp||areaEdited)return;
+  const label=await reverseGeocode(lat,lng);
+  if(label&&!areaEdited){ inp.value=label; autoArea=label; }
 }
 function pickStatus(el,v){ el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===el)); createStatus=v; }
 function pickDeal(el,v){ el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===el)); createDeal=v;
@@ -478,7 +521,7 @@ function saveListing(){
   const cat=document.getElementById('f_cat').value;
   const price=createDeal==='giveaway'?null:(+document.getElementById('f_price').value||0);
   const unit=createDeal==='giveaway'?null:document.getElementById('f_unit').value;
-  const area=(document.getElementById('f_area').value||'Uppsala').trim();
+  const area=(document.getElementById('f_area').value||autoArea||'Mitt område').trim();
   const desc=(document.getElementById('f_desc').value||'').trim();
   const ll=createMarker?createMarker.getLatLng():{lat:STATE.center.lat,lng:STATE.center.lng};
   let lat=ll.lat,lng=ll.lng;
@@ -587,10 +630,11 @@ function setView(v){
   if(v==='watch')renderWatch();
   if(v==='account')renderAccount();
 }
+function fitRadius(){ if(map&&radiusCircle){ try{ map.fitBounds(radiusCircle.getBounds(),{padding:[18,18],animate:false}); }catch(e){} } }
 function onDist(v){ v=+v; STATE.radiusKm=v;
   ['distVal','distVal2'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=v+' km';});
   ['dist','dist2'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=v; const pct=((v-1)/19)*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
-  refresh();
+  refresh(); fitRadius();
 }
 function setSort(s){ STATE.sort=s; document.querySelectorAll('.sortbtn').forEach(b=>b.classList.toggle('on',b.dataset.sort===s)); renderList(); }
 function refresh(){ renderMap(); renderList(); }
@@ -605,8 +649,8 @@ function boot(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
       STATE.center={lat:pos.coords.latitude,lng:pos.coords.longitude,label:'din plats'};
-      if(map)map.setView([STATE.center.lat,STATE.center.lng],13); refresh();
-    },()=>{ const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; },{enableHighAccuracy:true,timeout:6000});
+      refresh(); fitRadius();
+    },()=>{ const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; },{enableHighAccuracy:true,timeout:8000,maximumAge:0});
   } else { const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; }
 }
 window.addEventListener('load',boot);
