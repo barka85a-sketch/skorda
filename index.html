@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.2.0 -->
+<!-- Skörda v0.2.1 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -9,7 +9,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:600,700,800|inter:400,500,600,700" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{
   --paper:#F5F1E6;--paper-2:#EFEAD9;--kale:#1F3A29;--leaf:#3F7D53;--leaf-soft:#DCE7DA;
@@ -240,10 +240,10 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <svg id="i-pin" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 00-8 8c0 5 8 12 8 12s8-7 8-12a8 8 0 00-8-8z"/></svg>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJ1Pc4hk1Q1PdvbBoxA6WrLuvz36o=" crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.2.0';
+const APP_VERSION='0.2.1';
 const CONFIG={SUPABASE_URL:'',SUPABASE_ANON_KEY:'',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -597,7 +597,11 @@ function refresh(){ renderMap(); renderList(); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2200); }
 
 function boot(){
-  renderChips(); initMap(); onDist(5); refresh(); renderAccount();
+  renderChips();
+  try{ initMap(); }catch(e){ console.warn('Kartan kunde inte starta:',e); }
+  onDist(5); refresh(); renderAccount();
+  setTimeout(()=>{ if(map)map.invalidateSize(); },250);
+  setTimeout(()=>{ if(map)map.invalidateSize(); },900);
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
       STATE.center={lat:pos.coords.latitude,lng:pos.coords.longitude,label:'din plats'};
