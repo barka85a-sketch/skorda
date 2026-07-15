@@ -1,6 +1,6 @@
 {
   "name": "Skörda",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "date": "2026-07-15",
-  "notes": "Bildtaket sänkt till 5. Klicka på en bild (galleri eller hanterare) för helbild med bläddring; tryck för att stänga."
+  "notes": "Fält markeras helt vid fokus så att man skriver över värdet i stället för att lägga till (t.ex. pris blir 25, inte 025)."
 }

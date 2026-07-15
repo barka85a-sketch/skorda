@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.5.7 -->
+<!-- Skörda v0.5.8 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -318,7 +318,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.5.7';
+const APP_VERSION='0.5.8';
 const CONFIG={SUPABASE_URL:'',SUPABASE_ANON_KEY:'',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -1031,6 +1031,7 @@ function boot(){
     },()=>{ const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; },{enableHighAccuracy:true,timeout:8000,maximumAge:0});
   } else { const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; }
 }
+document.addEventListener('focusin',function(e){ const t=e.target; if(t&&t.tagName==='INPUT'&&(t.type==='number'||t.type==='text')){ setTimeout(function(){ try{ t.select(); }catch(_){}} ,0); } });
 window.addEventListener('load',boot);
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{})); }
 </script>

@@ -1,4 +1,4 @@
-const CACHE = 'skorda-v0.5.7';
+const CACHE = 'skorda-v0.5.8';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
