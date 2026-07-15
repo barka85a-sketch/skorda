@@ -1,6 +1,6 @@
 {
   "name": "Skörda",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "date": "2026-07-15",
-  "notes": "Fält markeras helt vid fokus så att man skriver över värdet i stället för att lägga till (t.ex. pris blir 25, inte 025)."
+  "notes": "Skarp backend påkopplad (milstolpe 1–3): Supabase-nycklar inlagda, riktig inloggning via magic link + Apple/Google, och kartan läser skarpa annonser via nearby_listings. Demodata visas som fallback tills databasen har annonser i närheten."
 }
