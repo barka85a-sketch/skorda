@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.2.8 -->
+<!-- Skörda v0.3.2 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -51,6 +51,14 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .pin .prate{font-size:9.5px;font-weight:800;color:#8A6A12;background:#fff;border:1px solid var(--line);border-radius:99px;padding:1px 6px;display:inline-flex;align-items:center;gap:2px;box-shadow:0 2px 4px rgba(0,0,0,.14)}
 .pin .prate svg{width:9px;height:9px}
 .mepin{width:18px;height:18px;border-radius:99px;background:var(--sky);border:3px solid #fff;box-shadow:0 0 0 6px rgba(46,107,230,.18)}
+.mpin{position:relative;width:40px;height:40px}
+.mpin .c{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid var(--tomato);box-shadow:0 5px 12px rgba(31,58,41,.3);display:grid;place-items:center}
+.mpin .c svg{width:24px;height:24px}
+.mpin:after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--tomato)}
+.mpin.soon .c{border-color:var(--yolk)}.mpin.soon:after{border-top-color:var(--yolk)}
+.mpin.gift .c{border-color:var(--sky)}.mpin.gift:after{border-top-color:var(--sky)}
+.mpin.order .c{border-color:var(--kraft-dk)}.mpin.order:after{border-top-color:var(--kraft-dk)}
+.mpin.public .c{border-color:var(--teal)}.mpin.public:after{border-top-color:var(--teal)}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sortrow{display:flex;align-items:center;gap:8px;padding:2px 16px 10px}
 .sortrow .sortlbl{font-size:12px;font-weight:700;color:var(--muted)}
@@ -180,20 +188,18 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="banner" id="demoBanner">Demoläge — data sparas i din webbläsare. Koppla Supabase för skarp drift.</div>
 
   <div class="view on" id="view-map">
-    <div class="top"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</div><div class="sub" id="mapSub">Söker nära dig</div></div>
-      <div class="toggle"><button class="on" onclick="setView('map')">Karta</button><button onclick="setView('list')">Lista</button></div></div>
+    <div class="top"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</div><div class="sub" id="mapSub">Söker nära dig</div></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="0" max="12" value="8" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="5000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
       <div class="hchip" id="chips"></div>
     </div>
     <div id="map"></div>
   </div>
 
   <div class="view" id="view-list">
-    <div class="top"><div><div class="ttl">Nära dig</div><div class="sub" id="listSub"></div></div>
-      <div class="toggle"><button onclick="setView('map')">Karta</button><button class="on" onclick="setView('list')">Lista</button></div></div>
+    <div class="top"><div><div class="ttl">Nära dig</div><div class="sub" id="listSub"></div></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="0" max="12" value="8" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="5000" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
       <div class="hchip" id="chips2"></div>
     </div>
     <div class="sortrow"><span class="sortlbl">Sortera</span>
@@ -220,7 +226,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 
   <nav class="nav" id="nav">
     <a class="on" data-nav="map" onclick="setView('map')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>Skörda</a>
-    <a data-nav="list" onclick="setView('list')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Bläddra</a>
+    <a data-nav="list" onclick="setView('list')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Lista</a>
     <a data-nav="create" onclick="openCreate()"><span class="plus"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></span></a>
     <a data-nav="watch" onclick="setView('watch')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>Bevaka</a>
     <a data-nav="account" onclick="setView('account')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Konto</a>
@@ -238,12 +244,39 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <svg id="i-potato" viewBox="0 0 64 64"><path d="M16 34c-2-9 6-16 16-15 8 1 18 5 18 14s-9 15-18 15-14-5-16-14z" fill="#C9A876"/><circle cx="26" cy="30" r="2" fill="#A9884F"/><circle cx="38" cy="38" r="2" fill="#A9884F"/></svg>
   <svg id="i-star" viewBox="0 0 24 24" fill="#EBAF2E"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
   <svg id="i-pin" viewBox="0 0 24 24" fill="none" stroke="#6E7469" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 00-8 8c0 5 8 12 8 12s8-7 8-12a8 8 0 00-8-8z"/></svg>
+  <svg id="i-pear" viewBox="0 0 64 64"><path d="M32 24c-2-4 0-9 5-10 1 4-1 8-5 10z" fill="#3F7D53"/><path d="M30 22c7 0 12 6 14 14 2 9-3 18-12 18s-14-9-12-18c1-6 4-11 10-14z" fill="#B7C24A"/></svg>
+  <svg id="i-plum" viewBox="0 0 64 64"><ellipse cx="32" cy="37" rx="16" ry="18" fill="#5B3A6B"/><path d="M32 19v6" stroke="#3F7D53" stroke-width="3" stroke-linecap="round"/><path d="M32 34c-3 0-5 3-5 7" stroke="#7A5A88" stroke-width="2" fill="none"/></svg>
+  <svg id="i-cherry" viewBox="0 0 64 64"><path d="M24 20c4 6 4 12 0 20M40 20c-4 6-2 14 2 18" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="22" cy="44" r="9" fill="#C1272D"/><circle cx="42" cy="42" r="9" fill="#D9432B"/></svg>
+  <svg id="i-strawberry" viewBox="0 0 64 64"><path d="M32 24c10 0 18 6 18 15s-9 19-18 19-18-10-18-19 8-15 18-15z" fill="#D9432B"/><path d="M22 22h20l-6 6h-8z" fill="#3F7D53"/><g fill="#F5E6C8"><circle cx="26" cy="36" r="1.6"/><circle cx="38" cy="36" r="1.6"/><circle cx="32" cy="44" r="1.6"/><circle cx="26" cy="48" r="1.6"/><circle cx="38" cy="48" r="1.6"/></g></svg>
+  <svg id="i-raspberry" viewBox="0 0 64 64"><g fill="#C63A5A"><circle cx="26" cy="34" r="6"/><circle cx="38" cy="34" r="6"/><circle cx="32" cy="42" r="6"/><circle cx="26" cy="46" r="6"/><circle cx="38" cy="46" r="6"/><circle cx="32" cy="52" r="6"/></g><path d="M32 30c0-6 4-10 10-11" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-grapes" viewBox="0 0 64 64"><g fill="#6B4A8A"><circle cx="26" cy="34" r="6"/><circle cx="38" cy="34" r="6"/><circle cx="32" cy="42" r="6"/><circle cx="24" cy="45" r="6"/><circle cx="40" cy="45" r="6"/><circle cx="32" cy="53" r="6"/></g><path d="M32 30c2-6 8-8 12-8" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-rhubarb" viewBox="0 0 64 64"><path d="M26 54c-2-14-3-24-2-30M38 54c2-14 3-22 2-28" stroke="#C1272D" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M24 24c-8-2-14-8-16-16 9-1 16 3 20 10zm16-2c8-3 13-9 15-17-9-1-16 4-19 11z" fill="#3F7D53"/></svg>
+  <svg id="i-cucumber" viewBox="0 0 64 64"><rect x="14" y="24" width="36" height="18" rx="9" transform="rotate(22 32 33)" fill="#3F7D53"/><rect x="14" y="24" width="36" height="9" rx="4.5" transform="rotate(22 32 33)" fill="#4F8F63" opacity=".6"/></svg>
+  <svg id="i-carrot" viewBox="0 0 64 64"><path d="M32 54L20 30c6-4 18-4 24 0z" fill="#E0722C"/><path d="M32 26c0-6-3-10-8-12m8 12c0-6 3-10 8-12m-8 12v-14" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-onion" viewBox="0 0 64 64"><path d="M32 22c8 0 14 8 14 18 0 8-6 14-14 14s-14-6-14-14c0-10 6-18 14-18z" fill="#C9A0C0"/><path d="M32 22v32M24 26c-2 8-2 18 0 26m16-26c2 8 2 18 0 26" stroke="#A87BA0" stroke-width="1.5" fill="none"/><path d="M32 22c-2-4-4-6-4-8m4 8c2-4 4-6 4-8" stroke="#3F7D53" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-garlic" viewBox="0 0 64 64"><path d="M32 20c6 0 10 8 10 18 0 9-4 16-10 16s-10-7-10-16c0-10 4-18 10-18z" fill="#F0EAF0"/><path d="M32 20v34M26 26c-2 8-2 18 0 26m12-26c2 8 2 18 0 26" stroke="#D8CBD8" stroke-width="1.5" fill="none"/><path d="M32 20c0-4 1-6 2-8" stroke="#C9A876" stroke-width="2" stroke-linecap="round"/></svg>
+  <svg id="i-leek" viewBox="0 0 64 64"><path d="M28 54c-3 0-5-2-5-6V32h18v16c0 4-2 6-5 6z" fill="#EFEAD9"/><path d="M23 32c0-10 3-18 9-24 6 6 9 14 9 24" fill="#4F8F53"/></svg>
+  <svg id="i-lettuce" viewBox="0 0 64 64"><path d="M32 52c-13 0-21-9-21-17 4-2 8-1 11 1 0-4 3-8 7-8 1-4 5-6 8-4 3-3 9-2 10 3 4-1 8 2 8 6-9 13-19 18-31 15z" fill="#6FA96B"/><path d="M32 52c9-2 15-7 19-13" stroke="#3F7D53" stroke-width="2" fill="none"/></svg>
+  <svg id="i-cabbage" viewBox="0 0 64 64"><circle cx="32" cy="34" r="20" fill="#7FB069"/><path d="M32 14v40M12 34h40M20 20c8 6 16 6 24 0M20 48c8-6 16-6 24 0" stroke="#5E8F55" stroke-width="2" fill="none"/></svg>
+  <svg id="i-broccoli" viewBox="0 0 64 64"><path d="M28 40h8v13h-8z" fill="#C9B892"/><g fill="#3F7D53"><circle cx="24" cy="30" r="9"/><circle cx="40" cy="30" r="9"/><circle cx="32" cy="22" r="9"/><circle cx="32" cy="34" r="9"/></g></svg>
+  <svg id="i-pepper" viewBox="0 0 64 64"><path d="M24 24c8-4 16-4 20 2 4 8 0 20-8 26-6 4-14 2-18-4-5-8-2-20 6-24z" fill="#D9432B"/><path d="M32 22v-4c0-2 2-4 5-4" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-chili" viewBox="0 0 64 64"><path d="M22 22c2 0 4 2 5 5 8 0 18 8 18 20 0 4-3 7-6 5-2-8-10-16-20-18-2-1-3-8 3-12z" fill="#C1272D"/><path d="M22 22c-2-3-2-6 0-8" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-beans" viewBox="0 0 64 64"><path d="M18 46C14 30 26 16 44 16c2 0 3 2 2 4-12 4-18 16-16 28 0 2-2 3-4 2-4-1-7-2-8-4z" fill="#6FA96B"/><g fill="#4F8F53"><circle cx="26" cy="34" r="2.6"/><circle cx="31" cy="29" r="2.6"/><circle cx="36" cy="25" r="2.6"/></g></svg>
+  <svg id="i-peas" viewBox="0 0 64 64"><path d="M16 40c0-12 10-22 24-22 3 0 4 3 2 5-10 3-16 12-16 22 0 3-3 4-5 2-3-2-5-4-5-7z" fill="#7FB069"/><g fill="#4F8F53"><circle cx="24" cy="34" r="4"/><circle cx="32" cy="30" r="4"/><circle cx="40" cy="26" r="4"/></g></svg>
+  <svg id="i-beet" viewBox="0 0 64 64"><path d="M32 52c-8 0-14-8-14-16 0-6 6-10 14-10s14 4 14 10c0 8-6 16-14 16z" fill="#8B2C5A"/><path d="M32 26c0-6-4-12-4-14m4 14c0-6 4-12 6-14m-6 14v-16" stroke="#3F7D53" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M32 52c-2 4-3 6-3 8" stroke="#6B2247" stroke-width="2" stroke-linecap="round"/></svg>
+  <svg id="i-radish" viewBox="0 0 64 64"><path d="M32 52c-8 0-14-6-14-14 0-6 6-10 14-10s14 4 14 10c0 8-6 14-14 14z" fill="#D9432B"/><path d="M32 28c0-6-3-10-8-12m8 12c0-6 3-10 8-12" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 52c0 4 0 6 0 8" stroke="#F0EAE0" stroke-width="3" stroke-linecap="round"/></svg>
+  <svg id="i-corn" viewBox="0 0 64 64"><path d="M32 14c8 4 12 14 12 24s-4 16-12 18c-8-2-12-8-12-18s4-20 12-24z" fill="#EBAF2E"/><path d="M32 18v36M24 24c6 4 10 4 16 0M24 34c6 4 10 4 16 0M24 44c6 4 10 4 16 0" stroke="#C98F1E" stroke-width="1.5" fill="none"/><path d="M32 54c-6 2-10 6-12 8m12-8c6 2 10 6 12 8" stroke="#3F7D53" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  <svg id="i-herb" viewBox="0 0 64 64"><path d="M32 54V20" stroke="#2C5A3A" stroke-width="3.5" stroke-linecap="round"/><path d="M32 28c-5-6-12-6-16-3 3 6 10 8 16 4zm0 8c-5-6-12-6-16-3 3 6 10 8 16 4zm0-16c5-6 12-6 16-3-3 6-10 8-16 4zm0 8c5-6 12-6 16-3-3 6-10 8-16 4z" fill="#4F8F53"/></svg>
+  <svg id="i-flower" viewBox="0 0 64 64"><path d="M32 40v18" stroke="#3F7D53" stroke-width="3" stroke-linecap="round"/><path d="M32 46c-6 0-10-2-12-6 5-2 9-1 12 2" fill="#3F7D53"/><g fill="#E86A9A"><circle cx="32" cy="20" r="7"/><circle cx="22" cy="27" r="7"/><circle cx="42" cy="27" r="7"/><circle cx="26" cy="38" r="7"/><circle cx="38" cy="38" r="7"/></g><circle cx="32" cy="30" r="6" fill="#EBAF2E"/></svg>
+  <svg id="i-plant" viewBox="0 0 64 64"><path d="M22 40h20l-3 14H25z" fill="#C08457"/><path d="M32 40V24" stroke="#2C5A3A" stroke-width="3" stroke-linecap="round"/><path d="M32 30c-4-5-11-5-15-2 3 5 9 7 15 3zm0-4c4-5 11-5 15-2-3 5-9 7-15 3z" fill="#4F8F53"/></svg>
+  <svg id="i-mushroom" viewBox="0 0 64 64"><path d="M28 40h8v12a4 4 0 01-8 0z" fill="#E8DCC0"/><path d="M14 40c0-12 8-20 18-20s18 8 18 20z" fill="#B4562A"/><g fill="#E8DCC0"><circle cx="24" cy="32" r="2.5"/><circle cx="38" cy="30" r="2.5"/><circle cx="31" cy="26" r="2"/></g></svg>
+  <svg id="i-basket" viewBox="0 0 64 64"><path d="M14 28h36l-4 24H18z" fill="#C9A876"/><path d="M14 28h36" stroke="#A9884F" stroke-width="3"/><path d="M22 28c0-8 4-14 10-14s10 6 10 14" stroke="#A9884F" stroke-width="3" fill="none"/><path d="M24 34v12M32 34v12M40 34v12" stroke="#A9884F" stroke-width="1.5"/></svg>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.2.8';
+const APP_VERSION='0.3.2';
 const CONFIG={SUPABASE_URL:'',SUPABASE_ANON_KEY:'',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -267,7 +300,19 @@ const Store={
 };
 
 function svg(id,size){ const el=document.getElementById(id); return el?'<svg width="'+size+'" height="'+size+'" viewBox="'+el.getAttribute('viewBox')+'">'+el.innerHTML+'</svg>':''; }
-const ICON={vegetables:'i-greens',fruit_berries:'i-apple',eggs:'i-egg',honey:'i-honey',herbs:'i-greens',plants:'i-greens'};
+const ICON={vegetables:'i-greens',fruit_berries:'i-apple',eggs:'i-egg',honey:'i-honey',herbs:'i-herb',plants:'i-plant',other:'i-basket'};
+const PRODUCE=[
+['Äpple','fruit_berries','i-apple'],['Päron','fruit_berries','i-pear'],['Plommon','fruit_berries','i-plum'],['Körsbär','fruit_berries','i-cherry'],['Jordgubbar','fruit_berries','i-strawberry'],['Hallon','fruit_berries','i-raspberry'],['Blåbär','fruit_berries','i-berry'],['Svarta vinbär','fruit_berries','i-berry'],['Röda vinbär','fruit_berries','i-berry'],['Krusbär','fruit_berries','i-berry'],['Björnbär','fruit_berries','i-berry'],['Vindruvor','fruit_berries','i-grapes'],['Rabarber','fruit_berries','i-rhubarb'],['Aronia','fruit_berries','i-berry'],['Havtorn','fruit_berries','i-berry'],['Nypon','fruit_berries','i-berry'],
+['Tomat','vegetables','i-tomato'],['Gurka','vegetables','i-cucumber'],['Potatis','vegetables','i-potato'],['Morötter','vegetables','i-carrot'],['Lök','vegetables','i-onion'],['Vitlök','vegetables','i-garlic'],['Purjolök','vegetables','i-leek'],['Sallad','vegetables','i-lettuce'],['Grönkål','vegetables','i-greens'],['Spenat','vegetables','i-greens'],['Vitkål','vegetables','i-cabbage'],['Rödkål','vegetables','i-cabbage'],['Blomkål','vegetables','i-broccoli'],['Broccoli','vegetables','i-broccoli'],['Zucchini','vegetables','i-squash'],['Squash','vegetables','i-squash'],['Pumpa','vegetables','i-squash'],['Paprika','vegetables','i-pepper'],['Chili','vegetables','i-chili'],['Bönor','vegetables','i-beans'],['Ärtor','vegetables','i-peas'],['Sockerärtor','vegetables','i-peas'],['Rödbetor','vegetables','i-beet'],['Rädisor','vegetables','i-radish'],['Majs','vegetables','i-corn'],['Kålrot','vegetables','i-beet'],['Rovor','vegetables','i-beet'],['Palsternacka','vegetables','i-carrot'],['Sparris','vegetables','i-herb'],['Fänkål','vegetables','i-herb'],['Svamp','vegetables','i-mushroom'],
+['Basilika','herbs','i-herb'],['Persilja','herbs','i-herb'],['Dill','herbs','i-herb'],['Gräslök','herbs','i-herb'],['Mynta','herbs','i-herb'],['Timjan','herbs','i-herb'],['Rosmarin','herbs','i-herb'],['Koriander','herbs','i-herb'],['Oregano','herbs','i-herb'],['Salvia','herbs','i-herb'],
+['Hönsägg','eggs','i-egg'],['Vaktelägg','eggs','i-egg'],['Ankägg','eggs','i-egg'],
+['Honung','honey','i-honey'],['Bivax','honey','i-honey'],['Pollen','honey','i-honey'],
+['Tomatplantor','plants','i-plant'],['Örtplantor','plants','i-plant'],['Grönsaksplantor','plants','i-plant'],['Sticklingar','plants','i-plant'],['Snittblommor','plants','i-flower'],['Blomsterlökar','plants','i-flower']
+];
+function produceFor(cat){ return PRODUCE.filter(p=>p[1]===cat); }
+function iconForProduce(label,cat){ const p=PRODUCE.find(x=>x[0]===label&&x[1]===cat)||PRODUCE.find(x=>x[0]===label); return p?p[2]:(ICON[cat]||'i-basket'); }
+function populateProduce(){ const c=document.getElementById('f_cat'); const sel=document.getElementById('f_produce'); if(!c||!sel)return;
+  sel.innerHTML=produceFor(c.value).map(p=>'<option value="'+p[0]+'">'+p[0]+'</option>').join('')+'<option value="__other__">Övrigt (annat)</option>'; }
 function iconFor(it){ return (it.icon&&document.getElementById(it.icon))?it.icon:(ICON[it.category]||'i-greens'); }
 const STATUS={ready:{label:'Klar nu',cls:'now'},ripening:{label:'Mognar snart',cls:'soon'},on_order:{label:'På beställning',cls:'order'},self_pick:{label:'Självplock',cls:'order'}};
 const UNIT={piece:'st',kg:'kg',bunch:'knippe',sixpack:'6-pack',liter:'liter'};
@@ -279,21 +324,40 @@ function pinCls(it){ if(it.kind==='spot')return'public'; if(it.deal==='giveaway'
 function fmtRating(r){ return r.toFixed(1).replace('.',','); }
 
 const DEMO=[
-  {id:'1',title:'Soltomater, blandade sorter',category:'vegetables',kind:'listing',deal:'sale',status:'ready',price:18,unit:'piece',area_label:'Sunnersta, Uppsala',seller:'Karins gårdsstånd',sellerId:'karin',premiumSeller:true,rating:4.9,lat:59.836,lng:17.646,desc:'San Marzano, Sungold och bifftomat. Solmogna i växthus.'},
+  {id:'1',title:'Soltomater, blandade sorter',category:'vegetables',icon:'i-tomato',kind:'listing',deal:'sale',status:'ready',price:18,unit:'piece',area_label:'Sunnersta, Uppsala',seller:'Karins gårdsstånd',sellerId:'karin',premiumSeller:true,rating:4.9,lat:59.836,lng:17.646,desc:'San Marzano, Sungold och bifftomat. Solmogna i växthus.'},
   {id:'2',title:'Ägg från frigående höns',category:'eggs',kind:'listing',deal:'sale',status:'ready',price:45,unit:'sixpack',area_label:'Gården vid ån',seller:'Gården vid ån',sellerId:'garden',rating:5.0,lat:59.870,lng:17.610,desc:'Färska ägg, 6-pack.'},
   {id:'3',title:'Äpplen — Aroma & Ingrid Marie',category:'fruit_berries',kind:'listing',deal:'sale',status:'ripening',price:25,unit:'kg',area_label:'Norrby',seller:'Trädgården Norrby',sellerId:'norrby',rating:4.7,lat:59.845,lng:17.680,desc:'Mognar v.38. Förbeställ gärna.'},
-  {id:'4',title:'Rabarber — plocka själv',category:'vegetables',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Sunnersta',seller:'Bertil',sellerId:'bertil',rating:4.8,lat:59.862,lng:17.630,desc:'Mer än vi hinner. Kom och plocka. Lådan står vid grinden.'},
+  {id:'4',title:'Rabarber — plocka själv',category:'fruit_berries',icon:'i-rhubarb',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Sunnersta',seller:'Bertil',sellerId:'bertil',rating:4.8,lat:59.862,lng:17.630,desc:'Mer än vi hinner. Kom och plocka. Lådan står vid grinden.'},
   {id:'5',title:'Sommarhonung 500 g',category:'honey',kind:'listing',deal:'sale',status:'on_order',price:70,unit:'piece',area_label:'Sunnersta',seller:'Bertils bigård',sellerId:'bertil',rating:4.8,lat:59.855,lng:17.650,desc:'Slungas på beställning.'},
   {id:'6',title:'Färskpotatis',category:'vegetables',kind:'listing',deal:'sale',status:'ready',price:30,unit:'kg',area_label:'Norrby',seller:'Trädgården Norrby',sellerId:'norrby',rating:4.6,lat:59.840,lng:17.665,icon:'i-potato',desc:'Nyskördad.'},
   {id:'7',title:'Grönkål, knippe',category:'vegetables',kind:'listing',deal:'sale',status:'ready',price:15,unit:'bunch',area_label:'Sunnersta',seller:'Åsas köksträdgård',sellerId:'asa',premiumSeller:true,rating:4.9,lat:59.837,lng:17.648,desc:'Plockad idag.'},
-  {id:'8',title:'Krusbärsbuske vid ån — fritt att plocka',category:'fruit_berries',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Allmänning',seller:'Tipsad av Eva',sellerId:null,rating:null,lat:59.859,lng:17.635,icon:'i-berry',desc:'Växer på allmän mark. Fritt att plocka.'}
+  {id:'8',title:'Krusbärsbuske vid ån — fritt att plocka',category:'fruit_berries',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Allmänning',seller:'Tipsad av Eva',sellerId:null,rating:null,lat:59.859,lng:17.635,icon:'i-berry',desc:'Växer på allmän mark. Fritt att plocka.'},
+  {id:'d1',title:'Soltomater',category:'vegetables',produce:'Tomat',icon:'i-tomato',kind:'listing',deal:'sale',status:'ready',price:30,unit:'kg',area_label:'Duvbo, Sundbyberg',seller:'Familjen Lund',sellerId:'lund',rating:4.8,lat:59.3635,lng:17.9575,desc:'Solmogna tomater, flera sorter.'},
+  {id:'d2',title:'Zucchini, färska',category:'vegetables',produce:'Zucchini',icon:'i-squash',kind:'listing',deal:'sale',status:'ready',price:12,unit:'piece',area_label:'Sundbyberg',seller:'Majas täppa',sellerId:'maja',premiumSeller:true,rating:4.9,lat:59.3605,lng:17.9705,desc:'Gröna och gula.'},
+  {id:'d3',title:'Äpplen — Aroma',category:'fruit_berries',produce:'Äpple',icon:'i-apple',kind:'listing',deal:'sale',status:'ripening',price:20,unit:'kg',area_label:'Storskogen, Sundbyberg',seller:'Görans trädgård',sellerId:'goran',rating:4.7,lat:59.3662,lng:17.9648,desc:'Mognar i september.'},
+  {id:'d4',title:'Ägg från egna höns',category:'eggs',produce:'Hönsägg',icon:'i-egg',kind:'listing',deal:'sale',status:'ready',price:45,unit:'sixpack',area_label:'Bromma',seller:'Bromma gårdshöns',sellerId:'bromma',rating:5.0,lat:59.3452,lng:17.9390,desc:'Frigående höns.'},
+  {id:'d5',title:'Sommarhonung',category:'honey',produce:'Honung',icon:'i-honey',kind:'listing',deal:'sale',status:'on_order',price:75,unit:'piece',area_label:'Solna',seller:'Solna bigård',sellerId:'solnabi',rating:4.9,lat:59.3585,lng:17.9805,desc:'500 g, slungas på beställning.'},
+  {id:'d6',title:'Rabarber — plocka själv',category:'fruit_berries',produce:'Rabarber',icon:'i-rhubarb',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Duvbo',seller:'Inger',sellerId:'inger',rating:4.6,lat:59.3648,lng:17.9602,desc:'Massor kvar, kom och ta.'},
+  {id:'d7',title:'Krusbär vid Lötsjön',category:'fruit_berries',produce:'Krusbär',icon:'i-berry',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Lötsjön',seller:'Tipsat',sellerId:null,rating:null,lat:59.3712,lng:17.9655,desc:'Buskar på allmänningen.'},
+  {id:'d8',title:'Krispsallad',category:'vegetables',produce:'Sallad',icon:'i-lettuce',kind:'listing',deal:'sale',status:'ready',price:15,unit:'piece',area_label:'Ör, Sundbyberg',seller:'Majas täppa',sellerId:'maja',premiumSeller:true,rating:4.9,lat:59.3670,lng:17.9722,desc:'Plockas vid hämtning.'},
+  {id:'d9',title:'Färska örter, blandat',category:'herbs',produce:'Basilika',icon:'i-herb',kind:'listing',deal:'sale',status:'ready',price:15,unit:'piece',area_label:'Hallonbergen',seller:'Kryddkrukan',sellerId:'krydda',rating:4.8,lat:59.3752,lng:17.9648,desc:'Basilika, persilja, dill.'},
+  {id:'d10',title:'Färskpotatis',category:'vegetables',produce:'Potatis',icon:'i-potato',kind:'listing',deal:'sale',status:'ready',price:30,unit:'kg',area_label:'Ursvik',seller:'Ursviks odling',sellerId:'ursvik',rating:4.7,lat:59.3835,lng:17.9662,desc:'Nyskördad.'},
+  {id:'d11',title:'Jordgubbar',category:'fruit_berries',produce:'Jordgubbar',icon:'i-strawberry',kind:'listing',deal:'sale',status:'ready',price:45,unit:'liter',area_label:'Bromma',seller:'Bromma gårdshöns',sellerId:'bromma',rating:5.0,lat:59.3405,lng:17.9305,desc:'Söta och solmogna.'},
+  {id:'d12',title:'Sommarbukett',category:'plants',produce:'Snittblommor',icon:'i-flower',kind:'listing',deal:'sale',status:'ready',price:60,unit:'piece',area_label:'Sundbyberg',seller:'Majas täppa',sellerId:'maja',premiumSeller:true,rating:4.9,lat:59.3622,lng:17.9688,desc:'Plockas färskt.'},
+  {id:'d13',title:'Färskpotatis, Singö',category:'vegetables',produce:'Potatis',icon:'i-potato',kind:'listing',deal:'sale',status:'ready',price:35,unit:'kg',area_label:'Singö',seller:'Singö gård',sellerId:'singogard',premiumSeller:true,rating:4.9,lat:60.1812,lng:18.7625,desc:'Öns egen mandelpotatis.'},
+  {id:'d14',title:'Ägg från Singö',category:'eggs',produce:'Hönsägg',icon:'i-egg',kind:'listing',deal:'sale',status:'ready',price:50,unit:'sixpack',area_label:'Singö',seller:'Hönshuset Singö',sellerId:'singohons',rating:5.0,lat:60.1752,lng:18.7502,desc:'Frigående, utomhus.'},
+  {id:'d15',title:'Skärgårdshonung',category:'honey',produce:'Honung',icon:'i-honey',kind:'listing',deal:'sale',status:'ready',price:85,unit:'piece',area_label:'Singö',seller:'Singö bigård',sellerId:'singobi',rating:4.9,lat:60.1885,lng:18.7702,desc:'Från öns blommor.'},
+  {id:'d16',title:'Kantareller i Singöskogen',category:'vegetables',produce:'Svamp',icon:'i-mushroom',kind:'spot',deal:null,status:'ready',price:null,unit:null,area_label:'Singöskogen',seller:'Tipsat',sellerId:null,rating:null,lat:60.1902,lng:18.7548,desc:'Bra ställe i augusti–september.'},
+  {id:'d17',title:'Rabarber skänkes',category:'fruit_berries',produce:'Rabarber',icon:'i-rhubarb',kind:'listing',deal:'giveaway',status:'self_pick',price:null,unit:null,area_label:'Singö',seller:'Ella',sellerId:'ella',rating:4.7,lat:60.1778,lng:18.7682,desc:'Vid röda ladan.'},
+  {id:'d18',title:'Morötter',category:'vegetables',produce:'Morötter',icon:'i-carrot',kind:'listing',deal:'sale',status:'ready',price:25,unit:'kg',area_label:'Singö',seller:'Singö gård',sellerId:'singogard',premiumSeller:true,rating:4.9,lat:60.1725,lng:18.7452,desc:'Söta sandjordsmorötter.'},
+  {id:'d19',title:'Hallon',category:'fruit_berries',produce:'Hallon',icon:'i-raspberry',kind:'listing',deal:'sale',status:'ready',price:45,unit:'liter',area_label:'Singö',seller:'Hönshuset Singö',sellerId:'singohons',rating:5.0,lat:60.1852,lng:18.7602,desc:'Handplockade.'},
+  {id:'d20',title:'Svarta vinbär',category:'fruit_berries',produce:'Svarta vinbär',icon:'i-berry',kind:'listing',deal:'sale',status:'ripening',price:40,unit:'liter',area_label:'Singö',seller:'Ella',sellerId:'ella',rating:4.7,lat:60.1832,lng:18.7722,desc:'Klara om ett par veckor.'}
 ];
 function allItems(){ return DEMO.concat(Store.userListings); }
 
 const CATS=[{f:'allt',label:'Allt',c:'#1F3A29'},{f:'fruit_berries',label:'Frukt & bär',c:'#D9432B'},{f:'vegetables',label:'Grönt',c:'#3F7D53'},{f:'eggs',label:'Ägg',c:'#A9884F'},{f:'honey',label:'Honung',c:'#EBAF2E',dark:true},{f:'giveaway',label:'Skänkes',c:'#2E6BE6'},{f:'allman',label:'Allmän yta',c:'#0E9E9E'}];
 let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:5,cat:'allt',sort:'dist',view:'map'};
-const DIST_STOPS=[0.4,0.6,0.8,1,1.5,2,3,4,5,7,10,15,20];
-function distLabel(km){ return km<1 ? Math.round(km*1000)+' m' : (String(km).replace('.',',')+' km'); }
+function distLabel(km){ return km<1 ? Math.round(km*1000)+' m' : (String(Math.round(km*10)/10).replace('.',',')+' km'); }
 let map,markerLayer,radiusCircle,meMarker,createMap,createMarker;
 
 function matchesCat(it){ const f=STATE.cat; if(f==='allt')return true; if(f==='giveaway')return it.deal==='giveaway'; if(f==='allman')return it.kind==='spot'; return it.category===f; }
@@ -324,9 +388,9 @@ function renderMap(){
   radiusCircle.setLatLng([STATE.center.lat,STATE.center.lng]).setRadius(STATE.radiusKm*1000);
   meMarker.setLatLng([STATE.center.lat,STATE.center.lng]);
   visibleItems().forEach(it=>{
-    const rate=(it.rating!=null)?'<div class="prate">'+svg('i-star',9)+' '+fmtRating(it.rating)+'</div>':'';
-    const html='<div class="pin '+pinCls(it)+'"><div class="price">'+priceShort(it)+'</div>'+rate+'</div>';
-    const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html,iconSize:[1,1]})});
+    const ic=iconFor(it);
+    const html='<div class="mpin '+pinCls(it)+'"><div class="c">'+svg(ic,24)+'</div></div>';
+    const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html,iconSize:[40,49],iconAnchor:[20,47]})});
     m.on('click',()=>openDetail(it.id)); m.addTo(markerLayer);
   });
 }
@@ -341,7 +405,7 @@ function renderList(){
   if(!items.length){ box.innerHTML='<div class="empty"><b>Inget här ännu</b>Prova ett större avstånd eller ett annat filter.</div>'; return; }
   box.innerHTML=items.map(it=>{
     const b=badgeFor(it), ic=iconFor(it);
-    let tag; if(it.kind==='spot')tag='<div class="tag publict">Fritt</div>'; else if(it.deal==='giveaway')tag='<div class="tag free">Gratis</div>'; else tag='<div class="tag">'+it.price+' <small>/'+(UNIT[it.unit]||'')+'</small></div>';
+    let tag; if(it.kind==='spot')tag='<div class="tag publict">Fritt</div>'; else if(it.deal==='giveaway')tag='<div class="tag free">Gratis</div>'; else tag='<div class="tag">'+it.price+' kr<small>/'+(UNIT[it.unit]||'')+'</small></div>';
     const rate=(it.rating!=null)?'<span class="rate">'+svg('i-star',13)+' '+fmtRating(it.rating)+'</span>':'<span class="rate">'+it.seller+'</span>';
     const km=(it.dist/1000).toFixed(1).replace('.',',');
     return '<div class="card" onclick="openDetail(\''+it.id+'\')"><div class="thumb" style="background:'+(BG[ic]||'#DDE7CE')+'"><div class="stwrap"><span class="st '+b.cls+'">'+b.label+'</span></div>'+svg(ic,76)+tag+'</div><div class="cbody"><div class="name">'+it.title+'</div><div class="meta"><span>'+svg('i-pin',13)+' '+km+' km · '+it.seller+'</span>'+rate+'</div></div></div>';
@@ -360,22 +424,23 @@ function openDetail(id){
   const c=L.latLng(STATE.center.lat,STATE.center.lng);
   const km=(c.distanceTo(L.latLng(it.lat,it.lng))/1000).toFixed(1).replace('.',',');
   const ic=iconFor(it), b=badgeFor(it);
+  const dLat=(it.exactLat!=null?it.exactLat:it.lat), dLng=(it.exactLng!=null?it.exactLng:it.lng);
   const ord=orderFor(it.id);
   const unlocked=it.kind==='spot'||it.deal==='giveaway'||(ord&&['accepted','picked_up'].includes(ord.status));
   let priceBlock,pickup,action;
   if(it.kind==='spot'){
     priceBlock='<div class="price-lg public">Fritt att plocka</div>';
     pickup='<div class="privacy">'+svg('i-pin',18)+'<div>Allmän mark — exakt plats visas direkt. Respektera allemansrätten och plocka lagom.</div></div>';
-    action='<button class="btn" onclick="directions('+it.lat+','+it.lng+')">Vägbeskrivning</button>';
+    action='<button class="btn" onclick="directions('+dLat+','+dLng+')">Vägbeskrivning</button>';
   } else if(it.deal==='giveaway'){
     priceBlock='<div class="price-lg free">Skänkes</div>';
     pickup='<div class="privacy">'+svg('i-pin',18)+'<div>Hämtas hos '+it.seller+' i '+it.area_label+'. Säljaren har satt en exakt hämtningsplats.</div></div>';
-    action='<button class="btn" onclick="directions('+it.lat+','+it.lng+')">Vägbeskrivning</button><button class="btn ghost sm" style="margin-top:10px" onclick="contactSeller(\''+it.id+'\')">Skriv till '+it.seller+'</button>';
+    action='<button class="btn" onclick="directions('+dLat+','+dLng+')">Vägbeskrivning</button><button class="btn ghost sm" style="margin-top:10px" onclick="contactSeller(\''+it.id+'\')">Skriv till '+it.seller+'</button>';
   } else {
     priceBlock='<div class="price-lg">'+it.price+' kr <small>/ '+(UNIT[it.unit]||'')+'</small></div>';
     if(unlocked){
       pickup='<div class="privacy">'+svg('i-pin',18)+'<div>Accepterad! Hämtas hos '+it.seller+'. Exakt plats upplåst.</div></div>';
-      action='<button class="btn" onclick="directions('+it.lat+','+it.lng+')">Vägbeskrivning</button><button class="btn ghost sm" style="margin-top:10px" onclick="contactSeller(\''+it.id+'\')">Meddela '+it.seller+'</button>';
+      action='<button class="btn" onclick="directions('+dLat+','+dLng+')">Vägbeskrivning</button><button class="btn ghost sm" style="margin-top:10px" onclick="contactSeller(\''+it.id+'\')">Meddela '+it.seller+'</button>';
     } else {
       pickup='<div class="privacy">'+svg('i-pin',18)+'<div>Ungefärligt område: <b>'+it.area_label+'</b>. Exakt adress + vägbeskrivning låses upp när '+it.seller+' accepterat din beställning.</div></div>';
       action='<button class="btn" onclick="placeOrder(\''+it.id+'\')">Beställ · hämtas</button><div class="note">Betalning sker på plats (Swish). Ingen avgift i appen.</div>';
@@ -398,7 +463,7 @@ function placeOrder(itemId){
   if(!requireLogin())return;
   const it=allItems().find(x=>x.id===itemId); if(!it)return;
   if(orderFor(itemId)){ toast('Du har redan en beställning på denna.'); return; }
-  Store.orders.push({id:'o'+Date.now(),itemId,title:it.title,seller:it.seller,lat:it.lat,lng:it.lng,price:it.price,status:'requested',created:Date.now()});
+  Store.orders.push({id:'o'+Date.now(),itemId,title:it.title,seller:it.seller,lat:(it.exactLat!=null?it.exactLat:it.lat),lng:(it.exactLng!=null?it.exactLng:it.lng),price:it.price,status:'requested',created:Date.now()});
   Store.save(); toast('Beställning skickad till '+it.seller);
   closeOverlay('detail'); setView('account');
 }
@@ -409,7 +474,7 @@ function contactSeller(itemId){
   if(!requireLogin())return;
   let o=orderFor(itemId);
   if(!o){ const it=allItems().find(x=>x.id===itemId);
-    o={id:'o'+Date.now(),itemId,title:it.title,seller:it.seller,lat:it.lat,lng:it.lng,price:it.price,status:'requested',created:Date.now()};
+    o={id:'o'+Date.now(),itemId,title:it.title,seller:it.seller,lat:(it.exactLat!=null?it.exactLat:it.lat),lng:(it.exactLng!=null?it.exactLng:it.lng),price:it.price,status:'requested',created:Date.now()};
     Store.orders.push(o); Store.save(); }
   openChat(o.id);
 }
@@ -463,7 +528,8 @@ function openCreate(){
     '<div class="top"><div class="back" style="position:static" onclick="closeOverlay(\'sheet\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">Ny annons</div><div style="width:40px"></div></div>'+
     '<div class="scroll" style="padding:0 18px 24px">'+
       '<div class="field"><label>Rubrik</label><input id="f_title" placeholder="T.ex. Soltomater"></div>'+
-      '<div class="field"><label>Kategori</label><select id="f_cat"><option value="vegetables">Grönsaker</option><option value="fruit_berries">Frukt & bär</option><option value="eggs">Ägg</option><option value="honey">Honung</option><option value="herbs">Örter</option><option value="plants">Plantor</option></select></div>'+
+      '<div class="field"><label>Kategori</label><select id="f_cat" onchange="populateProduce()"><option value="vegetables">Grönsaker</option><option value="fruit_berries">Frukt & bär</option><option value="eggs">Ägg</option><option value="honey">Honung</option><option value="herbs">Örter</option><option value="plants">Plantor & blommor</option><option value="other">Övrigt</option></select></div>'+
+      '<div class="field"><label>Vad är det? (väljer ikon på kartan)</label><select id="f_produce"></select></div>'+
       '<div class="field"><label>Status</label><div class="seg" id="f_status"><div class="opt on" onclick="pickStatus(this,\'ready\')">Klar nu</div><div class="opt" onclick="pickStatus(this,\'ripening\')">Mognar snart</div><div class="opt" onclick="pickStatus(this,\'on_order\')">På beställning</div><div class="opt" onclick="pickStatus(this,\'self_pick\')">Självplock</div></div></div>'+
       '<div class="field"><label>Typ av affär</label><div class="seg" id="f_deal"><div class="opt on" onclick="pickDeal(this,\'sale\')">Säljs</div><div class="opt" onclick="pickDeal(this,\'giveaway\')">Skänkes</div></div></div>'+
       '<div class="field" id="f_pricewrap" style="display:flex;gap:12px"><div style="flex:1"><label>Pris (kr)</label><input id="f_price" type="number" inputmode="numeric" placeholder="18"></div><div style="flex:1"><label>Enhet</label><select id="f_unit"><option value="piece">per st</option><option value="kg">per kg</option><option value="bunch">per knippe</option><option value="sixpack">per 6-pack</option><option value="liter">per liter</option></select></div></div>'+
@@ -472,7 +538,7 @@ function openCreate(){
       '<div class="field"><label>Hämtningsplats — dra nålen dit varan hämtas</label><div id="createMap"></div><div class="note" id="f_pinnote" style="text-align:left;margin-top:6px">Säljs: exakt läge döljs publikt tills du accepterat. Skänkes: nålen visas exakt.</div></div>'+
       '<button class="btn" onclick="saveListing()">Publicera annons</button>'+
     '</div>';
-  showOverlay('sheet');
+  showOverlay('sheet'); populateProduce();
   createDeal='sale'; createStatus='ready'; areaEdited=false; autoArea=''; pinMoved=false;
   setTimeout(function(){ createMap=L.map('createMap',{zoomControl:false}).setView([STATE.center.lat,STATE.center.lng],15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(createMap);
@@ -488,7 +554,7 @@ function openCreate(){
         const la=pos.coords.latitude, ln=pos.coords.longitude;
         STATE.center={lat:la,lng:ln,label:'din plats'};
         createMarker.setLatLng([la,ln]); createMap.setView([la,ln],15);
-        areaEdited=false; fillArea(la,ln);
+        fillArea(la,ln);
       },function(){}, {enableHighAccuracy:true,timeout:8000,maximumAge:0});
     }
   },120);
@@ -496,12 +562,12 @@ function openCreate(){
 let pinMoved=false;
 let areaEdited=false, autoArea='';
 function areaLabelFromAddr(a){
-  const local=a.suburb||a.neighbourhood||a.city_district||a.borough||a.quarter||a.village||a.hamlet;
-  const city=a.city||a.town||a.municipality;
+  const local=a.suburb||a.city_district||a.borough||a.neighbourhood||a.quarter||a.residential;
+  const city=a.city||a.town||a.municipality||a.village;
   const parts=[];
   if(local)parts.push(local);
   if(city&&city!==local)parts.push(city);
-  if(!parts.length){ if(a.village)parts.push(a.village); else if(a.county)parts.push(a.county); }
+  if(!parts.length){ if(a.road)parts.push(a.road); else if(a.hamlet)parts.push(a.hamlet); else if(a.county)parts.push(a.county); }
   return parts.join(', ');
 }
 async function reverseGeocode(lat,lng){
@@ -522,14 +588,18 @@ function saveListing(){
   const title=(document.getElementById('f_title').value||'').trim();
   if(!title){ toast('Fyll i en rubrik'); return; }
   const cat=document.getElementById('f_cat').value;
+  const pv=document.getElementById('f_produce'); const produceVal=pv?pv.value:'';
+  const produce=(produceVal&&produceVal!=='__other__')?produceVal:'';
+  const icon=produce?iconForProduce(produce,cat):(ICON[cat]||'i-basket');
   const price=createDeal==='giveaway'?null:(+document.getElementById('f_price').value||0);
   const unit=createDeal==='giveaway'?null:document.getElementById('f_unit').value;
   const area=(document.getElementById('f_area').value||autoArea||'Mitt område').trim();
   const desc=(document.getElementById('f_desc').value||'').trim();
   const ll=createMarker?createMarker.getLatLng():{lat:STATE.center.lat,lng:STATE.center.lng};
-  let lat=ll.lat,lng=ll.lng;
-  if(createDeal==='sale'){ const d=(150+Math.random()*250)/111000, a=Math.random()*2*Math.PI; lat+=d*Math.cos(a); lng+=d*Math.sin(a)/Math.cos(ll.lat*Math.PI/180); }
-  Store.userListings.push({id:'u'+Date.now(),title,category:cat,kind:'listing',deal:createDeal,status:createStatus,price,unit,area_label:area,seller:Store.session.name,sellerId:Store.session.id,premiumSeller:Store.premium.active,rating:null,lat,lng,desc});
+  const exactLat=ll.lat, exactLng=ll.lng;
+  let lat=exactLat,lng=exactLng;
+  if(createDeal==='sale'){ const d=(150+Math.random()*250)/111000, a=Math.random()*2*Math.PI; lat=exactLat+d*Math.cos(a); lng=exactLng+d*Math.sin(a)/Math.cos(exactLat*Math.PI/180); }
+  Store.userListings.push({id:'u'+Date.now(),title,category:cat,produce,icon,kind:'listing',deal:createDeal,status:createStatus,price,unit,area_label:area,seller:Store.session.name,sellerId:Store.session.id,premiumSeller:Store.premium.active,rating:null,lat,lng,exactLat,exactLng,desc});
   Store.save(); closeOverlay('sheet'); toast('Annons publicerad'); setView('map'); refresh();
   if(map)map.setView([STATE.center.lat,STATE.center.lng],13);
 }
@@ -623,7 +693,7 @@ function renderAccount(){
 }
 function delListing(id){ Store.userListings=Store.userListings.filter(l=>l.id!==id); Store.save(); refresh(); renderAccount(); toast('Annons borttagen'); }
 
-function showOverlay(id){ document.getElementById(id).classList.add('on'); }
+function showOverlay(id){ document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('on')); document.getElementById(id).classList.add('on'); }
 function closeOverlay(id){ document.getElementById(id).classList.remove('on'); }
 function setView(v){
   STATE.view=v;
@@ -633,11 +703,17 @@ function setView(v){
   if(v==='watch')renderWatch();
   if(v==='account')renderAccount();
 }
-function fitRadius(){ if(map&&radiusCircle){ try{ map.fitBounds(radiusCircle.getBounds(),{padding:[18,18],animate:false}); }catch(e){} } }
-function onDist(idx){ idx=+idx; if(idx<0)idx=0; if(idx>DIST_STOPS.length-1)idx=DIST_STOPS.length-1;
-  const km=DIST_STOPS[idx]; STATE.radiusKm=km;
-  ['distVal','distVal2'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=distLabel(km);});
-  ['dist','dist2'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=idx; const pct=(idx/(DIST_STOPS.length-1))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
+function fitRadius(){ if(!map||!radiusCircle)return;
+  const el=document.getElementById('map'); const w=(el&&el.clientWidth)||360;
+  const mpp=(STATE.radiusKm*2000)/Math.max(1,(w-48));
+  let z=Math.log2((40075016*Math.cos(STATE.center.lat*Math.PI/180))/(256*mpp));
+  z=Math.max(3,Math.min(18,z));
+  map.setView([STATE.center.lat,STATE.center.lng],z,{animate:false});
+}
+function onDist(m){ m=+m; if(m<400)m=400; if(m>20000)m=20000; STATE.radiusKm=m/1000;
+  const lbl=distLabel(STATE.radiusKm);
+  ['distVal','distVal2'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=lbl;});
+  ['dist','dist2'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=m; const pct=((m-400)/(20000-400))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
   refresh(); fitRadius();
 }
 function setSort(s){ STATE.sort=s; document.querySelectorAll('.sortbtn').forEach(b=>b.classList.toggle('on',b.dataset.sort===s)); renderList(); }
@@ -647,7 +723,7 @@ function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg
 function boot(){
   renderChips();
   try{ initMap(); }catch(e){ console.warn('Kartan kunde inte starta:',e); }
-  onDist(8); refresh(); renderAccount();
+  onDist(5000); refresh(); renderAccount();
   setTimeout(()=>{ if(map)map.invalidateSize(); },250);
   setTimeout(()=>{ if(map)map.invalidateSize(); },900);
   if(navigator.geolocation){
