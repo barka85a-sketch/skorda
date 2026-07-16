@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "date": "2026-07-15",
-  "notes": "E-postinloggning bytt från magic link till 6-siffrig kod som skrivs in i appen (pålitligt på iPhone/PWA, ingen omdirigering). Kräver att Magic Link-mejlmallen i Supabase innehåller koden {{ .Token }}."
+  "notes": "Chatt i databasen: köpare och säljare kan meddela varandra i en tråd kopplad till beställningen, med live-uppdatering (realtime). Meddela-knapp finns på varje beställning. Kräver skorda-v3.sql."
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.7.4 -->
+<!-- Skörda v0.7.5 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -326,7 +326,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.7.4';
+const APP_VERSION='0.7.5';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -660,7 +660,9 @@ function contactSeller(itemId){
     Store.orders.push(o); Store.save(); }
   openChat(o.id);
 }
+let chatSub=null;
 function openChat(orderId){
+  if(sb && isUuid(orderId)){ return openChatDB(orderId); }
   const o=Store.orders.find(x=>x.id===orderId); if(!o)return;
   const msgs=Store.messages[orderId]||[];
   document.getElementById('chat').innerHTML=
@@ -670,10 +672,34 @@ function openChat(orderId){
   showOverlay('chat');
   const w=document.getElementById('chatWrap'); if(w)w.scrollTop=w.scrollHeight;
 }
+function openChatDB(orderId){
+  const o=DBORDERS.find(x=>x.id===orderId); const title=o?o.cpName:'Chatt'; const sub=o?o.title:'';
+  document.getElementById('chat').innerHTML=
+    '<div class="top"><div class="back" style="position:static" onclick="closeOverlay(\'chat\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div><div class="ttl" style="font-size:18px">'+escAttr(title)+'</div><div class="sub">'+escAttr(sub)+'</div></div><div style="width:40px"></div></div>'+
+    '<div class="chatwrap" id="chatWrap"><div class="empty">Laddar…</div></div>'+
+    '<div class="chat-in"><input id="chatInput" placeholder="Skriv ett meddelande…" onkeydown="if(event.key===\'Enter\')sendMsg(\''+orderId+'\')"><button class="send" onclick="sendMsg(\''+orderId+'\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button></div>';
+  showOverlay('chat');
+  loadChatDB(orderId);
+  if(chatSub){ try{ sb.removeChannel(chatSub); }catch(e){} chatSub=null; }
+  chatSub=sb.channel('chat-'+orderId).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'order_id=eq.'+orderId},function(){ loadChatDB(orderId); }).subscribe();
+}
+function loadChatDB(orderId){
+  sb.from('messages').select('*').eq('order_id',orderId).order('created_at',{ascending:true}).then(function(r){
+    if(r.error){ console.warn(r.error.message); return; }
+    const me=Store.session?Store.session.id:''; const msgs=r.data||[];
+    const html=msgs.length?msgs.map(function(m){ return '<div class="bub '+(m.sender_id===me?'me':'them')+'">'+escAttr(m.body)+'</div>'; }).join(''):'<div class="empty">Skriv första meddelandet.</div>';
+    const w=document.getElementById('chatWrap'); if(w){ w.innerHTML=html; w.scrollTop=w.scrollHeight; }
+  });
+}
 function sendMsg(orderId){
   const inp=document.getElementById('chatInput'); if(!inp||!inp.value.trim())return;
+  const body=inp.value.trim(); inp.value='';
+  if(sb && isUuid(orderId)){
+    sb.from('messages').insert({order_id:orderId,sender_id:Store.session.id,body:body}).then(function(r){ if(r.error){ toast(r.error.message); return; } loadChatDB(orderId); });
+    return;
+  }
   if(!Store.messages[orderId])Store.messages[orderId]=[];
-  Store.messages[orderId].push({me:true,text:inp.value.trim(),t:Date.now()});
+  Store.messages[orderId].push({me:true,text:body,t:Date.now()});
   Store.save(); openChat(orderId);
 }
 
@@ -1209,7 +1235,7 @@ function renderAccount(){
       const rate=(o.status==='picked_up'&&isUuid(o.cpId))?'<button class="btn ghost sm" style="margin-top:8px" onclick="openRateForm(\''+o.cpId+'\',\''+cp+'\')">Lämna omdöme</button>':'';
       const rm='<span onclick="cancelOrderDB(\''+o.id+'\')" title="Ta bort" style="color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</span>';
       const who=(o.role==='seller'?'Köpare: ':'Säljare: ')+escAttr(o.cpName||'');
-      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+who+(o.qty?(' · '+o.qty+' '+(UNIT[o.unit]||'st')):'')+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+rate+'</div>';
+      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+who+(o.qty?(' · '+o.qty+' '+(UNIT[o.unit]||'st')):'')+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela '+escAttr(o.cpName||'')+'</button>'+rate+'</div>';
     }
     let actions='';
     if(o.status==='requested') actions='<div style="display:flex;gap:8px"><button class="btn ghost sm" style="flex:1" onclick="acceptOrderDemo(\''+o.id+'\')">Acceptera (demo)</button><button class="btn ghost sm" style="flex:1" onclick="declineOrderDemo(\''+o.id+'\')">Tacka nej (demo)</button></div>';
@@ -1225,7 +1251,7 @@ function delListing(id){ const rem=myListings.find(l=>l.id===id);
   Store.userListings=Store.userListings.filter(l=>l.id!==id); Store.save(); refresh(); renderAccount(); toast('Annons borttagen'); }
 
 function showOverlay(id){ document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('on')); document.getElementById(id).classList.add('on'); }
-function closeOverlay(id){ document.getElementById(id).classList.remove('on'); }
+function closeOverlay(id){ if(id==='chat'&&chatSub){ try{ sb.removeChannel(chatSub); }catch(e){} chatSub=null; } document.getElementById(id).classList.remove('on'); }
 function setView(v){
   STATE.view=v;
   document.querySelectorAll('.view').forEach(el=>el.classList.toggle('on',el.id==='view-'+v));
