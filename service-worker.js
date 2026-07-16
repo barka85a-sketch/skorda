@@ -1,4 +1,4 @@
-const CACHE = 'skorda-v0.8.6';
+const CACHE = 'skorda-v0.8.8';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
@@ -12,16 +12,17 @@ self.addEventListener('activate', e => {
   );
 });
 
-// App-skalet: cache-first. Allt annat (kartrutor, CDN, Supabase-API): nätet direkt.
+// NÄTET-FÖRST för allt eget (index.html m.m.): hämta alltid färskt när man är online,
+// fall tillbaka till cache bara när man är offline. Då slår uppladdningar igenom direkt.
+// Kartrutor/CDN/Supabase-API går alltid direkt till nätet.
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  const isShell = url.origin === location.origin;
-  if (!isShell) return; // låt kartor/CDN/API gå direkt till nätet
+  if (url.origin !== location.origin) return;
   e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+    fetch(e.request).then(res => {
       const copy = res.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
       return res;
-    }).catch(() => caches.match('./index.html')))
+    }).catch(() => caches.match(e.request).then(hit => hit || caches.match('./index.html')))
   );
 });

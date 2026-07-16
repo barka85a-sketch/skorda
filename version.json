@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.8.6",
+  "version": "0.8.8",
   "date": "2026-07-15",
-  "notes": "Inloggning bytt till e-post + lösenord (ingen mejlkod behövs). Fyll i e-post + lösenord: finns kontot loggas du in, annars skapas det. Kräver att e-postbekräftelse är avstängd i Supabase (Authentication -> Providers -> Email -> Confirm email = av) för direkt inloggning."
+  "notes": "Premium-teman: gårdsståndets teman är ombyggda från platta färger till stämningsfulla naturscener (Skog, Fruktträdgård, Sommaräng, Bärskog, Lavendel, Gyllene skörd, Kustträdgård, Skymning) med rika gradienter och diskreta SVG-motiv. Temaväljaren visar dem som förhandsvisande kort."
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.8.6 -->
+<!-- Skörda v0.8.8 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -197,9 +197,10 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .cal .cm .cmn{font-family:'Bricolage Grotesque';font-weight:800;font-size:13px;letter-spacing:.03em}
 .cal .cm .cmw{font-size:8.5px;line-height:1.15;color:var(--muted)}
 .cal .cm.on .cmw{color:rgba(255,255,255,.85)}
-.tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.tsw{height:52px;border-radius:12px;cursor:pointer;border:2px solid transparent;display:flex;align-items:flex-end;padding:7px 9px;color:#fff;font-family:'Bricolage Grotesque';font-weight:700;font-size:12px}
-.tsw.on{border-color:var(--ink);box-shadow:0 0 0 2px #fff inset}
+.tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tsw{height:84px;border-radius:16px;cursor:pointer;border:2px solid transparent;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.09)}
+.tsw .tsw-name{position:absolute;left:11px;bottom:9px;color:#fff;font-family:'Bricolage Grotesque';font-weight:800;font-size:13.5px;text-shadow:0 1px 5px rgba(0,0,0,.45);z-index:2}
+.tsw.on{border-color:#fff;box-shadow:0 0 0 3px var(--leaf),0 4px 14px rgba(0,0,0,.14)}
 .sf-cover .motif{position:absolute;inset:0;display:flex;gap:20px;align-items:center;justify-content:center;opacity:.16}
 .sf-cover .motif svg{width:54px;height:54px}
 .sf-body{padding:0 18px 6px}
@@ -329,7 +330,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.8.6';
+const APP_VERSION='0.8.8';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -348,7 +349,7 @@ const Store={
   watches:LS.get('watches',[]),
   orders:LS.get('orders',[]),
   messages:LS.get('messages',{}),
-  page:LS.get('page',{images:[],theme:'kale',story:'',months:{}}),
+  page:LS.get('page',{images:[],theme:'skog',story:'',months:{}}),
   favorites:LS.get('favorites',[]),
   notifSeen:LS.get('notifSeen',[]),
   save(){ LS.set('session',this.session); LS.set('premium',this.premium); LS.set('userListings',this.userListings);
@@ -717,18 +718,52 @@ function sendMsg(orderId){
 }
 
 const THEMES=[
- {k:'kale',n:'Kål',c1:'#26452F',c2:'#3F7D53',a:'#3F7D53'},
- {k:'tomato',n:'Tomat',c1:'#7A1F12',c2:'#D9432B',a:'#D9432B'},
- {k:'honey',n:'Honung',c1:'#7A4E10',c2:'#EBAF2E',a:'#C98F1E'},
- {k:'plum',n:'Plommon',c1:'#4A1F3A',c2:'#8B2C5A',a:'#8B2C5A'},
- {k:'teal',n:'Teal',c1:'#0A4A4A',c2:'#0E9E9E',a:'#0E9E9E'},
- {k:'sky',n:'Himmel',c1:'#14346B',c2:'#2E6BE6',a:'#2E6BE6'},
- {k:'rust',n:'Höst',c1:'#6B2E12',c2:'#C85A2B',a:'#C85A2B'},
- {k:'lavender',n:'Lavendel',c1:'#3A2A5A',c2:'#7A5A9A',a:'#7A5A9A'},
- {k:'forest',n:'Skog',c1:'#14261A',c2:'#2C5A3A',a:'#2C5A3A'},
- {k:'sand',n:'Sand',c1:'#7A6A44',c2:'#C9A876',a:'#A9884F'}
+ {k:'skog',n:'Skog',c1:'#173325',c2:'#2E6B45',a:'#2E6B45',g:'linear-gradient(160deg,#173325 0%,#2E6B45 55%,#5BA06B 100%)',s:'skog'},
+ {k:'frukt',n:'Fruktträdgård',c1:'#8A3B22',c2:'#E08A4F',a:'#C56A3A',g:'linear-gradient(160deg,#8A3B22 0%,#E08A4F 45%,#8FB05E 100%)',s:'frukt'},
+ {k:'ang',n:'Sommaräng',c1:'#5B7F3A',c2:'#A9C86A',a:'#6FA24B',g:'linear-gradient(160deg,#5B7F3A 0%,#A9C86A 55%,#EDE3B0 100%)',s:'ang'},
+ {k:'bar',n:'Bärskog',c1:'#3E1836',c2:'#8B2C5A',a:'#8B2C5A',g:'linear-gradient(160deg,#3E1836 0%,#8B2C5A 55%,#C85A7A 100%)',s:'bar'},
+ {k:'lavendel',n:'Lavendel',c1:'#42356A',c2:'#8A6FB0',a:'#7A5A9A',g:'linear-gradient(160deg,#42356A 0%,#8A6FB0 55%,#C6B3D9 100%)',s:'lavendel'},
+ {k:'skord',n:'Gyllene skörd',c1:'#7A4E10',c2:'#E0A83E',a:'#C98F1E',g:'linear-gradient(160deg,#7A4E10 0%,#E0A83E 55%,#F0D896 100%)',s:'skord'},
+ {k:'kust',n:'Kustträdgård',c1:'#0E4A48',c2:'#3FA89A',a:'#0E9E9E',g:'linear-gradient(160deg,#0E4A48 0%,#3FA89A 55%,#D9CBA0 100%)',s:'kust'},
+ {k:'skymning',n:'Skymning',c1:'#2E2350',c2:'#7A4E6E',a:'#7A4E6E',g:'linear-gradient(160deg,#2E2350 0%,#7A4E6E 50%,#E0885A 100%)',s:'skymning'}
 ];
 function themeOf(k){ return THEMES.find(t=>t.k===k)||THEMES[0]; }
+function themeScene(k){
+  const W='<svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax slice" style="position:absolute;inset:0;width:100%;height:100%">', E='</svg>';
+  function fir(x,base,h){ const w=h*0.62; let s=''; for(let i=0;i<3;i++){ const ty=base-i*h*0.26, tw=w*(1-i*0.2); s+='<path d="M'+x+' '+(ty-h*0.5)+' L'+(x-tw/2)+' '+ty+' L'+(x+tw/2)+' '+ty+' Z"/>'; } return s+'<rect x="'+(x-1.5)+'" y="'+base+'" width="3" height="7"/>'; }
+  function flower(x,base,h){ return '<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-h)+'"/><circle cx="'+x+'" cy="'+(base-h)+'" r="3.2"/>'; }
+  function wheat(x,base,h){ let s='<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-h)+'"/>'; for(let i=0;i<4;i++){ const y=base-h+5+i*4; s+='<line x1="'+x+'" y1="'+y+'" x2="'+(x-4)+'" y2="'+(y-4)+'"/><line x1="'+x+'" y1="'+y+'" x2="'+(x+4)+'" y2="'+(y-4)+'"/>'; } return s; }
+  function lav(x,base,h){ let s='<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-h)+'"/>'; for(let i=0;i<4;i++){ s+='<circle cx="'+x+'" cy="'+(base-h+i*3.5)+'" r="1.7"/>'; } return s; }
+  function sprig(x,base){ let s='<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-9)+'"/>'; for(let i=0;i<5;i++){ const a=-0.6+i*0.3; s+='<circle cx="'+(x+Math.cos(a)*7).toFixed(1)+'" cy="'+(base-11-Math.sin(a)*7).toFixed(1)+'" r="2.4"/>'; } return s; }
+  if(k==='skog'||k==='skymning'){
+    const sun = k==='skymning' ? '<circle cx="330" cy="34" r="20" fill="#fff" opacity=".14"/>' : '<circle cx="336" cy="30" r="22" fill="#fff" opacity=".13"/>';
+    let firs=''; [40,82,120,255,300,342,382].forEach(function(x,i){ firs+=fir(x,118,20+((i*7)%14)); });
+    return W+sun+'<path d="M0 96 Q100 78 200 92 T400 88 V130 H0Z" fill="#fff" opacity=".05"/><path d="M0 112 Q120 96 240 110 T400 106 V130 H0Z" fill="#0b1a12" opacity=".13"/><g fill="#0b1a12" opacity=".2">'+firs+'</g>'+E;
+  }
+  if(k==='frukt'){
+    return W+'<path d="M0 104 Q140 86 280 102 T400 98 V130 H0Z" fill="#3d5a2a" opacity=".22"/><rect x="196" y="70" width="8" height="42" fill="#5a3a1e" opacity=".5"/><circle cx="200" cy="58" r="34" fill="#2f5a2a" opacity=".3"/><g fill="#e0562e" opacity=".55"><circle cx="188" cy="52" r="4"/><circle cx="210" cy="48" r="4"/><circle cx="200" cy="66" r="4"/><circle cx="216" cy="64" r="4"/><circle cx="184" cy="66" r="4"/></g><circle cx="60" cy="40" r="16" fill="#fff" opacity=".08"/>'+E;
+  }
+  if(k==='ang'){
+    let f=''; [40,70,110,150,215,255,300,340,375].forEach(function(x,i){ f+=flower(x,118,16+((i*5)%12)); });
+    return W+'<circle cx="70" cy="36" r="18" fill="#fff" opacity=".12"/><path d="M0 108 Q120 92 240 106 T400 102 V130 H0Z" fill="#4e7a2e" opacity=".18"/><g stroke="#2f4d1c" stroke-width="1.4" fill="#e8d24a" opacity=".5" stroke-opacity=".4">'+f+'</g>'+E;
+  }
+  if(k==='bar'){
+    let b=''; [60,110,250,300,350].forEach(function(x,i){ b+=sprig(x,118-((i*6)%10)); });
+    return W+'<path d="M0 104 Q120 90 240 104 T400 100 V130 H0Z" fill="#2e0f26" opacity=".2"/><g fill="#e57aa0" stroke="#3e1836" stroke-width="1.3" stroke-opacity=".3" opacity=".6">'+b+'</g>'+E;
+  }
+  if(k==='lavendel'){
+    let l=''; for(let i=0;i<11;i++){ l+=lav(24+i*35,120,20+((i*4)%12)); }
+    return W+'<circle cx="60" cy="34" r="16" fill="#fff" opacity=".1"/><g stroke="#e6d4f2" stroke-width="1.3" fill="#c9a6e0" opacity=".5">'+l+'</g>'+E;
+  }
+  if(k==='skord'){
+    let w=''; for(let i=0;i<9;i++){ w+=wheat(30+i*44,122,26+((i*5)%14)); }
+    return W+'<circle cx="336" cy="30" r="22" fill="#fff" opacity=".16"/><g stroke="#8a5a14" stroke-width="1.3" stroke-linecap="round" opacity=".45" fill="none">'+w+'</g>'+E;
+  }
+  if(k==='kust'){
+    return W+'<g fill="#0b3a38" opacity=".16"><path d="M40 130 C40 90 80 70 120 60 C90 90 70 110 60 130 Z"/><path d="M360 130 C360 88 320 66 280 56 C312 88 330 108 340 130 Z"/></g><g fill="#fff" opacity=".07"><path d="M200 130 C200 96 176 78 150 70 C180 96 190 110 196 130 Z"/></g>'+E;
+  }
+  return '';
+}
 const MONTHS=['JAN','FEB','MAR','APR','MAJ','JUN','JUL','AUG','SEP','OKT','NOV','DEC'];
 const plusSvg='<svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>';
 const themeSvg='<svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1"/><circle cx="12" cy="8" r="1"/><circle cx="15.5" cy="10" r="1"/></svg>';
@@ -772,8 +807,8 @@ function setTheme(k){ Store.page.theme=k; Store.save(); openStorefront(Store.ses
 function openThemePicker(){
   document.getElementById('sheet').innerHTML=
     '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+Store.session.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">Välj tema</div><div style="width:40px"></div></div>'+
-    '<div class="scroll" style="padding:16px 18px 30px"><div class="tgrid">'+
-    THEMES.map(function(t){ return '<div class="tsw'+(Store.page.theme===t.k?' on':'')+'" style="background:linear-gradient(120deg,'+t.c1+','+t.c2+')" onclick="setTheme(\''+t.k+'\')">'+t.n+'</div>'; }).join('')+
+    '<div class="scroll" style="padding:16px 18px 30px"><div style="font-size:12px;color:var(--muted);margin-bottom:12px">Ett tema ger ditt gårdsstånd en egen stämning. Bilder du lägger till visas ovanpå.</div><div class="tgrid">'+
+    THEMES.map(function(t){ return '<div class="tsw'+(Store.page.theme===t.k?' on':'')+'" style="background:'+t.g+'" onclick="setTheme(\''+t.k+'\')">'+themeScene(t.s)+'<span class="tsw-name">'+t.n+'</span></div>'; }).join('')+
     '</div></div>';
   showOverlay('sheet');
 }
@@ -1015,7 +1050,7 @@ function openStorefront(sellerId){
   const name = own ? Store.session.name : (items[0]?items[0].seller:'Stånd');
   const safeName=(name||'').replace(/['"<>]/g,'');
   const area = items[0]?items[0].area_label:'';
-  const th = themeOf(own?Store.page.theme:'kale');
+  const th = themeOf(own?Store.page.theme:'skog');
   const avatar=(name||'S').trim().charAt(0).toUpperCase();
   const imgs = own ? Store.page.images : [];
   let cover;
@@ -1027,7 +1062,7 @@ function openStorefront(sellerId){
       (own?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
     '</div>';
   } else {
-    cover='<div class="sf-cover" style="background:linear-gradient(120deg,'+th.c1+','+th.c2+')"><div class="motif">'+svg('i-apple',54)+svg('i-greens',54)+svg('i-honey',54)+svg('i-berry',54)+'</div>'+
+    cover='<div class="sf-cover" style="background:'+th.g+'">'+themeScene(th.s)+
       '<div class="back" onclick="back()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+
       (own&&prem?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
     '</div>';
