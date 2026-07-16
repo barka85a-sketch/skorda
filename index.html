@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.8.5 -->
+<!-- Skörda v0.8.6 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -329,7 +329,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.8.5';
+const APP_VERSION='0.8.6';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -1242,8 +1242,9 @@ function openAuth(){
     '<div class="divider">eller med e-post</div>'+
     '<div class="field"><label>Namn (visas på ditt gårdsstånd)</label><input id="au_name" placeholder="T.ex. Karins trädgård"></div>'+
     '<div class="field"><label>E-post</label><input id="au_email" type="email" inputmode="email" placeholder="du@example.se"></div>'+
-    '<button class="btn" onclick="authEmail()">'+(real?'Skicka kod':'Logga in / skapa konto')+'</button>'+
-    '<div class="note">'+(real?'Vi mejlar en 6-siffrig kod (inget lösenord).':'Demo: inget lösenord, ingen e-post skickas.')+'</div></div>';
+    '<div class="field"><label>Lösenord (minst 6 tecken)</label><input id="au_pass" type="password" placeholder="••••••"></div>'+
+    '<button class="btn" onclick="authEmail()">'+(real?'Logga in / skapa konto':'Logga in / skapa konto')+'</button>'+
+    '<div class="note">'+(real?'Ny? Fyll i e-post + lösenord så skapas kontot. Har du redan konto loggas du in.':'Demo: inget lösenord, ingen e-post skickas.')+'</div></div>';
   showOverlay('sheet');
 }
 function setSessionFromSupabase(session){
@@ -1257,13 +1258,18 @@ function authOAuth(provider){ if(!sb){ demoOAuth(provider.charAt(0).toUpperCase(
 let pendingEmail='',pendingName='';
 function authEmail(){
   const email=(document.getElementById('au_email').value||'').trim();
+  const password=(document.getElementById('au_pass')?document.getElementById('au_pass').value:'')||'';
   const name=(document.getElementById('au_name').value||'').trim();
-  if(!email){ toast('Fyll i e-post'); return; }
+  if(!email||!password){ toast('Fyll i e-post och lösenord'); return; }
+  if(password.length<6){ toast('Lösenordet behöver minst 6 tecken'); return; }
   if(!sb){ demoEmailLogin(); return; }
-  pendingEmail=email; pendingName=name||email.split('@')[0];
-  sb.auth.signInWithOtp({email:email,options:{shouldCreateUser:true,data:{name:pendingName}}}).then(function(r){
-    if(r.error){ toast('Fel: '+r.error.message); return; }
-    showCodeEntry();
+  sb.auth.signInWithPassword({email:email,password:password}).then(function(r){
+    if(!r.error){ closeOverlay('sheet'); toast('Inloggad'); return; }
+    sb.auth.signUp({email:email,password:password,options:{data:{name:name||email.split('@')[0]}}}).then(function(r2){
+      if(r2.error){ toast('Fel: '+r2.error.message); return; }
+      if(r2.data && r2.data.session){ closeOverlay('sheet'); toast('Konto skapat'); }
+      else { toast('Konto skapat — bekräfta via mejl, eller slå av e-postbekräftelse i Supabase.'); }
+    });
   });
 }
 function showCodeEntry(){

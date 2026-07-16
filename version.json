@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "date": "2026-07-15",
-  "notes": "Info tydligare: en klickbar info-ruta ovanför status-valen i skapa-annons, och en ⓘ-knapp först i kategoriraden på kartan. Tillbaka-knappen följer nu en historik och går till föregående vy (t.ex. annons -> gårdssida -> tillbaka till annonsen)."
+  "notes": "Inloggning bytt till e-post + lösenord (ingen mejlkod behövs). Fyll i e-post + lösenord: finns kontot loggas du in, annars skapas det. Kräver att e-postbekräftelse är avstängd i Supabase (Authentication -> Providers -> Email -> Confirm email = av) för direkt inloggning."
 }
