@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "date": "2026-07-15",
-  "notes": "Samlad beställning: på en säljares gårdssida kan man bocka i flera varor och välja antal per vara, och beställa allt på en gång via en beställ-bar. Skapar en order per vara hos säljaren."
+  "notes": "E-postinloggning bytt från magic link till 6-siffrig kod som skrivs in i appen (pålitligt på iPhone/PWA, ingen omdirigering). Kräver att Magic Link-mejlmallen i Supabase innehåller koden {{ .Token }}."
 }
