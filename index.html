@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.7.2 -->
+<!-- Skörda v0.7.3 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -176,6 +176,13 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .imgcell .ctrls button{background:rgba(255,255,255,.94);border:none;border-radius:8px;width:34px;height:28px;font-size:16px;cursor:pointer;display:grid;place-items:center;color:var(--kale)}
 .imgcell .ctrls button:disabled{opacity:.35}
 .qbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:20px;cursor:pointer;color:var(--kale);display:grid;place-items:center;line-height:1}
+.mini{position:relative}
+.cartchk{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:#fff;z-index:2;display:grid;place-items:center;font-size:15px;color:#fff;font-weight:800}
+.cartchk.on{background:var(--leaf);border-color:var(--leaf)}
+.cartqty{display:flex;align-items:center;gap:10px;margin-top:8px}
+.cartqty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:16px;cursor:pointer;color:var(--kale);display:grid;place-items:center;line-height:1}
+.cartqty span{font-weight:800;min-width:20px;text-align:center;font-family:'Bricolage Grotesque'}
+.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--leaf);color:#fff;padding:17px;text-align:center;font-family:'Bricolage Grotesque';font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
 #lightbox{position:fixed;inset:0;background:#000;z-index:3000;display:flex;flex-direction:column}
 .lb-close{position:absolute;top:14px;right:16px;color:#fff;font-size:32px;z-index:2;cursor:pointer;line-height:1;width:44px;height:44px;display:grid;place-items:center}
 .lb-track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
@@ -319,7 +326,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.7.2';
+const APP_VERSION='0.7.3';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -849,7 +856,23 @@ function submitRating(targetId){
     toast('Tack för ditt omdöme!'); closeOverlay('sheet'); loadListings();
   });
 }
+let cartSel={};
+function cartToggle(id,sellerId,name){ if(cartSel[id]){delete cartSel[id];}else{cartSel[id]=1;}
+  const chk=document.getElementById('chk_'+id); if(chk){ chk.classList.toggle('on',!!cartSel[id]); chk.textContent=cartSel[id]?'✓':''; }
+  const q=document.getElementById('qty_'+id); if(q)q.style.display=cartSel[id]?'flex':'none';
+  const qn=document.getElementById('qtyn_'+id); if(qn)qn.textContent=cartSel[id]||1;
+  updateCartBar(sellerId,name); }
+function cartQty(id,d,sellerId,name){ if(!cartSel[id])return; cartSel[id]=Math.max(1,cartSel[id]+d); const qn=document.getElementById('qtyn_'+id); if(qn)qn.textContent=cartSel[id]; updateCartBar(sellerId,name); }
+function updateCartBar(sellerId,name){ const bar=document.getElementById('cartBar'); if(!bar)return; const ids=Object.keys(cartSel);
+  if(!ids.length){ bar.style.display='none'; return; }
+  let total=0; ids.forEach(function(id){ const it=allItems().find(function(x){return x.id===id;}); if(it&&it.deal!=='giveaway'&&it.price)total+=it.price*cartSel[id]; });
+  bar.style.display='block'; bar.querySelector('.cb-txt').textContent='Beställ valda ('+ids.length+')'+(total?(' · '+total+' kr'):''); }
+function placeCartOrder(sellerId,name){ const ids=Object.keys(cartSel); if(!ids.length)return;
+  if(!sb||!Store.session){ toast('Logga in för att beställa'); return; }
+  const rows=ids.map(function(id){ const it=allItems().find(function(x){return x.id===id;}); return {listing_id:id,buyer_id:Store.session.id,seller_id:sellerId,title:it?it.title:'Vara',seller:it?it.seller:name,price:(it&&it.deal!=='giveaway')?it.price:null,qty:cartSel[id],unit:it?it.unit:null,status:'requested'}; });
+  sb.from('orders').insert(rows).then(function(r){ if(r.error){ toast(r.error.message); return; } toast(ids.length+' varor beställda hos '+name); cartSel={}; closeOverlay('sheet'); setView('account'); loadOrders(); }); }
 function openStorefront(sellerId){
+  cartSel={};
   const own = Store.session && sellerId===Store.session.id;
   const items=allItems().filter(x=>x.sellerId===sellerId);
   if(!items.length && !own){ toast('Inga annonser på detta stånd än'); return; }
@@ -874,7 +897,15 @@ function openStorefront(sellerId){
       (own&&prem?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
     '</div>';
   }
-  const grid=(items.map(function(it){ const ic=iconFor(it); const price=it.kind==='spot'?'Fritt':(it.deal==='giveaway'?'Skänkes':it.price+' kr'); return '<div class="mini" onclick="closeOverlay(\'sheet\');openDetail(\''+it.id+'\')"><div class="mt" style="background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,44)+'</div><div class="mb"><div class="mn">'+it.title.split(',')[0].split(' — ')[0]+'</div><div class="mp">'+price+'</div></div></div>'; }).join('')) || '<div class="empty" style="padding:16px">Inga aktiva annonser just nu</div>';
+  const cartEnabled = !own && isUuid(sellerId);
+  const grid=(items.map(function(it){ const ic=iconFor(it); const price=it.kind==='spot'?'Fritt':(it.deal==='giveaway'?'Skänkes':it.price+' kr');
+    const orderable = cartEnabled && it.kind!=='spot'; const sel=!!cartSel[it.id];
+    return '<div class="mini" onclick="closeOverlay(\'sheet\');openDetail(\''+it.id+'\')">'+
+      (orderable?'<div class="cartchk'+(sel?' on':'')+'" id="chk_'+it.id+'" onclick="event.stopPropagation();cartToggle(\''+it.id+'\',\''+sellerId+'\',\''+safeName+'\')">'+(sel?'✓':'')+'</div>':'')+
+      '<div class="mt" style="background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,44)+'</div>'+
+      '<div class="mb"><div class="mn">'+it.title.split(',')[0].split(' — ')[0]+'</div><div class="mp">'+price+'</div>'+
+      (orderable?'<div class="cartqty" id="qty_'+it.id+'" style="'+(sel?'':'display:none')+'" onclick="event.stopPropagation()"><button onclick="event.stopPropagation();cartQty(\''+it.id+'\',-1,\''+sellerId+'\',\''+safeName+'\')">−</button><span id="qtyn_'+it.id+'">'+(cartSel[it.id]||1)+'</span><button onclick="event.stopPropagation();cartQty(\''+it.id+'\',1,\''+sellerId+'\',\''+safeName+'\')">+</button></div>':'')+
+      '</div></div>'; }).join('')) || '<div class="empty" style="padding:16px">Inga aktiva annonser just nu</div>';
   let story='';
   if(prem && own) story='<div class="sec"><p class="k">Om skörden</p><textarea class="ed" id="storyText" maxlength="300" style="min-height:72px;resize:vertical" placeholder="Berätta om din odling — vad du odlar, hur, och varför…" oninput="storyCount(this)" onchange="saveStory(this.value)">'+escAttr(Store.page.story)+'</textarea><div id="storyCnt" style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px">'+(Store.page.story||'').length+'/300</div></div>';
   else if(prem) story='<div class="sec"><p class="k">Om skörden</p><p style="font-size:13.5px;line-height:1.6;margin:0">Liten odling i '+(area||'trakten')+'. Odlar utan bekämpningsmedel och säljer överskottet. Kom gärna och plocka.</p></div>';
@@ -900,8 +931,8 @@ function openStorefront(sellerId){
     '<div class="sec"><p class="k">Till salu</p><div class="grid2">'+grid+'</div></div>'+
     (!prem&&own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Med Premium får du bildgalleri, 10 teman, "Om skörden" och en säsongskalender med förberedda annonser.</div></div><button class="btn" style="margin-top:10px" onclick="openPlan()">Uppgradera till Premium</button></div>':'')+
     (!prem&&!own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Enkel profil.</div></div></div>':'')+
-    '</div>';
-  showOverlay('sheet');
+    '</div>'+(cartEnabled?'<div id="cartBar" class="cartbar" style="display:none" onclick="placeCartOrder(\''+sellerId+'\',\''+safeName+'\')"><span class="cb-txt"></span></div>':'');
+  showOverlay('sheet'); updateCartBar(sellerId,safeName);
 }
 
 let createDeal='sale', createStatus='ready';
