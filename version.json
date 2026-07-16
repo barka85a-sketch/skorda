@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "date": "2026-07-15",
-  "notes": "Premium-teman: gårdsståndets teman är ombyggda från platta färger till stämningsfulla naturscener (Skog, Fruktträdgård, Sommaräng, Bärskog, Lavendel, Gyllene skörd, Kustträdgård, Skymning) med rika gradienter och diskreta SVG-motiv. Temaväljaren visar dem som förhandsvisande kort."
+  "notes": "Uppdateringskoll vid start: appen jämför körd version mot senaste version.json och visar en banner 'Ny version finns — Uppdatera' om en nyare finns. Ett tryck laddar om och hämtar den nya versionen."
 }

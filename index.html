@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.8.8 -->
+<!-- Skörda v0.8.9 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -201,6 +201,9 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .tsw{height:84px;border-radius:16px;cursor:pointer;border:2px solid transparent;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.09)}
 .tsw .tsw-name{position:absolute;left:11px;bottom:9px;color:#fff;font-family:'Bricolage Grotesque';font-weight:800;font-size:13.5px;text-shadow:0 1px 5px rgba(0,0,0,.45);z-index:2}
 .tsw.on{border-color:#fff;box-shadow:0 0 0 3px var(--leaf),0 4px 14px rgba(0,0,0,.14)}
+#updBanner{position:fixed;top:0;left:0;right:0;z-index:5000;background:var(--kale);color:#fff;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;font-family:'Bricolage Grotesque';font-weight:700;font-size:13.5px;box-shadow:0 3px 14px rgba(0,0,0,.22)}
+#updBanner button{margin-left:auto;background:#fff;color:var(--kale);border:none;border-radius:9px;padding:8px 13px;font-weight:800;font-size:13px;cursor:pointer}
+#updBanner .upd-x{cursor:pointer;opacity:.75;font-size:19px;padding:0 2px;flex:0 0 auto}
 .sf-cover .motif{position:absolute;inset:0;display:flex;gap:20px;align-items:center;justify-content:center;opacity:.16}
 .sf-cover .motif svg{width:54px;height:54px}
 .sf-body{padding:0 18px 6px}
@@ -330,7 +333,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.8.8';
+const APP_VERSION='0.8.9';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -1505,7 +1508,21 @@ function boot(){
   } else { const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; }
 }
 document.addEventListener('focusin',function(e){ const t=e.target; if(t&&t.tagName==='INPUT'&&(t.type==='number'||t.type==='text')){ setTimeout(function(){ try{ t.select(); }catch(_){}} ,0); } });
+function showUpdateBanner(ver){
+  if(document.getElementById('updBanner'))return;
+  const b=document.createElement('div'); b.id='updBanner';
+  b.innerHTML='<span>Ny version '+ver+' finns</span><button onclick="location.reload()">Uppdatera</button><span class="upd-x" onclick="this.parentNode.remove()">×</span>';
+  document.body.appendChild(b);
+}
+function checkForUpdate(){
+  try{
+    fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok?r.json():null; }).then(function(v){
+      if(v && v.version && v.version!==APP_VERSION){ showUpdateBanner(v.version); }
+    }).catch(function(){});
+  }catch(e){}
+}
 window.addEventListener('load',boot);
+window.addEventListener('load',function(){ setTimeout(checkForUpdate,1500); });
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{})); }
 </script>
 </body>
