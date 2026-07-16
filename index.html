@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.7.5 -->
+<!-- Skörda v0.7.8 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -183,6 +183,9 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .cartqty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:16px;cursor:pointer;color:var(--kale);display:grid;place-items:center;line-height:1}
 .cartqty span{font-weight:800;min-width:20px;text-align:center;font-family:'Bricolage Grotesque'}
 .cartbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--leaf);color:#fff;padding:17px;text-align:center;font-family:'Bricolage Grotesque';font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
+.bell{position:relative;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;cursor:pointer;background:#fff;border:1px solid var(--line);flex:0 0 auto}
+.bell .badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:99px;background:#D9432B;color:#fff;font-size:11px;font-weight:800;display:none;place-items:center;padding:0 5px;font-family:'Bricolage Grotesque'}
+.bell .badge.on{display:grid}
 #lightbox{position:fixed;inset:0;background:#000;z-index:3000;display:flex;flex-direction:column}
 .lb-close{position:absolute;top:14px;right:16px;color:#fff;font-size:32px;z-index:2;cursor:pointer;line-height:1;width:44px;height:44px;display:grid;place-items:center}
 .lb-track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
@@ -233,7 +236,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="banner" id="demoBanner">Demoläge — data sparas i din webbläsare. Koppla Supabase för skarp drift.</div>
 
   <div class="view on" id="view-map">
-    <div class="top"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg><span>Skörda <span style="font-weight:600;font-size:.6em;color:var(--muted);letter-spacing:.02em">– närodlat</span></span></div><div class="sub" id="mapSub">Söker nära dig</div></div></div>
+    <div class="top" style="display:flex;align-items:center;justify-content:space-between"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg><span>Skörda <span style="font-weight:600;font-size:.6em;color:var(--muted);letter-spacing:.02em">– närodlat</span></span></div><div class="sub" id="mapSub">Söker nära dig</div></div><div class="bell" id="notifBell" onclick="openNotifications()"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#26452F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" id="notifBadge"></span></div></div>
     <div class="filterbar">
       <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
       <div class="hchip" id="chips"></div>
@@ -326,7 +329,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.7.5';
+const APP_VERSION='0.7.8';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -347,8 +350,9 @@ const Store={
   messages:LS.get('messages',{}),
   page:LS.get('page',{images:[],theme:'kale',story:'',months:{}}),
   favorites:LS.get('favorites',[]),
+  notifSeen:LS.get('notifSeen',[]),
   save(){ LS.set('session',this.session); LS.set('premium',this.premium); LS.set('userListings',this.userListings);
-    LS.set('watches',this.watches); LS.set('orders',this.orders); LS.set('messages',this.messages); LS.set('page',this.page); LS.set('favorites',this.favorites); }
+    LS.set('watches',this.watches); LS.set('orders',this.orders); LS.set('messages',this.messages); LS.set('page',this.page); LS.set('favorites',this.favorites); LS.set('notifSeen',this.notifSeen); }
 };
 
 function svg(id,size){ const el=document.getElementById(id); return el?'<svg width="'+size+'" height="'+size+'" viewBox="'+el.getAttribute('viewBox')+'">'+el.innerHTML+'</svg>':''; }
@@ -568,7 +572,7 @@ function directions(lat,lng){
 function orderFor(itemId){ return Store.orders.find(o=>o.itemId===itemId); }
 function openDetail(id){
   const it=allItems().find(x=>x.id===id); if(!it)return;
-  orderQty=1;
+  orderQty=1; orderUnitPrice=(it.price||0);
   const c=L.latLng(STATE.center.lat,STATE.center.lng);
   const km=(c.distanceTo(L.latLng(it.lat,it.lng))/1000).toFixed(1).replace('.',',');
   const ic=iconFor(it), b=badgeFor(it);
@@ -591,7 +595,8 @@ function openDetail(id){
       action='<button class="btn" onclick="directions('+dLat+','+dLng+')">Vägbeskrivning</button><button class="btn ghost sm" style="margin-top:10px" onclick="contactSeller(\''+it.id+'\')">Meddela '+it.seller+'</button>';
     } else {
       pickup='<div class="privacy">'+svg('i-pin',18)+'<div>Ungefärligt område: <b>'+it.area_label+'</b>. Exakt adress + vägbeskrivning låses upp när '+it.seller+' accepterat din beställning.</div></div>';
-      action='<div style="display:flex;align-items:center;margin-bottom:14px"><span style="color:var(--muted);font-size:13px">Antal ('+(UNIT[it.unit]||'st')+')</span><div style="margin-left:auto;display:flex;align-items:center;gap:14px"><button class="qbtn" onclick="setQty(orderQty-1)">−</button><span id="qtyNum" style="font-family:\'Bricolage Grotesque\';font-weight:800;font-size:19px;min-width:26px;text-align:center">1</span><button class="qbtn" onclick="setQty(orderQty+1)">+</button></div></div>'+
+      action='<div style="display:flex;align-items:center;margin-bottom:12px"><span style="color:var(--muted);font-size:13px">Antal ('+(UNIT[it.unit]||'st')+')</span><div style="margin-left:auto;display:flex;align-items:center;gap:14px"><button class="qbtn" onclick="setQty(orderQty-1)">−</button><span id="qtyNum" style="font-family:\'Bricolage Grotesque\';font-weight:800;font-size:19px;min-width:26px;text-align:center">1</span><button class="qbtn" onclick="setQty(orderQty+1)">+</button></div></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-family:\'Bricolage Grotesque\'"><span style="font-weight:700">Totalt</span><span style="font-weight:800;font-size:18px;color:var(--kale)"><span id="orderTot">'+it.price+'</span> kr</span></div>'+
         '<button class="btn" onclick="placeOrder(\''+it.id+'\')">Beställ · hämtas</button><div class="note">Betalning sker på plats (Swish). Ingen avgift i appen.</div>';
     }
   }
@@ -639,7 +644,7 @@ function loadOrders(){ if(!sb||!Store.session)return; const uid=Store.session.id
         return {id:o.id,listing_id:o.listing_id,role:role,status:o.status,title:o.title,price:o.price,qty:o.qty,unit:o.unit,
           cpId:(role==='buyer'?o.seller_id:o.buyer_id),
           cpName:(role==='buyer'?(o.seller||'Säljare'):((nm&&nm[o.buyer_id])||'Köpare'))}; });
-      renderAccount(); };
+      renderAccount(); refreshNotifBadge(); };
     if(!buyerIds.length){ build({}); return; }
     sb.from('profiles').select('id,name').in('id',buyerIds).then(function(p){ const m={}; (p.data||[]).forEach(function(x){m[x.id]=x.name;}); build(m); });
   }); }
@@ -882,6 +887,40 @@ function submitRating(targetId){
     toast('Tack för ditt omdöme!'); closeOverlay('sheet'); loadListings();
   });
 }
+function buildNotifications(cb){
+  if(!sb||!Store.session){ cb([]); return; }
+  const me=Store.session.id; const list=[];
+  DBORDERS.forEach(function(o){
+    if(o.role==='seller'&&o.status==='requested') list.push({key:'oreq-'+o.id,icon:'i-basket',text:'Ny beställning: '+o.title+' från '+o.cpName,act:'account',t:Date.now()});
+    else if(o.role==='buyer'&&o.status==='accepted') list.push({key:'oacc-'+o.id,icon:'i-pin',text:o.cpName+' accepterade: '+o.title,act:'account',t:Date.now()});
+    else if(o.role==='buyer'&&o.status==='declined') list.push({key:'odec-'+o.id,icon:'i-basket',text:o.cpName+' tackade nej: '+o.title,act:'account',t:Date.now()});
+  });
+  const fav=Store.favorites.filter(function(f){return f.type==='seller'&&isUuid(f.id);});
+  const favIds=fav.map(function(f){return f.id;}); const favName={}; fav.forEach(function(f){favName[f.id]=f.name;});
+  sb.from('messages').select('id,order_id,sender_id,body,created_at').neq('sender_id',me).order('created_at',{ascending:false}).limit(20).then(function(r){
+    (r.data||[]).forEach(function(m){ const bd=(m.body||''); list.push({key:'msg-'+m.id,icon:'i-pin',text:'Nytt meddelande: '+(bd.length>40?bd.slice(0,40)+'…':bd),act:'chat',orderId:m.order_id,t:new Date(m.created_at).getTime()}); });
+    if(!favIds.length){ cb(list); return; }
+    sb.from('listings').select('id,title,user_id,created_at').in('user_id',favIds).order('created_at',{ascending:false}).limit(20).then(function(r2){
+      (r2.data||[]).forEach(function(l){ list.push({key:'lst-'+l.id,icon:'i-basket',text:'Ny annons hos '+(favName[l.user_id]||'gårdssida')+': '+l.title,act:'seller',sellerId:l.user_id,t:new Date(l.created_at).getTime()}); });
+      cb(list);
+    },function(){ cb(list); });
+  },function(){ cb(list); });
+}
+function refreshNotifBadge(){ buildNotifications(function(list){ const seen=Store.notifSeen||[]; const unread=list.filter(function(n){return seen.indexOf(n.key)<0;}).length; const b=document.getElementById('notifBadge'); if(b){ b.textContent=unread>9?'9+':(''+unread); b.classList.toggle('on',unread>0); } }); }
+function openNotifications(){
+  document.getElementById('sheet').innerHTML='<div class="top"><div class="back" style="position:static" onclick="closeOverlay(\'sheet\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">Aviseringar</div><div style="width:40px"></div></div><div class="scroll" id="notifBody" style="padding:0 18px 24px"><div class="empty" style="padding:24px">Laddar…</div></div>';
+  showOverlay('sheet');
+  buildNotifications(function(list){
+    const seen=Store.notifSeen||[]; list.sort(function(a,b){return (b.t||0)-(a.t||0);});
+    const body=document.getElementById('notifBody'); if(!body)return;
+    if(!list.length){ body.innerHTML='<div class="empty" style="padding:30px"><b>Inga aviseringar</b>Nya beställningar, svar och meddelanden dyker upp här.</div>'; }
+    else { body.innerHTML=list.map(function(n){ const isNew=seen.indexOf(n.key)<0;
+      const open = n.act==='chat'?('closeOverlay(\'sheet\');openChat(\''+n.orderId+'\')') : (n.act==='seller'?('openStorefront(\''+n.sellerId+'\')') : ('closeOverlay(\'sheet\');setView(\'account\')'));
+      return '<div class="arow" onclick="'+open+'"><div style="width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:'+(isNew?'#FDECE7':'#EFEBDD')+'">'+svg(n.icon,20)+'</div><div style="flex:1"><div class="at" style="font-weight:'+(isNew?'700':'600')+'">'+escAttr(n.text)+'</div></div>'+(isNew?'<span style="width:9px;height:9px;border-radius:99px;background:#D9432B;flex:0 0 auto"></span>':'')+'</div>';
+    }).join(''); }
+    const keys=list.map(function(n){return n.key;}); const s=Store.notifSeen||[]; keys.forEach(function(k){ if(s.indexOf(k)<0)s.push(k); }); Store.notifSeen=(s.length>500?s.slice(-500):s); Store.save(); refreshNotifBadge();
+  });
+}
 let cartSel={};
 function cartToggle(id,sellerId,name){ if(cartSel[id]){delete cartSel[id];}else{cartSel[id]=1;}
   const chk=document.getElementById('chk_'+id); if(chk){ chk.classList.toggle('on',!!cartSel[id]); chk.textContent=cartSel[id]?'✓':''; }
@@ -893,10 +932,42 @@ function updateCartBar(sellerId,name){ const bar=document.getElementById('cartBa
   if(!ids.length){ bar.style.display='none'; return; }
   let total=0; ids.forEach(function(id){ const it=allItems().find(function(x){return x.id===id;}); if(it&&it.deal!=='giveaway'&&it.price)total+=it.price*cartSel[id]; });
   bar.style.display='block'; bar.querySelector('.cb-txt').textContent='Beställ valda ('+ids.length+')'+(total?(' · '+total+' kr'):''); }
+function openCart(sellerId,name){ const ids=Object.keys(cartSel); if(!ids.length){ toast('Bocka i minst en vara'); return; } renderCart(sellerId,name); }
+function cartTotal(){ let t=0; Object.keys(cartSel).forEach(function(id){ const it=allItems().find(function(x){return x.id===id;}); if(it&&it.deal!=='giveaway'&&it.price)t+=it.price*cartSel[id]; }); return t; }
+function renderCart(sellerId,name){
+  const ids=Object.keys(cartSel);
+  const rows=ids.map(function(id){ const it=allItems().find(function(x){return x.id===id;}); if(!it)return '';
+    const q=cartSel[id]; const unit=UNIT[it.unit]||'st'; const each=(it.deal==='giveaway'||it.price==null)?0:it.price; const line=each*q;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)">'+
+      '<div style="width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:'+(BG[iconFor(it)]||'#DDE7CE')+';flex:0 0 auto">'+svg(iconFor(it),22)+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:700;font-family:\'Bricolage Grotesque\';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+it.title.split(',')[0].split(' — ')[0]+'</div><div style="font-size:12px;color:var(--muted)">'+(each?each+' kr/'+unit:'Skänkes')+'</div></div>'+
+      '<div style="display:flex;align-items:center;gap:6px;flex:0 0 auto"><button class="qbtn" style="width:30px;height:30px;font-size:17px" onclick="cartReviewQty(\''+id+'\',-1,\''+sellerId+'\',\''+name+'\')">−</button><span style="min-width:26px;text-align:center;font-weight:800;font-family:\'Bricolage Grotesque\'">'+q+'</span><button class="qbtn" style="width:30px;height:30px;font-size:17px" onclick="cartReviewQty(\''+id+'\',1,\''+sellerId+'\',\''+name+'\')">+</button></div>'+
+      '<div style="width:62px;text-align:right;font-weight:700;flex:0 0 auto">'+(each?line+' kr':'—')+'</div>'+
+      '<span onclick="cartRemove(\''+id+'\',\''+sellerId+'\',\''+name+'\')" style="color:var(--muted);cursor:pointer;font-size:18px;flex:0 0 auto">×</span>'+
+    '</div>'; }).join('');
+  const total=cartTotal();
+  document.getElementById('sheet').innerHTML=
+    '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+sellerId+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">Din beställning</div><div style="width:40px"></div></div>'+
+    '<div class="scroll" style="padding:0 18px 110px"><p class="k" style="margin:14px 0 4px">Hos '+escAttr(name)+'</p>'+rows+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-family:\'Bricolage Grotesque\'"><span style="font-weight:700;font-size:16px">Totalt</span><span style="font-weight:800;font-size:22px;color:var(--kale)">'+total+' kr</span></div>'+
+      '<div class="note" style="text-align:left;margin-top:8px">Betalning sker på plats (Swish/kontant). Ingen avgift i appen. Säljaren accepterar din beställning.</div>'+
+    '</div>'+
+    '<div class="cartbar" onclick="placeCartOrder(\''+sellerId+'\',\''+name+'\')">Bekräfta beställning'+(total?(' · '+total+' kr'):'')+'</div>';
+  showOverlay('sheet');
+}
+function cartReviewQty(id,d,sellerId,name){ if(!cartSel[id])return; cartSel[id]=Math.max(1,cartSel[id]+d); renderCart(sellerId,name); }
+function cartRemove(id,sellerId,name){ delete cartSel[id]; if(!Object.keys(cartSel).length){ openStorefront(sellerId); return; } renderCart(sellerId,name); }
 function placeCartOrder(sellerId,name){ const ids=Object.keys(cartSel); if(!ids.length)return;
-  if(!sb||!Store.session){ toast('Logga in för att beställa'); return; }
-  const rows=ids.map(function(id){ const it=allItems().find(function(x){return x.id===id;}); return {listing_id:id,buyer_id:Store.session.id,seller_id:sellerId,title:it?it.title:'Vara',seller:it?it.seller:name,price:(it&&it.deal!=='giveaway')?it.price:null,qty:cartSel[id],unit:it?it.unit:null,status:'requested'}; });
-  sb.from('orders').insert(rows).then(function(r){ if(r.error){ toast(r.error.message); return; } toast(ids.length+' varor beställda hos '+name); cartSel={}; closeOverlay('sheet'); setView('account'); loadOrders(); }); }
+  if(sb && isUuid(sellerId)){
+    if(!Store.session){ toast('Logga in för att beställa'); openAuth(); return; }
+    const rows=ids.map(function(id){ const it=allItems().find(function(x){return x.id===id;}); return {listing_id:id,buyer_id:Store.session.id,seller_id:sellerId,title:it?it.title:'Vara',seller:it?it.seller:name,price:(it&&it.deal!=='giveaway')?it.price:null,qty:cartSel[id],unit:it?it.unit:null,status:'requested'}; });
+    sb.from('orders').insert(rows).then(function(r){ if(r.error){ toast(r.error.message); return; } toast(ids.length+' varor beställda hos '+name); cartSel={}; closeOverlay('sheet'); setView('account'); loadOrders(); });
+    return;
+  }
+  if(!requireLogin())return;
+  ids.forEach(function(id){ const it=allItems().find(function(x){return x.id===id;}); if(!it)return; Store.orders.push({id:'o'+Date.now()+'_'+id.slice(-4),itemId:id,title:it.title,seller:it.seller,sellerId:it.sellerId,lat:(it.exactLat!=null?it.exactLat:it.lat),lng:(it.exactLng!=null?it.exactLng:it.lng),price:it.price,qty:cartSel[id],unit:it.unit,status:'requested',created:Date.now()}); });
+  Store.save(); toast(ids.length+' varor beställda hos '+name); cartSel={}; closeOverlay('sheet'); setView('account');
+}
 function openStorefront(sellerId){
   cartSel={};
   const own = Store.session && sellerId===Store.session.id;
@@ -923,7 +994,7 @@ function openStorefront(sellerId){
       (own&&prem?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
     '</div>';
   }
-  const cartEnabled = !own && isUuid(sellerId);
+  const cartEnabled = !own;
   const grid=(items.map(function(it){ const ic=iconFor(it); const price=it.kind==='spot'?'Fritt':(it.deal==='giveaway'?'Skänkes':it.price+' kr');
     const orderable = cartEnabled && it.kind!=='spot'; const sel=!!cartSel[it.id];
     return '<div class="mini" onclick="closeOverlay(\'sheet\');openDetail(\''+it.id+'\')">'+
@@ -957,7 +1028,7 @@ function openStorefront(sellerId){
     '<div class="sec"><p class="k">Till salu</p><div class="grid2">'+grid+'</div></div>'+
     (!prem&&own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Med Premium får du bildgalleri, 10 teman, "Om skörden" och en säsongskalender med förberedda annonser.</div></div><button class="btn" style="margin-top:10px" onclick="openPlan()">Uppgradera till Premium</button></div>':'')+
     (!prem&&!own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Enkel profil.</div></div></div>':'')+
-    '</div>'+(cartEnabled?'<div id="cartBar" class="cartbar" style="display:none" onclick="placeCartOrder(\''+sellerId+'\',\''+safeName+'\')"><span class="cb-txt"></span></div>':'');
+    '</div>'+(cartEnabled?'<div id="cartBar" class="cartbar" style="display:none" onclick="openCart(\''+sellerId+'\',\''+safeName+'\')"><span class="cb-txt"></span></div>':'');
   showOverlay('sheet'); updateCartBar(sellerId,safeName);
 }
 
@@ -1034,8 +1105,8 @@ function renderCreateImg(){ const w=document.getElementById('createImgWrap'); if
     ? '<div style="position:relative;width:130px;height:98px;border-radius:12px;overflow:hidden"><img src="'+createImage+'" style="width:100%;height:100%;object-fit:cover"><div onclick="clearCreateImage()" style="position:absolute;top:5px;right:5px;width:26px;height:26px;border-radius:99px;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:15px">×</div></div>'
     : '<button class="btn ghost sm" onclick="pickCreateImage()">Lägg till bild</button>'; }
 function clearCreateImage(){ createImage=''; renderCreateImg(); }
-let orderQty=1;
-function setQty(n){ orderQty=Math.max(1,n); const e=document.getElementById('qtyNum'); if(e)e.textContent=orderQty; }
+let orderQty=1, orderUnitPrice=0;
+function setQty(n){ orderQty=Math.max(1,n); const e=document.getElementById('qtyNum'); if(e)e.textContent=orderQty; const t=document.getElementById('orderTot'); if(t)t.textContent=orderUnitPrice*orderQty; }
 function saveListing(){
   const title=(document.getElementById('f_title').value||'').trim();
   if(!title){ toast('Fyll i en rubrik'); return; }
@@ -1235,13 +1306,13 @@ function renderAccount(){
       const rate=(o.status==='picked_up'&&isUuid(o.cpId))?'<button class="btn ghost sm" style="margin-top:8px" onclick="openRateForm(\''+o.cpId+'\',\''+cp+'\')">Lämna omdöme</button>':'';
       const rm='<span onclick="cancelOrderDB(\''+o.id+'\')" title="Ta bort" style="color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</span>';
       const who=(o.role==='seller'?'Köpare: ':'Säljare: ')+escAttr(o.cpName||'');
-      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+who+(o.qty?(' · '+o.qty+' '+(UNIT[o.unit]||'st')):'')+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela '+escAttr(o.cpName||'')+'</button>'+rate+'</div>';
+      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+who+(o.qty?(' · '+o.qty+' '+(UNIT[o.unit]||'st')):'')+(o.price?(' · '+(o.price*(o.qty||1))+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela '+escAttr(o.cpName||'')+'</button>'+rate+'</div>';
     }
     let actions='';
     if(o.status==='requested') actions='<div style="display:flex;gap:8px"><button class="btn ghost sm" style="flex:1" onclick="acceptOrderDemo(\''+o.id+'\')">Acceptera (demo)</button><button class="btn ghost sm" style="flex:1" onclick="declineOrderDemo(\''+o.id+'\')">Tacka nej (demo)</button></div>';
     else if(o.status==='accepted') actions='<div style="display:flex;gap:8px"><button class="btn sm" style="flex:1" onclick="directions('+o.lat+','+o.lng+')">Vägbeskrivning</button><button class="btn ghost sm" style="flex:1" onclick="markPicked(\''+o.id+'\')">Hämtad</button></div>';
     const rm='<span onclick="removeOrder(\''+o.id+'\')" title="Ta bort" style="color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</span>';
-    return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+o.seller+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela</button>'+((o.status!=='declined'&&isUuid(o.sellerId)&&Store.session&&o.sellerId!==Store.session.id)?'<button class="btn ghost sm" style="margin-top:8px" onclick="openRateForm(\''+o.sellerId+'\',\''+(o.seller||'').replace(/['"<>]/g,'')+'\')">Lämna omdöme</button>':'')+'</div>'; }).join('');
+    return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+o.seller+(o.qty?(' · '+o.qty+' '+(UNIT[o.unit]||'st')):'')+(o.price?(' · '+(o.price*(o.qty||1))+' kr'):'')+'</div>'+actions+'<button class="btn ghost sm" style="margin-top:8px" onclick="openChat(\''+o.id+'\')">Meddela</button>'+((o.status!=='declined'&&isUuid(o.sellerId)&&Store.session&&o.sellerId!==Store.session.id)?'<button class="btn ghost sm" style="margin-top:8px" onclick="openRateForm(\''+o.sellerId+'\',\''+(o.seller||'').replace(/['"<>]/g,'')+'\')">Lämna omdöme</button>':'')+'</div>'; }).join('');
   html+='<button class="btn ghost sm" style="margin-top:18px" onclick="logout()">Logga ut</button>';
   html+='<div style="text-align:center;color:var(--muted);font-size:11px;margin-top:20px">Skörda v'+APP_VERSION+'</div>';
   box.innerHTML=html;
@@ -1301,6 +1372,7 @@ function boot(){
     sb.auth.getSession().then(function(r){ setSessionFromSupabase(r.data?r.data.session:null); });
     sb.auth.onAuthStateChange(function(_e,session){ setSessionFromSupabase(session); if(session)closeOverlay('sheet'); });
     loadListings();
+    setInterval(function(){ if(sb&&Store.session)refreshNotifBadge(); },60000);
   }
   renderAccount();
   setTimeout(()=>{ if(map)map.invalidateSize(); },250);
