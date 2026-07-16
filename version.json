@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "date": "2026-07-15",
-  "notes": "Appens titel ändrad till Skörda – närodlat (kartrubrik, sidtitel, inloggning, manifest). Hemskärmsnamnet (short_name) förblir Skörda."
+  "notes": "Bild på annons (läggs till när man skapar, syns i detaljvyn). Antal (st/kg) väljs med stepper innan man beställer, och visas på beställningen. Kräver skorda-v2.sql i Supabase."
 }

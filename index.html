@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.7.1 -->
+<!-- Skörda v0.7.2 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -175,6 +175,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .imgcell .ctrls{position:absolute;bottom:7px;left:7px;right:7px;display:flex;gap:6px;justify-content:center}
 .imgcell .ctrls button{background:rgba(255,255,255,.94);border:none;border-radius:8px;width:34px;height:28px;font-size:16px;cursor:pointer;display:grid;place-items:center;color:var(--kale)}
 .imgcell .ctrls button:disabled{opacity:.35}
+.qbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:20px;cursor:pointer;color:var(--kale);display:grid;place-items:center;line-height:1}
 #lightbox{position:fixed;inset:0;background:#000;z-index:3000;display:flex;flex-direction:column}
 .lb-close{position:absolute;top:14px;right:16px;color:#fff;font-size:32px;z-index:2;cursor:pointer;line-height:1;width:44px;height:44px;display:grid;place-items:center}
 .lb-track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
@@ -318,7 +319,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.7.1';
+const APP_VERSION='0.7.2';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -560,6 +561,7 @@ function directions(lat,lng){
 function orderFor(itemId){ return Store.orders.find(o=>o.itemId===itemId); }
 function openDetail(id){
   const it=allItems().find(x=>x.id===id); if(!it)return;
+  orderQty=1;
   const c=L.latLng(STATE.center.lat,STATE.center.lng);
   const km=(c.distanceTo(L.latLng(it.lat,it.lng))/1000).toFixed(1).replace('.',',');
   const ic=iconFor(it), b=badgeFor(it);
@@ -582,13 +584,16 @@ function openDetail(id){
       action='<button class="btn" onclick="directions('+dLat+','+dLng+')">Vägbeskrivning</button><button class="btn ghost sm" style="margin-top:10px" onclick="contactSeller(\''+it.id+'\')">Meddela '+it.seller+'</button>';
     } else {
       pickup='<div class="privacy">'+svg('i-pin',18)+'<div>Ungefärligt område: <b>'+it.area_label+'</b>. Exakt adress + vägbeskrivning låses upp när '+it.seller+' accepterat din beställning.</div></div>';
-      action='<button class="btn" onclick="placeOrder(\''+it.id+'\')">Beställ · hämtas</button><div class="note">Betalning sker på plats (Swish). Ingen avgift i appen.</div>';
+      action='<div style="display:flex;align-items:center;margin-bottom:14px"><span style="color:var(--muted);font-size:13px">Antal ('+(UNIT[it.unit]||'st')+')</span><div style="margin-left:auto;display:flex;align-items:center;gap:14px"><button class="qbtn" onclick="setQty(orderQty-1)">−</button><span id="qtyNum" style="font-family:\'Bricolage Grotesque\';font-weight:800;font-size:19px;min-width:26px;text-align:center">1</span><button class="qbtn" onclick="setQty(orderQty+1)">+</button></div></div>'+
+        '<button class="btn" onclick="placeOrder(\''+it.id+'\')">Beställ · hämtas</button><div class="note">Betalning sker på plats (Swish). Ingen avgift i appen.</div>';
     }
   }
   const sellerLine=(it.sellerId)?'<div style="margin-top:10px"><span onclick="openStorefront(\''+it.sellerId+'\')" style="color:var(--leaf);font-weight:700;cursor:pointer">'+it.seller+' →</span></div>':'<div style="margin-top:10px;color:var(--muted)">'+it.seller+'</div>';
+  const heroImg='<img id="detailHeroImg" src="'+(it.image||'')+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;'+(it.image?'':'display:none')+'">';
+  const heroIcon='<span id="detailHeroIcon" style="'+(it.image?'display:none':'')+'">'+svg(ic,120)+'</span>';
   document.getElementById('detail').innerHTML=
     '<div class="scroll">'+
-    '<div class="hero" style="background:'+(BG[ic]||'#DDE7CE')+'"><div class="back" onclick="closeOverlay(\'detail\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+svg(ic,120)+'<span class="st '+b.cls+'" style="position:absolute;bottom:14px;left:14px">'+b.label+'</span></div>'+
+    '<div class="hero" style="background:'+(BG[ic]||'#DDE7CE')+'">'+heroImg+'<div class="back" onclick="closeOverlay(\'detail\')" style="z-index:3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+heroIcon+'<span class="st '+b.cls+'" style="position:absolute;bottom:14px;left:14px;z-index:3">'+b.label+'</span></div>'+
     '<div class="sec"><p class="k">'+it.area_label+' · '+km+' km</p><h2 style="font-size:22px;color:var(--ink);margin-bottom:8px">'+it.title+'</h2>'+priceBlock+
       '<div onclick="openReviews(\''+it.sellerId+'\')" style="margin-top:10px;color:#8A6A12;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px">'+svg('i-star',14)+' '+(it.rating!=null?fmtRating(it.rating)+' · se omdömen':'Se omdömen')+' ›</div>'+
       sellerLine+'</div>'+
@@ -597,6 +602,7 @@ function openDetail(id){
     '<div class="sec">'+action+'</div>'+
     '</div>';
   showOverlay('detail');
+  if(sb&&!it.image&&isUuid(it.id)){ sb.from('listings').select('image_url').eq('id',it.id).single().then(function(r){ if(r.data&&r.data.image_url){ it.image=r.data.image_url; const im=document.getElementById('detailHeroImg'), icn=document.getElementById('detailHeroIcon'); if(im){ im.src=r.data.image_url; im.style.display='block'; } if(icn)icn.style.display='none'; } }); }
 }
 
 function placeOrder(itemId){
@@ -605,15 +611,15 @@ function placeOrder(itemId){
   if(sb&&Store.session&&isUuid(it.id)&&isUuid(it.sellerId)){
     if(it.sellerId===Store.session.id){ toast('Det är din egen annons'); return; }
     if(DBORDERS.some(function(o){return o.listing_id===it.id&&o.role==='buyer';})){ toast('Du har redan en beställning på denna.'); return; }
-    sb.from('orders').insert({listing_id:it.id,buyer_id:Store.session.id,seller_id:it.sellerId,title:it.title,seller:it.seller,price:it.price,status:'requested'}).then(function(r){
+    sb.from('orders').insert({listing_id:it.id,buyer_id:Store.session.id,seller_id:it.sellerId,title:it.title,seller:it.seller,price:it.price,qty:orderQty,unit:it.unit,status:'requested'}).then(function(r){
       if(r.error){ toast(r.error.message); return; }
-      toast('Beställning skickad till '+it.seller); closeOverlay('detail'); setView('account'); loadOrders();
+      toast('Beställning skickad till '+it.seller); orderQty=1; closeOverlay('detail'); setView('account'); loadOrders();
     });
     return;
   }
   if(orderFor(itemId)){ toast('Du har redan en beställning på denna.'); return; }
-  Store.orders.push({id:'o'+Date.now(),itemId,title:it.title,seller:it.seller,sellerId:it.sellerId,lat:(it.exactLat!=null?it.exactLat:it.lat),lng:(it.exactLng!=null?it.exactLng:it.lng),price:it.price,status:'requested',created:Date.now()});
-  Store.save(); toast('Beställning skickad till '+it.seller);
+  Store.orders.push({id:'o'+Date.now(),itemId,title:it.title,seller:it.seller,sellerId:it.sellerId,lat:(it.exactLat!=null?it.exactLat:it.lat),lng:(it.exactLng!=null?it.exactLng:it.lng),price:it.price,qty:orderQty,unit:it.unit,status:'requested',created:Date.now()});
+  orderQty=1; Store.save(); toast('Beställning skickad till '+it.seller);
   closeOverlay('detail'); setView('account');
 }
 let DBORDERS=[];
@@ -623,7 +629,7 @@ function loadOrders(){ if(!sb||!Store.session)return; const uid=Store.session.id
     const rows=r.data||[];
     const buyerIds=Array.from(new Set(rows.filter(function(o){return o.seller_id===uid&&o.buyer_id;}).map(function(o){return o.buyer_id;})));
     const build=function(nm){ DBORDERS=rows.map(function(o){ const role=(o.buyer_id===uid)?'buyer':'seller';
-        return {id:o.id,listing_id:o.listing_id,role:role,status:o.status,title:o.title,price:o.price,
+        return {id:o.id,listing_id:o.listing_id,role:role,status:o.status,title:o.title,price:o.price,qty:o.qty,unit:o.unit,
           cpId:(role==='buyer'?o.seller_id:o.buyer_id),
           cpName:(role==='buyer'?(o.seller||'Säljare'):((nm&&nm[o.buyer_id])||'Köpare'))}; });
       renderAccount(); };
@@ -912,10 +918,11 @@ function openCreate(){
       '<div class="field" id="f_pricewrap" style="display:flex;gap:12px"><div style="flex:1"><label>Pris (kr)</label><input id="f_price" type="number" inputmode="numeric" placeholder="18"></div><div style="flex:1"><label>Enhet</label><select id="f_unit"><option value="piece">per st</option><option value="kg">per kg</option><option value="bunch">per knippe</option><option value="sixpack">per 6-pack</option><option value="liter">per liter</option></select></div></div>'+
       '<div class="field"><label>Område (visas publikt)</label><input id="f_area" oninput="areaEdited=true" placeholder="Fylls i från kartnålen…"></div>'+
       '<div class="field"><label>Beskrivning</label><textarea id="f_desc" placeholder="Kort om varan…"></textarea></div>'+
+      '<div class="field"><label>Bild (valfritt)</label><div id="createImgWrap"><button class="btn ghost sm" onclick="pickCreateImage()">Lägg till bild</button></div><input type="file" id="createImgInput" accept="image/*" style="display:none" onchange="handleCreateImage(this)"><div class="note" style="text-align:left;margin-top:6px">En bild gör annonsen mer klickbar. Syns när någon öppnar annonsen.</div></div>'+
       '<div class="field"><label>Hämtningsplats — dra nålen dit varan hämtas</label><div id="createMap"></div><div class="note" id="f_pinnote" style="text-align:left;margin-top:6px">Säljs: exakt läge döljs publikt tills du accepterat. Skänkes: nålen visas exakt.</div></div>'+
       '<button class="btn" onclick="saveListing()">Publicera annons</button>'+
     '</div>';
-  showOverlay('sheet'); populateProduce();
+  showOverlay('sheet'); populateProduce(); createImage=''; renderCreateImg();
   createDeal='sale'; createStatus='ready'; areaEdited=false; autoArea=''; pinMoved=false;
   setTimeout(function(){ createMap=L.map('createMap',{zoomControl:false}).setView([STATE.center.lat,STATE.center.lng],15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(createMap);
@@ -961,6 +968,17 @@ async function fillArea(lat,lng){
 function pickStatus(el,v){ el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===el)); createStatus=v; }
 function pickDeal(el,v){ el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===el)); createDeal=v;
   document.getElementById('f_pricewrap').style.display=v==='giveaway'?'none':'flex'; }
+let createImage='';
+function pickCreateImage(){ const i=document.getElementById('createImgInput'); if(i)i.click(); }
+function handleCreateImage(inp){ const f=inp.files&&inp.files[0]; if(!f)return;
+  const rd=new FileReader(); rd.onload=function(e){ const img=new Image(); img.onload=function(){ const max=1000; let w=img.width,h=img.height; if(w>h&&w>max){h=Math.round(h*max/w);w=max;} else if(h>w&&h>max){w=Math.round(w*max/h);h=max;} else if(w>max){w=max;h=max;} const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h); createImage=cv.toDataURL('image/jpeg',0.72); renderCreateImg(); }; img.src=e.target.result; }; rd.readAsDataURL(f); inp.value=''; }
+function renderCreateImg(){ const w=document.getElementById('createImgWrap'); if(!w)return;
+  w.innerHTML = createImage
+    ? '<div style="position:relative;width:130px;height:98px;border-radius:12px;overflow:hidden"><img src="'+createImage+'" style="width:100%;height:100%;object-fit:cover"><div onclick="clearCreateImage()" style="position:absolute;top:5px;right:5px;width:26px;height:26px;border-radius:99px;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:15px">×</div></div>'
+    : '<button class="btn ghost sm" onclick="pickCreateImage()">Lägg till bild</button>'; }
+function clearCreateImage(){ createImage=''; renderCreateImg(); }
+let orderQty=1;
+function setQty(n){ orderQty=Math.max(1,n); const e=document.getElementById('qtyNum'); if(e)e.textContent=orderQty; }
 function saveListing(){
   const title=(document.getElementById('f_title').value||'').trim();
   if(!title){ toast('Fyll i en rubrik'); return; }
@@ -975,17 +993,17 @@ function saveListing(){
   const ll=createMarker?createMarker.getLatLng():{lat:STATE.center.lat,lng:STATE.center.lng};
   const exactLat=ll.lat, exactLng=ll.lng;
   if(sb&&Store.session){
-    sb.rpc('create_listing',{in_title:title,in_produce:produce,in_category:cat,in_icon:icon,in_kind:'listing',in_deal:createDeal,in_status:createStatus,in_price:price,in_unit:unit,in_area_label:area,in_lat:exactLat,in_lng:exactLng}).then(function(r){
+    sb.rpc('create_listing',{in_title:title,in_produce:produce,in_category:cat,in_icon:icon,in_kind:'listing',in_deal:createDeal,in_status:createStatus,in_price:price,in_unit:unit,in_area_label:area,in_lat:exactLat,in_lng:exactLng,in_image_url:(createImage||null)}).then(function(r){
       if(r.error){ toast('Kunde inte spara: '+r.error.message); return; }
-      closeOverlay('sheet'); toast('Annons publicerad'); setView('map'); loadListings(); loadMyListings();
+      createImage=''; closeOverlay('sheet'); toast('Annons publicerad'); setView('map'); loadListings(); loadMyListings();
       if(map)map.setView([STATE.center.lat,STATE.center.lng],13);
     });
     return;
   }
   let lat=exactLat,lng=exactLng;
   if(createDeal==='sale'){ const d=(150+Math.random()*250)/111000, a=Math.random()*2*Math.PI; lat=exactLat+d*Math.cos(a); lng=exactLng+d*Math.sin(a)/Math.cos(exactLat*Math.PI/180); }
-  Store.userListings.push({id:'u'+Date.now(),title,category:cat,produce,icon,kind:'listing',deal:createDeal,status:createStatus,price,unit,area_label:area,seller:Store.session.name,sellerId:Store.session.id,premiumSeller:Store.premium.active,rating:null,lat,lng,exactLat,exactLng,desc});
-  Store.save(); closeOverlay('sheet'); toast('Annons publicerad'); setView('map'); refresh();
+  Store.userListings.push({id:'u'+Date.now(),title,category:cat,produce,icon,kind:'listing',deal:createDeal,status:createStatus,price,unit,area_label:area,seller:Store.session.name,sellerId:Store.session.id,premiumSeller:Store.premium.active,rating:null,lat,lng,exactLat,exactLng,desc,image:createImage||''});
+  createImage=''; Store.save(); closeOverlay('sheet'); toast('Annons publicerad'); setView('map'); refresh();
   if(map)map.setView([STATE.center.lat,STATE.center.lng],13);
 }
 
@@ -1138,7 +1156,7 @@ function renderAccount(){
       const rate=(o.status==='picked_up'&&isUuid(o.cpId))?'<button class="btn ghost sm" style="margin-top:8px" onclick="openRateForm(\''+o.cpId+'\',\''+cp+'\')">Lämna omdöme</button>':'';
       const rm='<span onclick="cancelOrderDB(\''+o.id+'\')" title="Ta bort" style="color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</span>';
       const who=(o.role==='seller'?'Köpare: ':'Säljare: ')+escAttr(o.cpName||'');
-      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+who+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+rate+'</div>';
+      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:\'Bricolage Grotesque\';font-weight:700">'+o.title+'</div><div style="margin-left:auto;display:flex;align-items:center;gap:10px">'+st+rm+'</div></div><div style="color:var(--muted);font-size:12px;margin:4px 0 10px">'+who+(o.qty?(' · '+o.qty+' '+(UNIT[o.unit]||'st')):'')+(o.price?(' · '+o.price+' kr'):'')+'</div>'+actions+rate+'</div>';
     }
     let actions='';
     if(o.status==='requested') actions='<div style="display:flex;gap:8px"><button class="btn ghost sm" style="flex:1" onclick="acceptOrderDemo(\''+o.id+'\')">Acceptera (demo)</button><button class="btn ghost sm" style="flex:1" onclick="declineOrderDemo(\''+o.id+'\')">Tacka nej (demo)</button></div>';
