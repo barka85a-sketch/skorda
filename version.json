@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.7.8",
+  "version": "0.8.5",
   "date": "2026-07-15",
-  "notes": "Totalkostnad vid enstaka köp: detaljvyn visar löpande total (pris × antal) medan man justerar antalet, och Mina beställningar visar totalkostnaden (antal × styckpris) i stället för styckpriset."
+  "notes": "Info tydligare: en klickbar info-ruta ovanför status-valen i skapa-annons, och en ⓘ-knapp först i kategoriraden på kartan. Tillbaka-knappen följer nu en historik och går till föregående vy (t.ex. annons -> gårdssida -> tillbaka till annonsen)."
 }
