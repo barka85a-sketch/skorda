@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.9.6 -->
+<!-- Skörda v0.9.11 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -29,9 +29,11 @@ h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;margin:0}
 .toggle button{border:none;background:transparent;font-family:'Bricolage Grotesque';font-weight:700;font-size:13px;color:var(--muted);padding:8px 12px;border-radius:9px;cursor:pointer}
 .toggle button.on{background:var(--white);color:var(--kale);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .filterbar{padding:0 16px 8px}
-.distrow{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:10px}
+.distrow{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
 .distrow .lbl{font-size:12px;font-weight:700;color:var(--kale);white-space:nowrap}
-.distrow .val{font-family:'Bricolage Grotesque';font-weight:800;color:var(--tomato);font-size:15px;min-width:52px;text-align:right}
+.distrow .val{font-family:'Bricolage Grotesque';font-weight:800;color:var(--tomato);font-size:14px;min-width:52px;text-align:right}
+.distbtn{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--kale);font-size:17px;font-weight:800;flex:0 0 auto;cursor:pointer;display:grid;place-items:center;line-height:1}
+.distbtn:active{background:var(--paper-2)}
 input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:6px;border-radius:99px;background:var(--line);outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:99px;background:var(--kale);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
 input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;background:var(--kale);border:3px solid #fff;cursor:pointer}
@@ -249,7 +251,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="view on" id="view-map">
     <div class="top" style="display:flex;align-items:center;justify-content:space-between"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg><span>Skörda <span style="font-weight:600;font-size:.6em;color:var(--muted);letter-spacing:.02em">– närodlat</span></span></div><div class="sub" id="mapSub">Söker nära dig</div></div><div class="bell" id="notifBell" onclick="openNotifications()"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#26452F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" id="notifBadge"></span></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="60000" step="100" value="20000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">20 km</span></div>
       <div class="hchip" id="chips"></div>
       <div class="hchip" id="subchips" style="display:none;margin-top:8px"></div>
     </div>
@@ -260,7 +262,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="view" id="view-list">
     <div class="top"><div><div class="ttl">Nära dig</div><div class="sub" id="listSub"></div></div></div>
     <div class="filterbar">
-      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">5 km</span></div>
+      <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="60000" step="100" value="20000" id="dist2" oninput="onDist(this.value)"><span class="val" id="distVal2">20 km</span></div>
       <div class="hchip" id="chips2"></div>
       <div class="hchip" id="subchips2" style="display:none;margin-top:8px"></div>
     </div>
@@ -274,7 +276,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 
   <div class="view" id="view-watch">
     <div class="top"><div><div class="ttl">Bevakningar</div><div class="sub">Få en pling när något är klart nära dig</div></div></div>
-    <div class="filterbar"><div class="distrow"><span class="lbl">Bevaka inom</span><input type="range" min="400" max="20000" step="100" value="15000" id="dist3" oninput="onDist(this.value)"><span class="val" id="distVal3">5 km</span></div></div>
+    <div class="filterbar"><div class="distrow"><span class="lbl">Bevaka inom</span><input type="range" min="400" max="60000" step="100" value="20000" id="dist3" oninput="onDist(this.value)"><span class="val" id="distVal3">20 km</span></div></div>
     <div class="scroll" style="padding:0 16px 24px"><div id="watchBody"></div></div>
   </div>
 
@@ -340,7 +342,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.9.6';
+const APP_VERSION='0.9.11';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -488,7 +490,7 @@ function loadMyListings(){ if(!sb||!Store.session)return;
 const CATS=[{f:'allt',label:'Allt',c:'#1F3A29'},{f:'fruit_berries',label:'Frukt & bär',c:'#D9432B'},{f:'vegetables',label:'Grönt',c:'#3F7D53'},{f:'eggs',label:'Ägg',c:'#A9884F'},{f:'honey',label:'Honung',c:'#EBAF2E',dark:true},{f:'giveaway',label:'Skänkes',c:'#2E6BE6'},{f:'allman',label:'Allmän yta',c:'#0E9E9E'}];
 const CAT_COLOR={fruit_berries:'#D9432B',vegetables:'#3F7D53',herbs:'#4F8F53',eggs:'#A9884F',honey:'#EBAF2E',plants:'#B0568A',other:'#C9A876'};
 function pinColor(it){ if(it.kind==='spot')return '#0E9E9E'; if(it.deal==='giveaway')return '#2E6BE6'; return CAT_COLOR[it.category]||'#C9A876'; }
-let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:5,cats:[],subs:[],sortKeys:[{key:'dist',dir:'asc'}],view:'map'};
+let STATE={center:{lat:CONFIG.DEFAULT.lat,lng:CONFIG.DEFAULT.lng,label:CONFIG.DEFAULT.label},radiusKm:20,cats:[],subs:[],sortKeys:[{key:'dist',dir:'asc'}],view:'map'};
 function distLabel(km){ return km<1 ? Math.round(km*1000)+' m' : (String(Math.round(km*10)/10).replace('.',',')+' km'); }
 let map,markerLayer,radiusCircle,meMarker,createMap,createMarker;
 
@@ -534,8 +536,18 @@ function renderSubChips(){ ['subchips','subchips2'].forEach(id=>{ const box=docu
 function toggleSub(p){ if(p===null){ STATE.subs=[]; } else { const i=STATE.subs.indexOf(p); if(i<0)STATE.subs.push(p); else STATE.subs.splice(i,1); } renderSubChips(); refresh(); }
 
 function initMap(){
-  map=L.map('map',{zoomControl:true}).setView([STATE.center.lat,STATE.center.lng],13);
-  map.zoomControl.setPosition('bottomright');
+  map=L.map('map',{zoomControl:false,zoomSnap:0,zoomDelta:0.6}).setView([STATE.center.lat,STATE.center.lng],13);
+  map.on('zoomend', applyViewRadius);
+  const RadiusCtl=L.Control.extend({ options:{position:'bottomright'}, onAdd:function(){
+    const c=L.DomUtil.create('div','leaflet-bar');
+    const zin=L.DomUtil.create('a','',c); zin.href='#'; zin.innerHTML='+'; zin.title='Zooma in (mindre avstånd)';
+    const zout=L.DomUtil.create('a','',c); zout.href='#'; zout.innerHTML='\u2212'; zout.title='Zooma ut (större avstånd)';
+    L.DomEvent.on(zin,'click',function(e){ L.DomEvent.stop(e); stepRadius(-400); });
+    L.DomEvent.on(zout,'click',function(e){ L.DomEvent.stop(e); stepRadius(400); });
+    L.DomEvent.disableClickPropagation(c);
+    return c;
+  }});
+  map.addControl(new RadiusCtl());
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
   markerLayer=L.layerGroup().addTo(map);
   radiusCircle=L.circle([STATE.center.lat,STATE.center.lng],{radius:STATE.radiusKm*1000,color:'#3F7D53',weight:2,dashArray:'6 6',fillColor:'#3F7D53',fillOpacity:.08}).addTo(map);
@@ -1472,6 +1484,20 @@ function setView(v){
   if(v==='watch')renderWatch();
   if(v==='account')renderAccount();
 }
+function applyViewRadius(){
+  if(!map||!radiusCircle)return;
+  const el=document.getElementById('map'); const w=(el&&el.clientWidth)||360, hh=(el&&el.clientHeight)||360;
+  const west=map.containerPointToLatLng([0,hh/2]), east=map.containerPointToLatLng([w,hh/2]);
+  const widthMeters=map.distance(west,east); const mpp=widthMeters/Math.max(1,w);
+  let radiusM=mpp*(w-48)/2; radiusM=Math.max(400,Math.min(60000,radiusM));
+  const km=Math.round(radiusM/100)/10;
+  if(Math.abs(km-STATE.radiusKm)<0.05)return;
+  STATE.radiusKm=km; const m=Math.round(km*1000); const lbl=distLabel(km);
+  ['distVal','distVal2','distVal3'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=lbl;});
+  ['dist','dist2','dist3'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=m; const pct=((m-400)/(60000-400))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
+  radiusCircle.setLatLng([STATE.center.lat,STATE.center.lng]).setRadius(km*1000);
+  refresh(); renderSubChips(); if(STATE.view==='watch')renderWatch();
+}
 function fitRadius(){ if(!map||!radiusCircle)return;
   const el=document.getElementById('map'); const w=(el&&el.clientWidth)||360;
   const mpp=(STATE.radiusKm*2000)/Math.max(1,(w-48));
@@ -1485,10 +1511,11 @@ function recenterMap(){
     STATE.center={lat:pos.coords.latitude,lng:pos.coords.longitude,label:'din plats'}; makeDemo(STATE.center.lat,STATE.center.lng); refresh(); fitRadius(); renderSubChips(); loadListings();
   },function(){}, {enableHighAccuracy:true,timeout:8000,maximumAge:0}); }
 }
-function onDist(m){ m=+m; if(m<400)m=400; if(m>20000)m=20000; STATE.radiusKm=m/1000;
+function stepRadius(deltaM){ onDist(Math.round(STATE.radiusKm*1000)+deltaM); }
+function onDist(m){ m=+m; if(m<400)m=400; if(m>60000)m=60000; STATE.radiusKm=m/1000;
   const lbl=distLabel(STATE.radiusKm);
   ['distVal','distVal2','distVal3'].forEach(id=>{const e=document.getElementById(id); if(e)e.textContent=lbl;});
-  ['dist','dist2','dist3'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=m; const pct=((m-400)/(20000-400))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
+  ['dist','dist2','dist3'].forEach(id=>{const e=document.getElementById(id); if(e){e.value=m; const pct=((m-400)/(60000-400))*100; e.style.background='linear-gradient(90deg,var(--leaf) '+pct+'%,var(--line) '+pct+'%)';}});
   refresh(); fitRadius(); renderSubChips(); if(STATE.view==='watch')renderWatch();
 }
 function priceVal(it){ return (it.price!=null)?it.price:0; }
@@ -1523,7 +1550,7 @@ function boot(){
   makeDemo(STATE.center.lat,STATE.center.lng);
   renderChips(); renderSubChips(); renderSortRow();
   try{ initMap(); }catch(e){ console.warn('Kartan kunde inte starta:',e); }
-  onDist(15000); refresh();
+  onDist(20000); refresh();
   if(sb){ Store.session=null;
     sb.auth.getSession().then(function(r){ setSessionFromSupabase(r.data?r.data.session:null); });
     sb.auth.onAuthStateChange(function(_e,session){ setSessionFromSupabase(session); if(session)closeOverlay('sheet'); });
