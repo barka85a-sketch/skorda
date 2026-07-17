@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.9.2 -->
+<!-- Skörda v0.9.6 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -154,6 +154,13 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .tier li{font-size:13px;color:var(--ink);padding:4px 0 4px 22px;position:relative}
 .tier li:before{content:"";position:absolute;left:0;top:9px;width:12px;height:7px;border-left:2px solid var(--leaf);border-bottom:2px solid var(--leaf);transform:rotate(-45deg)}
 .sf-cover{height:118px;position:relative;overflow:hidden;background:linear-gradient(120deg,#26452F,#3F7D53);flex:0 0 auto}
+.sf-cover2{margin:14px 14px 0;border-radius:18px;overflow:hidden;height:160px;position:relative;box-shadow:0 10px 26px rgba(0,0,0,.22);background-size:cover;background-position:center}
+.sf-cover2 .gallery{height:160px}
+.sf-cover2 .gi{height:160px}
+.sf-cover-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5);background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.25))}
+.sf-cover-hint .h1{font-family:'Bricolage Grotesque';font-weight:800;font-size:14px}
+.sf-cover-hint .h2{font-size:11.5px;opacity:.92}
+.sf-content{margin-top:-20px;border-radius:22px 22px 0 0;background:rgba(250,248,242,.93);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:0 -5px 20px rgba(0,0,0,.06);position:relative;z-index:2;padding-bottom:24px}
 .gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;height:220px;background:#0d0d0d}
 .gallery::-webkit-scrollbar{display:none}
 .gallery .gi{position:relative;flex:0 0 100%;scroll-snap-align:center;height:220px}
@@ -333,7 +340,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.9.2';
+const APP_VERSION='0.9.6';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -726,16 +733,18 @@ function sendMsg(orderId){
 }
 
 const THEMES=[
- {k:'skog',n:'Skog',c1:'#173325',c2:'#2E6B45',a:'#2E6B45',g:'linear-gradient(160deg,#173325 0%,#2E6B45 55%,#5BA06B 100%)',s:'skog'},
- {k:'frukt',n:'Fruktträdgård',c1:'#8A3B22',c2:'#E08A4F',a:'#C56A3A',g:'linear-gradient(160deg,#8A3B22 0%,#E08A4F 45%,#8FB05E 100%)',s:'frukt'},
- {k:'ang',n:'Sommaräng',c1:'#5B7F3A',c2:'#A9C86A',a:'#6FA24B',g:'linear-gradient(160deg,#5B7F3A 0%,#A9C86A 55%,#EDE3B0 100%)',s:'ang'},
- {k:'bar',n:'Bärskog',c1:'#3E1836',c2:'#8B2C5A',a:'#8B2C5A',g:'linear-gradient(160deg,#3E1836 0%,#8B2C5A 55%,#C85A7A 100%)',s:'bar'},
- {k:'lavendel',n:'Lavendel',c1:'#42356A',c2:'#8A6FB0',a:'#7A5A9A',g:'linear-gradient(160deg,#42356A 0%,#8A6FB0 55%,#C6B3D9 100%)',s:'lavendel'},
- {k:'skord',n:'Gyllene skörd',c1:'#7A4E10',c2:'#E0A83E',a:'#C98F1E',g:'linear-gradient(160deg,#7A4E10 0%,#E0A83E 55%,#F0D896 100%)',s:'skord'},
- {k:'kust',n:'Kustträdgård',c1:'#0E4A48',c2:'#3FA89A',a:'#0E9E9E',g:'linear-gradient(160deg,#0E4A48 0%,#3FA89A 55%,#D9CBA0 100%)',s:'kust'},
- {k:'skymning',n:'Skymning',c1:'#2E2350',c2:'#7A4E6E',a:'#7A4E6E',g:'linear-gradient(160deg,#2E2350 0%,#7A4E6E 50%,#E0885A 100%)',s:'skymning'}
+ {k:'skog',n:'Skog',c1:'#173325',c2:'#2E6B45',a:'#2E6B45',b:'#2C3821',g:'linear-gradient(160deg,#173325 0%,#2E6B45 55%,#5BA06B 100%)',s:'skog'},
+ {k:'frukt',n:'Fruktträdgård',c1:'#8A3B22',c2:'#E08A4F',a:'#C56A3A',b:'#586034',g:'linear-gradient(160deg,#8A3B22 0%,#E08A4F 45%,#8FB05E 100%)',s:'frukt'},
+ {k:'ang',n:'Sommaräng',c1:'#5B7F3A',c2:'#A9C86A',a:'#6FA24B',b:'#938F50',g:'linear-gradient(160deg,#5B7F3A 0%,#A9C86A 55%,#EDE3B0 100%)',s:'ang'},
+ {k:'bar',n:'Bärskog',c1:'#3E1836',c2:'#8B2C5A',a:'#8B2C5A',b:'#24393A',g:'linear-gradient(160deg,#3E1836 0%,#8B2C5A 55%,#C85A7A 100%)',s:'bar'},
+ {k:'lavendel',n:'Lavendel',c1:'#42356A',c2:'#8A6FB0',a:'#7A5A9A',b:'#4B4668',g:'linear-gradient(160deg,#42356A 0%,#8A6FB0 55%,#C6B3D9 100%)',s:'lavendel'},
+ {k:'skord',n:'Gyllene skörd',c1:'#7A4E10',c2:'#E0A83E',a:'#C98F1E',b:'#9D5A18',g:'linear-gradient(160deg,#7A4E10 0%,#E0A83E 55%,#F0D896 100%)',s:'skord'},
+ {k:'kust',n:'Kustträdgård',c1:'#0E4A48',c2:'#3FA89A',a:'#0E9E9E',b:'#4C6966',g:'linear-gradient(160deg,#0E4A48 0%,#3FA89A 55%,#D9CBA0 100%)',s:'kust'},
+ {k:'skymning',n:'Skymning',c1:'#2E2350',c2:'#7A4E6E',a:'#7A4E6E',b:'#292F46',g:'linear-gradient(160deg,#2E2350 0%,#7A4E6E 50%,#E0885A 100%)',s:'skymning'}
 ];
 function themeOf(k){ return THEMES.find(t=>t.k===k)||THEMES[0]; }
+function hexA(h,a){ h=(h||'#888').replace('#',''); if(h.length===3)h=h.split('').map(function(c){return c+c;}).join(''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+function themeScrollBg(){ const th=themeOf(Store.session?Store.page.theme:'skog'); return "linear-gradient(180deg,rgba(251,249,244,.60) 0,rgba(251,249,244,.91) 220px,"+th.b+" 940px), url('themes/"+th.k+".webp') top center/100% auto no-repeat, "+th.b; }
 function themeScene(k){
   const W='<svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax slice" style="position:absolute;inset:0;width:100%;height:100%">', E='</svg>';
   function fir(x,base,h){ const w=h*0.62; let s=''; for(let i=0;i<3;i++){ const ty=base-i*h*0.26, tw=w*(1-i*0.2); s+='<path d="M'+x+' '+(ty-h*0.5)+' L'+(x-tw/2)+' '+ty+' L'+(x+tw/2)+' '+ty+' Z"/>'; } return s+'<rect x="'+(x-1.5)+'" y="'+base+'" width="3" height="7"/>'; }
@@ -857,9 +866,11 @@ function openMonth(m){
   } else rows='<div class="empty" style="padding:16px"><b>Markera grödor ovan</b>Då dyker prissättningen upp här.</div>';
   document.getElementById('sheet').innerHTML=
     '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+Store.session.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">'+MONTHS[m-1]+(cur?' · nu':'')+'</div><span onclick="toggleMonth('+m+')" style="color:var(--tomato);font-weight:700;font-size:13px;cursor:pointer">Ta bort</span></div>'+
-    '<div class="scroll" style="padding:14px 18px 30px">'+
+    '<div class="scroll" style="padding:12px 14px 30px;background:'+themeScrollBg()+'">'+
+      '<div style="background:rgba(250,248,242,.93);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:16px;padding:14px 14px 18px">'+
       '<p class="k">Vad förväntas finnas? (tryck för att lägga till)</p>'+chips+
       '<p class="k" style="margin-top:24px">Prissättning</p><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Varje markerad gröda får en rad här och tänds automatiskt på kartan i '+MONTHS[m-1]+'.</div>'+rows+
+      '</div>'+
     '</div>';
   showOverlay('sheet');
 }
@@ -1062,17 +1073,16 @@ function openStorefront(sellerId){
   const avatar=(name||'S').trim().charAt(0).toUpperCase();
   const imgs = own ? Store.page.images : [];
   let cover;
+  const bsvg='<div class="back" onclick="back()" style="z-index:6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>';
+  const tools=(own&&prem)?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'';
   if(imgs && imgs.length){
-    cover='<div style="position:relative;flex:0 0 auto"><div class="gallery" onscroll="galScroll(this)">'+
+    cover='<div class="sf-cover2"><div class="gallery" onscroll="galScroll(this)">'+
       imgs.map(function(src,i){ return '<div class="gi"><img src="'+src+'" onclick="openLightbox('+i+')"></div>'; }).join('')+
-      '</div><div class="gdots">'+imgs.map(function(_,i){return '<i class="'+(i===0?'on':'')+'"></i>';}).join('')+'</div>'+
-      '<div class="back" onclick="back()" style="z-index:4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+
-      (own?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
+      '</div><div class="gdots">'+imgs.map(function(_,i){return '<i class="'+(i===0?'on':'')+'"></i>';}).join('')+'</div>'+bsvg+tools+
     '</div>';
   } else {
-    cover='<div class="sf-cover" style="background:url(\'themes/'+th.k+'.webp\') center/cover no-repeat, '+th.g+'">'+
-      '<div class="back" onclick="back()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>'+
-      (own&&prem?'<div class="sf-tools"><div class="sf-tool" onclick="openImages()">'+plusSvg+'Bild</div><div class="sf-tool" onclick="openThemePicker()">'+themeSvg+'Tema</div></div>':'')+
+    cover='<div class="sf-cover2" style="background-image:url(\'themes/'+th.k+'.webp\')">'+bsvg+
+      ((own&&prem)?'<div class="sf-cover-hint"><span class="h1">Lägg till en omslagsbild</span><span class="h2">Tryck på Bild</span></div>':'')+tools+
     '</div>';
   }
   const cartEnabled = !own;
@@ -1100,8 +1110,8 @@ function openStorefront(sellerId){
     cal='<div class="sec"><p class="k">På gång i år</p><div class="season"><div class="smonth on"><div class="m">JUL</div>'+svg('i-honey',28)+'<div class="w">Honung, örter</div></div><div class="smonth"><div class="m">AUG</div>'+svg('i-berry',28)+'<div class="w">Tomater, bär</div></div><div class="smonth"><div class="m">SEP</div>'+svg('i-apple',28)+'<div class="w">Äpplen</div></div><div class="smonth"><div class="m">OKT</div>'+svg('i-squash',28)+'<div class="w">Pumpa</div></div></div></div>';
   }
   document.getElementById('sheet').innerHTML=
-    '<div class="scroll">'+cover+
-    '<div class="sf-body"><div class="sf-av" style="background:'+th.a+'">'+avatar+'</div><div class="sf-name">'+name+(prem?' <span class="pill">Verifierad</span>':'')+'</div>'+
+    '<div class="scroll" style="background:linear-gradient(180deg,rgba(251,249,244,.10) 0,rgba(251,249,244,.26) 190px,'+th.b+' 820px), url(\'themes/'+th.k+'.webp\') top center/100% auto no-repeat, '+th.b+'">'+cover+
+    '<div class="sf-content"><div class="sf-body"><div class="sf-av" style="background:'+th.a+'">'+avatar+'</div><div class="sf-name">'+name+(prem?' <span class="pill">Verifierad</span>':'')+'</div>'+
       '<div style="font-size:13px;color:var(--muted)">'+(area||'')+'</div>'+(prem?'<div class="sf-link">'+svg('i-pin',13)+' skorda.se/'+sellerId+'</div>':'')+
       (!own?('<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost sm" onclick="toggleFavSeller(\''+sellerId+'\',\''+safeName+'\')">'+(isFav('seller',sellerId)?'Följer ✓':'☆ Följ')+'</button>'+(isUuid(sellerId)?'<button class="btn ghost sm" onclick="openReviews(\''+sellerId+'\')">Se omdömen</button>':'')+'</div>'):(isUuid(sellerId)?'<div style="margin-top:12px"><button class="btn ghost sm" onclick="openReviews(\''+sellerId+'\')">Mina omdömen &amp; svar</button></div>':''))+
     '</div>'+
@@ -1109,7 +1119,7 @@ function openStorefront(sellerId){
     '<div class="sec"><p class="k">Till salu</p><div class="grid2">'+grid+'</div></div>'+
     (!prem&&own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Med Premium får du bildgalleri, 10 teman, "Om skörden" och en säsongskalender med förberedda annonser.</div></div><button class="btn" style="margin-top:10px" onclick="openPlan()">Uppgradera till Premium</button></div>':'')+
     (!prem&&!own?'<div class="sec"><div class="privacy">'+svg('i-pin',18)+'<div>Enkel profil.</div></div></div>':'')+
-    '</div>'+(cartEnabled?'<div id="cartBar" class="cartbar" style="display:none" onclick="openCart(\''+sellerId+'\',\''+safeName+'\')"><span class="cb-txt"></span></div>':'');
+    '</div></div>'+(cartEnabled?'<div id="cartBar" class="cartbar" style="display:none" onclick="openCart(\''+sellerId+'\',\''+safeName+'\')"><span class="cb-txt"></span></div>':'');
   showOverlay('sheet'); updateCartBar(sellerId,safeName);
 }
 
@@ -1249,6 +1259,8 @@ function finishPublish(errs,n){
 
 function renderWatch(){
   const box=document.getElementById('watchBody'); if(!box)return;
+  if(box.parentNode)box.parentNode.style.background=themeScrollBg();
+  box.style.cssText='background:rgba(250,248,242,.93);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:16px;padding:16px 14px 22px;margin-top:12px';
   const watched=Store.watches.map(w=>w.key);
   const groups=[['fruit_berries','Frukt & bär'],['vegetables','Grönsaker'],['herbs','Örter'],['eggs','Ägg'],['honey','Honung'],['plants','Plantor & blommor']];
   let html='<p class="k" style="margin:14px 0 4px">Bevaka en gröda</p><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Tryck för att bevaka. Vi plingar när något dyker upp inom '+distLabel(STATE.radiusKm)+'.</div>';
@@ -1387,6 +1399,8 @@ function removeOrder(id){ Store.orders=Store.orders.filter(o=>o.id!==id); if(Sto
 function declineOrderDemo(id){ const o=Store.orders.find(x=>x.id===id); if(o){o.status='declined'; Store.save(); toast('Säljaren tackade nej (demo)'); renderAccount();} }
 function renderAccount(){
   const box=document.getElementById('accBody'), sub=document.getElementById('accSub'); if(!box)return;
+  if(box.parentNode)box.parentNode.style.background=themeScrollBg();
+  box.style.cssText='background:rgba(250,248,242,.93);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:16px;padding:16px 14px 22px;margin-top:12px';
   if(!Store.session){
     sub.textContent='Inte inloggad';
     box.innerHTML='<div class="empty" style="padding:30px 20px"><b>Logga in</b>För att sälja, beställa och bevaka.</div><button class="btn" onclick="openAuth()">Logga in / skapa konto</button><div style="text-align:center;color:var(--muted);font-size:11px;margin-top:20px">Skörda v'+APP_VERSION+'</div>';
