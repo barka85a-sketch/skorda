@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.8.9",
+  "version": "0.9.2",
   "date": "2026-07-15",
-  "notes": "Uppdateringskoll vid start: appen jämför körd version mot senaste version.json och visar en banner 'Ny version finns — Uppdatera' om en nyare finns. Ett tryck laddar om och hämtar den nya versionen."
+  "notes": "Teman är nu riktiga bakgrundsbilder (målade naturscener) på gårdssidan i stället för gradienter. Åtta teman: Skog, Fruktträdgård, Sommaräng, Bärskog, Lavendel, Gyllene skörd, Kustträdgård, Skymning. Kräver att mappen themes/ (8 .webp-filer) laddas upp i repot."
 }
