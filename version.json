@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.9.15",
+  "version": "0.9.18",
   "date": "2026-07-15",
-  "notes": "Fix: Boosta-knappen visades bara pa databas-annonser, sa den saknades helt i demo-/lokalt lage. Nu funkar boost aven lokalt. En demo-annons ar markerad som boostad sa guldringen syns direkt pa kartan."
+  "notes": "Premium-knappen satte tidigare bara en lokal flagga som servern ignorerade - darfor sa boost 'ingar i Premium'. Nu tas grundsaljarplatsen pa riktigt: befintliga saljare far den automatiskt vid inloggning, och Premium-knappen forsoker hamta den. Bara konton med minst en aktiv annons kan ta en plats. Kraver skorda-v7.sql."
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.9.15 -->
+<!-- Skörda v0.9.18 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -347,7 +347,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.9.15';
+const APP_VERSION='0.9.18';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -486,9 +486,9 @@ function loadListings(){
 function allItems(){ const base = REMOTE.length?REMOTE:DEMO; return base.concat(Store.userListings, activePlanned()); }
 let myListings=[];
 function loadMyListings(){ if(!sb||!Store.session)return;
-  sb.from('listings').select('id,title,produce,category,icon,kind,deal,status,price,unit,area_label,active').eq('user_id',Store.session.id).order('created_at',{ascending:false}).then(function(r){
+  sb.from('listings').select('id,title,produce,category,icon,kind,deal,status,price,unit,area_label,active,boosted_until').eq('user_id',Store.session.id).order('created_at',{ascending:false}).then(function(r){
     if(r.error){ console.warn('my listings:',r.error.message); return; }
-    myListings=(r.data||[]).map(function(x){ return {id:x.id,title:x.title,produce:x.produce,category:x.category,icon:x.icon,kind:x.kind,deal:x.deal,status:x.status,price:x.price,unit:x.unit,area_label:x.area_label,seller:Store.session.name,sellerId:Store.session.id,remote:true}; });
+    myListings=(r.data||[]).map(function(x){ return {id:x.id,title:x.title,produce:x.produce,category:x.category,icon:x.icon,kind:x.kind,deal:x.deal,status:x.status,price:x.price,unit:x.unit,area_label:x.area_label,seller:Store.session.name,sellerId:Store.session.id,boosted_until:x.boosted_until,remote:true}; });
     renderAccount();
   }); }
 
@@ -588,6 +588,45 @@ function unboostListing(id){
   }
   const l=Store.userListings.find(function(x){ return x.id===id; }); if(!l)return;
   l.boostedUntil=null; Store.save(); toast('Boost avslutad'); renderAccount(); refresh();
+}
+async function kommunOf(lat,lng){
+  try{
+    const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&addressdetails=1&lat='+lat+'&lon='+lng,{headers:{'Accept-Language':'sv'}});
+    const j=await r.json(); const a=j.address||{};
+    return (a.municipality||a.city||a.town||a.county||'').replace(/\s+kommun$/i,'').trim();
+  }catch(e){ return ''; }
+}
+function claimFounder(lat,lng){
+  if(!sb||!Store.session)return;
+  kommunOf(lat,lng).then(function(reg){
+    if(!reg)return;
+    sb.rpc('claim_founder',{in_region:reg}).then(function(r){
+      if(r.error){ console.warn('claim_founder:',r.error.message); return; }
+      const d=r.data||{};
+      if(d.status==='granted'){
+        Store.premium={active:true,plan:'founder'}; Store.save();
+        toast('Grundsäljare nr '+d.number+' i '+reg+' — premium gratis i ett år');
+        loadPremium(); renderAccount();
+      }
+      else if(d.status==='no_listings') toast('Lägg upp din första annons så får du grundsäljarplatsen');
+      else if(d.status==='full') toast('Grundsäljarplatserna i '+reg+' är slut');
+    });
+  });
+}
+function loadPremium(){
+  if(!sb||!Store.session)return;
+  sb.from('profiles').select('premium,premium_until,premium_source,region').eq('id',Store.session.id).single().then(function(r){
+    if(r.error||!r.data)return;
+    const d=r.data;
+    const active=!!d.premium && (!d.premium_until || new Date(d.premium_until).getTime()>Date.now());
+    Store.premium={active:active,plan:d.premium_source||'',until:d.premium_until||null,region:d.region||''};
+    Store.save(); renderAccount();
+    if(!active){
+      sb.from('listings').select('id',{count:'exact',head:true}).eq('user_id',Store.session.id).eq('active',true).then(function(c){
+        if((c.count||0)>0) claimFounder(STATE.center.lat,STATE.center.lng);
+      });
+    }
+  });
 }
 function renderMap(){
   if(!map)return;
@@ -1292,7 +1331,7 @@ function publishDrafts(){
   if(sb&&Store.session){
     let done=0, errs=0; const n=createDrafts.length;
     createDrafts.forEach(function(d){
-      sb.rpc('create_listing',{in_title:d.title,in_produce:d.produce,in_category:d.cat,in_icon:d.icon,in_kind:'listing',in_deal:d.deal,in_status:d.status,in_price:d.price,in_unit:d.unit,in_area_label:area,in_lat:lat,in_lng:lng,in_image_url:(d.image||null)}).then(function(r){ if(r.error)errs++; done++; if(done===n)finishPublish(errs,n); });
+      sb.rpc('create_listing',{in_title:d.title,in_produce:d.produce,in_category:d.cat,in_icon:d.icon,in_kind:'listing',in_deal:d.deal,in_status:d.status,in_price:d.price,in_unit:d.unit,in_area_label:area,in_lat:lat,in_lng:lng,in_image_url:(d.image||null)}).then(function(r){ if(r.error)errs++; done++; if(done===n){ claimFounder(lat,lng); finishPublish(errs,n); } });
     });
     return;
   }
@@ -1354,7 +1393,7 @@ function openAuth(){
 function setSessionFromSupabase(session){
   if(session&&session.user){ const u=session.user; Store.session={id:u.id,name:(u.user_metadata&&u.user_metadata.name)||(u.email?u.email.split('@')[0]:'Odlare'),email:u.email||''}; }
   else Store.session=null;
-  if(Store.session){ loadMyListings(); loadOrders(); } else { myListings=[]; DBORDERS=[]; }
+  if(Store.session){ loadMyListings(); loadOrders(); loadPremium(); } else { myListings=[]; DBORDERS=[]; }
   renderAccount();
 }
 function authOAuth(provider){ if(!sb){ demoOAuth(provider.charAt(0).toUpperCase()+provider.slice(1)); return; }
@@ -1405,7 +1444,14 @@ function demoEmailLogin(){
 function afterLogin(){ closeOverlay('sheet'); toast('Inloggad som '+Store.session.name); setView('account'); }
 function logout(){ if(sb){ sb.auth.signOut(); Store.session=null; renderAccount(); toast('Utloggad'); return; } Store.session=null; Store.save(); toast('Utloggad'); renderAccount(); }
 
-function goPremium(mode){ Store.premium={active:true,plan:mode}; Store.userListings.forEach(l=>l.premiumSeller=true); Store.save();
+function goPremium(mode){
+  if(sb&&Store.session){
+    closeOverlay('sheet');
+    toast('Kollar grundsäljarplats i din kommun…');
+    claimFounder(STATE.center.lat,STATE.center.lng);
+    return;
+  }
+  Store.premium={active:true,plan:mode}; Store.userListings.forEach(l=>l.premiumSeller=true); Store.save();
   toast('Premium aktiverat (demo)'); closeOverlay('sheet'); renderAccount(); }
 let planMode='month';
 function openPlan(){
