@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.9.20 -->
+<!-- Skörda v0.9.22 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -347,7 +347,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.9.20';
+const APP_VERSION='0.9.22';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -917,6 +917,11 @@ function openThemePicker(){
     '</div></div>';
   showOverlay('sheet');
 }
+function saveStorefront(){
+  try{ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur(); }catch(e){}
+  const t=document.getElementById('storyText'); if(t)Store.page.story=t.value;
+  Store.save(); toast('Sparat');
+}
 function saveStory(v){ Store.page.story=v; Store.save(); }
 function storyCount(el){ const c=document.getElementById('storyCnt'); if(c)c.textContent=el.value.length+'/300'; }
 function monthObj(m){ if(!Store.page.months[m])Store.page.months[m]={produce:[],listings:[]}; return Store.page.months[m]; }
@@ -930,6 +935,10 @@ function updatePlanned(m,i,field,value){ const mo=monthObj(m); const p=mo.listin
   else { p[field]=value; Store.save(); } }
 let monthOpen={};
 function toggleMonthGroup(cat,m){ monthOpen[cat]=!monthOpen[cat]; openMonth(m); }
+function saveMonth(m){
+  try{ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur(); }catch(e){}
+  Store.save(); toast('Sparat'); back();
+}
 function openMonth(m){
   enter('month-'+m,function(){ openMonth(m); });
   const mo=monthObj(m); const cur=(new Date().getMonth()+1)===m;
@@ -949,15 +958,16 @@ function openMonth(m){
         '<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,20)+'</div><div class="at" style="flex:1">'+p.produce+'</div><span onclick="toggleMonthProduce('+m+',\''+esc+'\')" style="color:var(--muted);font-size:20px;cursor:pointer">×</span></div>'+
         '<div style="display:flex;gap:8px"><select class="ed" onchange="updatePlanned('+m+','+i+',\'deal\',this.value)"><option value="sale"'+(p.deal!=='giveaway'?' selected':'')+'>Säljs</option><option value="giveaway"'+(p.deal==='giveaway'?' selected':'')+'>Skänkes</option></select>'+
         '<select class="ed" onchange="updatePlanned('+m+','+i+',\'status\',this.value)">'+statusOpts(p.status)+'</select></div>'+
-        '<div style="gap:8px;'+giftHide+'"><input class="ed" type="number" inputmode="numeric" value="'+(p.price!=null?p.price:'')+'" placeholder="Pris (kr)" onchange="updatePlanned('+m+','+i+',\'price\',this.value)"><select class="ed" onchange="updatePlanned('+m+','+i+',\'unit\',this.value)">'+unitOpts(p.unit)+'</select></div>'+
+        '<div style="gap:8px;'+giftHide+'"><input class="ed" type="number" inputmode="numeric" value="'+(p.price!=null?p.price:'')+'" placeholder="Pris (kr)" oninput="updatePlanned('+m+','+i+',\'price\',this.value)"><select class="ed" onchange="updatePlanned('+m+','+i+',\'unit\',this.value)">'+unitOpts(p.unit)+'</select></div>'+
       '</div>'; }).join('');
   } else rows='<div class="empty" style="padding:16px"><b>Markera grödor ovan</b>Då dyker prissättningen upp här.</div>';
   document.getElementById('sheet').innerHTML=
-    '<div class="top"><div class="back" style="position:static" onclick="openStorefront(\''+Store.session.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">'+MONTHS[m-1]+(cur?' · nu':'')+'</div><span onclick="toggleMonth('+m+')" style="color:var(--tomato);font-weight:700;font-size:13px;cursor:pointer">Ta bort</span></div>'+
+    '<div class="top"><div class="back" style="position:static" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#1F3A29" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="ttl">'+MONTHS[m-1]+(cur?' · nu':'')+'</div><span onclick="toggleMonth('+m+')" style="color:var(--tomato);font-weight:700;font-size:13px;cursor:pointer">Ta bort</span></div>'+
     '<div class="scroll" style="padding:12px 14px 30px;background:'+themeScrollBg()+'">'+
       '<div style="background:rgba(250,248,242,.93);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:16px;padding:14px 14px 18px">'+
       '<p class="k">Vad förväntas finnas? (tryck för att lägga till)</p>'+chips+
       '<p class="k" style="margin-top:24px">Prissättning</p><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Varje markerad gröda får en rad här och tänds automatiskt på kartan i '+MONTHS[m-1]+'.</div>'+rows+
+      '<button class="btn" style="margin-top:18px" onclick="saveMonth('+m+')">Spara</button>'+
       '</div>'+
     '</div>';
   showOverlay('sheet');
@@ -1183,7 +1193,7 @@ function openStorefront(sellerId){
       (orderable?'<div class="cartqty" id="qty_'+it.id+'" style="'+(sel?'':'display:none')+'" onclick="event.stopPropagation()"><button onclick="event.stopPropagation();cartQty(\''+it.id+'\',-1,\''+sellerId+'\',\''+safeName+'\')">−</button><span id="qtyn_'+it.id+'">'+(cartSel[it.id]||1)+'</span><button onclick="event.stopPropagation();cartQty(\''+it.id+'\',1,\''+sellerId+'\',\''+safeName+'\')">+</button></div>':'')+
       '</div></div>'; }).join('')) || '<div class="empty" style="padding:16px">Inga aktiva annonser just nu</div>';
   let story='';
-  if(prem && own) story='<div class="sec"><p class="k">Om skörden</p><textarea class="ed" id="storyText" maxlength="300" style="min-height:72px;resize:vertical" placeholder="Berätta om din odling — vad du odlar, hur, och varför…" oninput="storyCount(this)" onchange="saveStory(this.value)">'+escAttr(Store.page.story)+'</textarea><div id="storyCnt" style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px">'+(Store.page.story||'').length+'/300</div></div>';
+  if(prem && own) story='<div class="sec"><p class="k">Om skörden</p><textarea class="ed" id="storyText" maxlength="300" style="min-height:72px;resize:vertical" placeholder="Berätta om din odling — vad du odlar, hur, och varför…" oninput="storyCount(this);saveStory(this.value)">'+escAttr(Store.page.story)+'</textarea><div id="storyCnt" style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px">'+(Store.page.story||'').length+'/300</div><button class="btn" style="margin-top:12px" onclick="saveStorefront()">Spara</button></div>';
   else if(prem) story='<div class="sec"><p class="k">Om skörden</p><p style="font-size:13.5px;line-height:1.6;margin:0">Liten odling i '+(area||'trakten')+'. Odlar utan bekämpningsmedel och säljer överskottet. Kom gärna och plocka.</p></div>';
   let cal='';
   if(prem && own){

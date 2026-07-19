@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat nära dig",
-  "version": "0.9.20",
+  "version": "0.9.22",
   "date": "2026-07-15",
-  "notes": "Underrubriken Söker nära dig borttagen - den var statisk och sa inget som inte redan stod i Maxavstand. Raden visas nu bara om platsen inte kunde hamtas, som en tydlig varning om att kartan visar standardorten."
+  "notes": "Gardssidan har nu en Spara-knapp under Om skorden, och texten sparas medan man skriver i stallet for forst nar faltet lamnas - tidigare forsvann texten om man tryckte bakat direkt."
 }
