@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat",
-  "version": "0.9.11",
+  "version": "0.9.15",
   "date": "2026-07-15",
-  "notes": "Kartans +/- stegar nu 400 m i taget (i stället för 100 m)."
+  "notes": "Fix: Boosta-knappen visades bara pa databas-annonser, sa den saknades helt i demo-/lokalt lage. Nu funkar boost aven lokalt. En demo-annons ar markerad som boostad sa guldringen syns direkt pa kartan."
 }

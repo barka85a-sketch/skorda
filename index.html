@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.9.11 -->
+<!-- Skörda v0.9.15 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -53,10 +53,15 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 .pin .prate{font-size:9.5px;font-weight:800;color:#8A6A12;background:#fff;border:1px solid var(--line);border-radius:99px;padding:1px 6px;display:inline-flex;align-items:center;gap:2px;box-shadow:0 2px 4px rgba(0,0,0,.14)}
 .pin .prate svg{width:9px;height:9px}
 .mepin{width:18px;height:18px;border-radius:99px;background:var(--sky);border:3px solid #fff;box-shadow:0 0 0 6px rgba(46,107,230,.18)}
-.mpin{position:relative;width:40px;height:40px}
-.mpin .c{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid #D9432B;box-shadow:0 5px 12px rgba(31,58,41,.3);display:grid;place-items:center}
-.mpin .c svg{width:24px;height:24px}
-.mpin .pt{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid #D9432B}
+.mhit{width:44px;height:44px;position:relative}
+.mpin{position:absolute;left:7px;top:4px;width:30px;height:30px}
+.mpin .c{width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid #D9432B;box-shadow:0 3px 8px rgba(31,58,41,.28);display:grid;place-items:center}
+.mpin .c svg{width:17px;height:17px}
+.mpin .pt{position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #D9432B}
+.mpin.boost .c{box-shadow:0 0 0 2px #E8B723,0 0 7px 1px rgba(232,183,35,.38),0 3px 9px rgba(31,58,41,.3)}
+.mpin.boost:before{content:"";position:absolute;left:-4px;top:-4px;width:38px;height:38px;box-sizing:border-box;border-radius:50%;border:2px solid transparent;border-top-color:#E8B723;border-right-color:#E8B723;animation:boostspin 3.2s linear infinite;pointer-events:none}
+@keyframes boostspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.mpin.boost:before{animation:none}}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sortrow{display:flex;align-items:center;gap:8px;padding:2px 16px 10px}
 .sortrow .sortlbl{font-size:12px;font-weight:700;color:var(--muted)}
@@ -342,7 +347,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.9.11';
+const APP_VERSION='0.9.15';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -454,7 +459,7 @@ function makeDemo(lat,lng){ const cl=Math.cos(lat*Math.PI/180)||1;
       bases[key]={dx:r*Math.cos(ang),dy:r*Math.sin(ang)}; si++; } });
   DEMO=DEMO_T.map((t,i)=>{ const key=t.sellerId||('spot'+i); const b=bases[key]||{dx:0,dy:0};
     const dx=b.dx+((i*0.37)%1-0.5)*0.4, dy=b.dy+((i*0.53)%1-0.5)*0.4;
-    return {id:'x'+i,title:t.produce,produce:t.produce,category:t.category,icon:t.icon,
+    return {id:'x'+i,title:t.produce,produce:t.produce,category:t.category,icon:t.icon,boosted:(i===1),
       kind:t.kind||'listing',deal:t.kind==='spot'?null:(t.deal||'sale'),status:t.status||'ready',
       price:(t.price!==undefined?t.price:null),unit:(t.unit!==undefined?t.unit:null),
       area_label:t.area||'I närheten',seller:t.seller,sellerId:(t.kind==='spot'?null:(t.sellerId||null)),
@@ -474,7 +479,7 @@ function loadListings(){
   if(!sb)return;
   sb.rpc('nearby_listings',{in_lat:STATE.center.lat,in_lng:STATE.center.lng,in_radius_m:20000}).then(function(res){
     if(res.error){ console.warn('nearby_listings:',res.error.message); return; }
-    REMOTE=(res.data||[]).map(function(r){ return {id:r.id,title:r.title,produce:r.produce,category:r.category,icon:r.icon,kind:r.kind,deal:r.deal,status:r.status,price:r.price,unit:r.unit,area_label:r.area_label,seller:r.seller,sellerId:r.user_id,premiumSeller:r.premium,rating:r.rating,lat:r.lat,lng:r.lng}; });
+    REMOTE=(res.data||[]).map(function(r){ return {id:r.id,title:r.title,produce:r.produce,category:r.category,icon:r.icon,kind:r.kind,deal:r.deal,status:r.status,price:r.price,unit:r.unit,area_label:r.area_label,seller:r.seller,sellerId:r.user_id,premiumSeller:r.premium,rating:r.rating,lat:r.lat,lng:r.lng,boosted:r.boosted}; });
     refresh(); renderSubChips();
   }).catch(function(e){ console.warn(e); });
 }
@@ -553,6 +558,37 @@ function initMap(){
   radiusCircle=L.circle([STATE.center.lat,STATE.center.lng],{radius:STATE.radiusKm*1000,color:'#3F7D53',weight:2,dashArray:'6 6',fillColor:'#3F7D53',fillOpacity:.08}).addTo(map);
   meMarker=L.marker([STATE.center.lat,STATE.center.lng],{icon:L.divIcon({className:'',html:'<div class="mepin"></div>',iconSize:[18,18]})}).addTo(map);
 }
+function isBoosted(it){ if(!it)return false; if(it.boosted===true)return true;
+  const bu=it.boosted_until||it.boostedUntil; return !!(bu && new Date(bu).getTime()>Date.now()); }
+function boostDaysLeft(it){ const bu=it.boosted_until||it.boostedUntil; if(!bu)return 0;
+  const d=Math.ceil((new Date(bu).getTime()-Date.now())/86400000); return d>0?d:0; }
+function boostListing(id){
+  if(!Store.session){ toast('Logga in först'); return; }
+  if(!Store.premium.active){ toast('Boost ingår i Premium'); openPlan(); return; }
+  if(sb && isUuid(id)){
+    sb.rpc('boost_listing',{in_listing_id:id,in_days:7}).then(function(r){
+      if(r.error){ toast(r.error.message); return; }
+      toast('Annonsen är boostad i 7 dagar'); loadMyListings(); loadListings();
+    });
+    return;
+  }
+  const other=Store.userListings.find(function(l){ return l.id!==id && isBoosted(l); });
+  if(other){ toast('Du kan bara ha en boostad annons åt gången'); return; }
+  const l=Store.userListings.find(function(x){ return x.id===id; }); if(!l)return;
+  l.boostedUntil=new Date(Date.now()+7*86400000).toISOString(); Store.save();
+  toast('Annonsen är boostad i 7 dagar'); renderAccount(); refresh();
+}
+function unboostListing(id){
+  if(sb && isUuid(id)){
+    sb.rpc('unboost_listing',{in_listing_id:id}).then(function(r){
+      if(r.error){ toast(r.error.message); return; }
+      toast('Boost avslutad'); loadMyListings(); loadListings();
+    });
+    return;
+  }
+  const l=Store.userListings.find(function(x){ return x.id===id; }); if(!l)return;
+  l.boostedUntil=null; Store.save(); toast('Boost avslutad'); renderAccount(); refresh();
+}
 function renderMap(){
   if(!map)return;
   markerLayer.clearLayers();
@@ -561,8 +597,9 @@ function renderMap(){
   visibleItems().forEach(it=>{
     const ic=iconFor(it);
     const col=pinColor(it);
-    const html='<div class="mpin"><div class="c" style="border-color:'+col+'">'+svg(ic,24)+'</div><div class="pt" style="border-top-color:'+col+'"></div></div>';
-    const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html,iconSize:[40,49],iconAnchor:[20,47]})});
+    const boost = isBoosted(it);
+    const html='<div class="mhit"><div class="mpin'+(boost?' boost':'')+'"><div class="c" style="border-color:'+col+'">'+svg(ic,17)+'</div><div class="pt" style="border-top-color:'+col+'"></div></div></div>';
+    const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html,iconSize:[44,44],iconAnchor:[22,41]})});
     m.on('click',()=>openDetail(it.id)); m.addTo(markerLayer);
   });
 }
@@ -1436,8 +1473,11 @@ function renderAccount(){
       '<div style="gap:8px;'+giftHide+'"><input class="ed" type="number" inputmode="numeric" value="'+(it.price!=null?it.price:'')+'" placeholder="Pris (kr)" onchange="updateListing(\''+it.id+'\',\'price\',this.value)"><select class="ed" onchange="updateListing(\''+it.id+'\',\'unit\',this.value)">'+unitOpts(it.unit)+'</select></div>'+
       '<button class="btn ghost sm" onclick="delListing(\''+it.id+'\')">Ta bort annons</button>'+
     '</div>'; }).join('');
-  else html+=mine.map(it=>{ const ic=iconFor(it), b=badgeFor(it);
-    return '<div class="arow"><div style="width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,26)+'</div><div><div class="at">'+it.title+'</div><div class="as"><span class="st '+b.cls+'" style="padding:1px 7px">'+b.label+'</span></div></div><span onclick="event.stopPropagation();delListing(\''+it.id+'\')" style="margin-left:auto;color:var(--muted);font-size:20px;cursor:pointer">×</span></div>'; }).join('');
+  else html+=mine.map(it=>{ const ic=iconFor(it), b=badgeFor(it); const bo=isBoosted(it);
+    const bbtn=(bo
+      ?'<span onclick="event.stopPropagation();unboostListing(\''+it.id+'\')" style="margin-left:auto;font-size:11px;font-weight:800;color:#8A6A12;background:#FBF0D2;border:1px solid #E8B723;border-radius:99px;padding:3px 9px;cursor:pointer;white-space:nowrap">Boostad '+boostDaysLeft(it)+' d</span>'
+      :'<span onclick="event.stopPropagation();boostListing(\''+it.id+'\')" style="margin-left:auto;font-size:11px;font-weight:800;color:var(--kale);background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 9px;cursor:pointer;white-space:nowrap">Boosta</span>');
+    return '<div class="arow"><div style="width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:'+(BG[ic]||'#DDE7CE')+'">'+svg(ic,26)+'</div><div style="min-width:0"><div class="at">'+it.title+'</div><div class="as"><span class="st '+b.cls+'" style="padding:1px 7px">'+b.label+'</span></div></div>'+bbtn+'<span onclick="event.stopPropagation();delListing(\''+it.id+'\')" style="margin-left:'+(bbtn?'8px':'auto')+';color:var(--muted);font-size:20px;cursor:pointer">×</span></div>'; }).join('');
   html+='<p class="k" style="margin:20px 0 8px">Mina beställningar ('+orders.length+')</p>';
   if(!orders.length) html+='<div class="empty" style="padding:18px"><b>Inga beställningar</b>Beställningar du gör hamnar här.</div>';
   else html+=orders.map(o=>{
