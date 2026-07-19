@@ -1,6 +1,6 @@
 {
   "name": "Skörda – närodlat nära dig",
-  "version": "0.9.19",
+  "version": "0.9.20",
   "date": "2026-07-15",
-  "notes": "Apptiteln andrad till Skörda – närodlat nära dig i webbfliken, i appens topprubrik, i inloggningsvyn och i manifestet. Hemskarmsnamnet ar kvar som Skörda."
+  "notes": "Underrubriken Söker nära dig borttagen - den var statisk och sa inget som inte redan stod i Maxavstand. Raden visas nu bara om platsen inte kunde hamtas, som en tydlig varning om att kartan visar standardorten."
 }

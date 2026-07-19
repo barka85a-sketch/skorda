@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skörda v0.9.19 -->
+<!-- Skörda v0.9.20 -->
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
@@ -254,7 +254,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
   <div class="banner" id="demoBanner">Demoläge — data sparas i din webbläsare. Koppla Supabase för skarp drift.</div>
 
   <div class="view on" id="view-map">
-    <div class="top" style="display:flex;align-items:center;justify-content:space-between"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg><span>Skörda <span style="font-weight:600;font-size:.6em;color:var(--muted);letter-spacing:.02em">– närodlat nära dig</span></span></div><div class="sub" id="mapSub">Söker nära dig</div></div><div class="bell" id="notifBell" onclick="openNotifications()"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#26452F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" id="notifBadge"></span></div></div>
+    <div class="top" style="display:flex;align-items:center;justify-content:space-between"><div><div class="ttl" style="display:flex;align-items:center;gap:7px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3F7D53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg><span>Skörda <span style="font-weight:600;font-size:.6em;color:var(--muted);letter-spacing:.02em">– närodlat nära dig</span></span></div><div class="sub" id="mapSub" style="display:none"></div></div><div class="bell" id="notifBell" onclick="openNotifications()"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#26452F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" id="notifBadge"></span></div></div>
     <div class="filterbar">
       <div class="distrow"><span class="lbl">Maxavstånd</span><input type="range" min="400" max="60000" step="100" value="20000" id="dist" oninput="onDist(this.value)"><span class="val" id="distVal">20 km</span></div>
       <div class="hchip" id="chips"></div>
@@ -347,7 +347,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;ba
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_VERSION='0.9.19';
+const APP_VERSION='0.9.20';
 const CONFIG={SUPABASE_URL:'https://takonarqndfdctlizufu.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT',DEFAULT:{lat:59.8586,lng:17.6389,label:'Uppsala'}};
 const USE_SUPABASE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 let sb=null;
@@ -1651,8 +1651,8 @@ function boot(){
       STATE.center={lat:pos.coords.latitude,lng:pos.coords.longitude,label:'din plats'};
       makeDemo(STATE.center.lat,STATE.center.lng);
       refresh(); fitRadius(); renderSubChips(); loadListings();
-    },()=>{ const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; },{enableHighAccuracy:true,timeout:8000,maximumAge:0});
-  } else { const s=document.getElementById('mapSub'); if(s)s.textContent='Söker i '+CONFIG.DEFAULT.label; }
+    },()=>{ const s=document.getElementById('mapSub'); if(s){s.textContent='Platsen kunde inte hämtas — visar '+CONFIG.DEFAULT.label; s.style.display='';} },{enableHighAccuracy:true,timeout:8000,maximumAge:0});
+  } else { const s=document.getElementById('mapSub'); if(s){s.textContent='Platsen kunde inte hämtas — visar '+CONFIG.DEFAULT.label; s.style.display='';} }
 }
 document.addEventListener('focusin',function(e){ const t=e.target; if(t&&t.tagName==='INPUT'&&(t.type==='number'||t.type==='text')){ setTimeout(function(){ try{ t.select(); }catch(_){}} ,0); } });
 function showUpdateBanner(ver){
