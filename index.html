@@ -79,6 +79,11 @@ h3{font-size:17px;color:var(--kale);font-weight:600;margin-bottom:6px}
 .plan{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px}
 .plan.hi{border:2px solid var(--leaf)}
 .plan .price{font-size:30px;font-weight:700;color:var(--kale);margin:6px 0 4px}
+.toggle{display:inline-flex;background:var(--paper2);border-radius:99px;padding:3px;margin:12px 0 4px}
+.tg{border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);
+ padding:7px 15px;border-radius:99px;cursor:pointer}
+.tg.on{background:var(--paper);color:var(--kale);box-shadow:0 1px 3px rgba(31,58,41,.12)}
+.save{font-size:13px;color:var(--leaf);font-weight:600;margin-bottom:4px;min-height:20px}
 .plan .price small{font-size:14px;font-weight:400;color:var(--muted)}
 .plan ul{list-style:none;margin-top:16px}
 .plan li{font-size:14.5px;color:var(--muted);padding:7px 0 7px 26px;position:relative}
@@ -217,7 +222,12 @@ footer a{color:#fff}
       </div>
       <div class="plan hi">
         <span class="badge">Premium</span>
-        <div class="price">79 kr <small>/ månad</small></div>
+        <div class="toggle">
+          <button class="tg on" id="tgM" onclick="setPlan('m')">Månadsvis</button>
+          <button class="tg" id="tgA" onclick="setPlan('a')">Årsvis</button>
+        </div>
+        <div class="price" id="pris">79 kr <small>/ månad</small></div>
+        <div class="save" id="spar">790 kr per år — två månader gratis</div>
         <ul>
           <li>Obegränsat antal varor</li>
           <li>Boost som lyfter en vara i sju dagar</li>
@@ -231,6 +241,11 @@ footer a{color:#fff}
     <p class="note" style="margin-top:20px">
       De 200 första säljarna i varje län får Premium gratis i ett år och behåller
       märket Grundsäljare för alltid.
+    </p>
+    <p class="note" style="margin-top:10px">
+      Premium är en prenumeration som förnyas automatiskt tills du säger upp den.
+      Uppsägning sker i telefonens inställningar, inte i appen. Priserna gäller i Sverige
+      inklusive moms.
     </p>
   </div>
 </section>
@@ -326,6 +341,18 @@ footer a{color:#fff}
   }
 })();
 document.getElementById('ar').textContent = new Date().getFullYear();
+
+function setPlan(v){
+  var m = v === 'm';
+  document.getElementById('tgM').classList.toggle('on', m);
+  document.getElementById('tgA').classList.toggle('on', !m);
+  document.getElementById('pris').innerHTML = m
+    ? '79 kr <small>/ månad</small>'
+    : '790 kr <small>/ år</small>';
+  document.getElementById('spar').textContent = m
+    ? '790 kr per år — två månader gratis'
+    : 'Motsvarar 66 kr per månad';
+}
 </script>
 </body>
 </html>
