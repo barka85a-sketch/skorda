@@ -227,7 +227,7 @@ footer a{color:#fff}
           <button class="tg" id="tgA" onclick="setPlan('a')">Årsvis</button>
         </div>
         <div class="price" id="pris">79 kr <small>/ månad</small></div>
-        <div class="save" id="spar">790 kr per år — två månader gratis</div>
+        <div class="save" id="spar">399 kr per år — sju månader gratis</div>
         <ul>
           <li>Obegränsat antal varor</li>
           <li>Boost som lyfter en vara i sju dagar</li>
@@ -348,10 +348,10 @@ function setPlan(v){
   document.getElementById('tgA').classList.toggle('on', !m);
   document.getElementById('pris').innerHTML = m
     ? '79 kr <small>/ månad</small>'
-    : '790 kr <small>/ år</small>';
+    : '399 kr <small>/ år</small>';
   document.getElementById('spar').textContent = m
-    ? '790 kr per år — två månader gratis'
-    : 'Motsvarar 66 kr per månad';
+    ? '399 kr per år — sju månader gratis'
+    : 'Motsvarar 33 kr per månad';
 }
 </script>
 </body>
