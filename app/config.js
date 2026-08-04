@@ -26,6 +26,6 @@ window.SKORDA_CONFIG = {
 
   // Google-inloggning på Android. Web client id.
   // Lämna som den är tills Google-login på Android sätts upp.
-  GOOGLE_WEB_CLIENT_ID: '225661568623-ptu336h5clvo8jao4rnas8kuhhja5sbh.apps.googleusercontent.com ',
+  GOOGLE_WEB_CLIENT_ID: '225661568623-ptu336h5clvo8jao4rnas8kuhhja5sbh.apps.googleusercontent.com',
 
 };
