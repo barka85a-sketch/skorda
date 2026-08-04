@@ -22,7 +22,7 @@ window.SKORDA_CONFIG = {
 
   // RevenueCat, publik Android-nyckel. Börjar med goog_
   // Fyll i när Android-appen är tillagd i RevenueCat.
-  RC_ANDROID_KEY: 'goog_DIN_ANDROID_NYCKEL',
+  RC_ANDROID_KEY: 'goog_MmgeMfMmIjlcIpFXzxuXzcslZTl',
 
   // Google-inloggning på Android. Web client id.
   // Lämna som den är tills Google-login på Android sätts upp.
