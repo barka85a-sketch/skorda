@@ -49,9 +49,9 @@ header{padding:26px 0 0}
 .btn.alt:hover{background:var(--paper2)}
 .note{font-size:13px;color:var(--muted)}
 
-/* Skärmbilder */
-.shots{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:22px 0 66px}
-.shots img{width:min(270px,80vw);border-radius:18px;box-shadow:0 18px 40px rgba(31,58,41,.14)}
+/* Feature-bild */
+.feature{padding:22px 0 66px;text-align:center}
+.feature img{width:100%;max-width:1024px;height:auto;border-radius:18px;box-shadow:0 18px 40px rgba(31,58,41,.14)}
 
 /* Sektioner */
 section{padding:60px 0}
@@ -128,17 +128,14 @@ footer a{color:#fff}
       i stället för att låta det ligga kvar under trädet.
     </p>
     <div class="cta">
-      <a class="btn" href="#" id="ios">Ladda ner för iPhone</a>
-      <a class="btn alt" href="#" id="android">Ladda ner för Android</a>
+      <a class="btn" href="https://apps.apple.com/app/id6791316408" id="ios">Ladda ner för iPhone</a>
+      <a class="btn alt" href="https://play.google.com/store/apps/details?id=app.skorda.app" id="android">Ladda ner för Android</a>
     </div>
-    <p class="note" style="margin-bottom:6px"><a href="/app/">Eller öppna Skörda direkt i webbläsaren</a></p>
     <p class="note">Gratis att använda. Ingen provision på det du säljer.</p>
   </div>
 
-  <div class="shots">
-    <img src="shot-1.jpg" alt="Karta med närodlat i närheten">
-    <img src="shot-2.jpg" alt="Lista över varor sorterad på avstånd">
-    <img src="shot-3.jpg" alt="Bevaka grödor och få notis">
+  <div class="feature">
+    <img src="skorda_feature_graphic_1024x500.png" alt="Skörda – hitta närodlat på en karta">
   </div>
 </div>
 
@@ -324,11 +321,12 @@ footer a{color:#fff}
 </footer>
 
 <script>
-// Delningslänkar ser ut som skorda.app/?g=<id> och ska öppna gårdssidan
-// i appen, inte den här sidan. Körs först av allt.
+// Delningslänkar ser ut som skorda.app/?g=<id>. Webbappen är borttagen,
+// så de leder nu till en sida som visar att gården finns i appen och
+// erbjuder nedladdning. Körs först av allt.
 (function(){
   var q = location.search;
-  if (/[?&]g=/.test(q)) { location.replace('/app/' + q); return; }
+  if (/[?&]g=/.test(q)) { location.replace('/g.html' + q); return; }
   // Appen låg tidigare på rotadressen och registrerade en service worker
   // där. Den skulle annars fortsätta servera den gamla appen i stället
   // för den här sidan. Städas bort en gång.
