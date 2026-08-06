@@ -1,8 +1,0 @@
-{
-  "appId": "app.skorda.app",
-  "appName": "Skörda",
-  "webDir": ".",
-  "server": {
-    "androidScheme": "https"
-  }
-}
