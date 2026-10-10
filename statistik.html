@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Statistik – Skörda</title>
+<link rel="icon" href="ikon.png">
+<style>
+:root{
+  --bg:#FBF9F4;--card:#FFFFFF;--ink:#22271F;--ink2:#4A544B;--muted:#7A8579;--line:#E7E2D6;--grid:#EFEBE1;
+  --kale:#1F3A29;--leaf:#3F7D53;--bar:#3F7D53;--bar-hover:#2C5E3D;--warn:#B4532A;--warn-bg:#FBEDE5;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#141815;--card:#1C221D;--ink:#ECEFE9;--ink2:#C3CCC2;--muted:#8E9A8D;--line:#2C342D;--grid:#262D27;
+        --kale:#CFE3D2;--leaf:#7DBB8E;--bar:#6FB083;--bar-hover:#93CBA3;--warn:#F0956B;--warn-bg:#3A2219}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);
+     line-height:1.45;-webkit-font-smoothing:antialiased;padding:0 16px calc(40px + env(safe-area-inset-bottom))}
+.wrap{max-width:980px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 0 14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:34px;height:34px;border-radius:9px}
+.brand h1{font-size:20px;color:var(--kale);letter-spacing:-.01em}
+.brand .tid{font-size:12.5px;color:var(--muted)}
+.btn{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);
+     border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.btn.prim{background:var(--leaf);border-color:var(--leaf);color:#fff}
+h2{font-size:15px;color:var(--kale);margin:26px 0 10px;letter-spacing:.01em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+.tile .v{font-size:28px;font-weight:700;color:var(--ink);line-height:1.05;font-variant-numeric:tabular-nums}
+.tile .l{font-size:13px;color:var(--ink2);margin-top:4px}
+.tile .s{font-size:12px;color:var(--muted);margin-top:2px}
+.tile.varn{border-color:var(--warn);background:var(--warn-bg)}
+.tile.varn .v{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;min-width:0}
+.card .ch{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.card .ct{font-size:14px;font-weight:600;color:var(--ink)}
+.card .cs{font-size:12.5px;color:var(--muted);white-space:nowrap}
+/* stapeldiagram per dag */
+.dag{position:relative;height:130px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid var(--line);padding-top:16px}
+.dag .gl{position:absolute;left:0;right:0;border-top:1px dashed var(--grid);pointer-events:none}
+.dag .gl span{position:absolute;right:0;top:-15px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dag .k{flex:1;height:100%;display:flex;align-items:flex-end;cursor:default;position:relative}
+.dag .k i{display:block;width:100%;background:var(--bar);border-radius:4px 4px 0 0;min-height:0}
+.dag .k.noll i{background:transparent}
+.dag .k:hover i,.dag .k.vald i{background:var(--bar-hover)}
+.axel{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+.tips{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;
+      padding:5px 9px;border-radius:7px;white-space:nowrap;opacity:0;transition:opacity .12s}
+.tips.on{opacity:1}
+/* topplistor */
+.rad{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;align-items:center;gap:10px;padding:4px 0}
+.rad .n{font-size:13.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rad .b{height:10px;background:var(--grid);border-radius:5px;overflow:hidden}
+.rad .b i{display:block;height:100%;background:var(--bar);border-radius:5px}
+.rad .t{font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
+.tom{font-size:13px;color:var(--muted);padding:6px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+td{padding:7px 4px;border-top:1px solid var(--line);color:var(--ink2)}
+td:first-child{color:var(--ink);font-weight:600}
+td.d{color:var(--muted);text-align:right;white-space:nowrap}
+/* kodruta */
+.las{max-width:380px;margin:12vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.las h2{margin:0 0 6px}
+.las p{font-size:14px;color:var(--ink2);margin-bottom:14px}
+.las input{width:100%;font:inherit;font-size:17px;letter-spacing:.08em;text-transform:uppercase;padding:11px 12px;
+           border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);margin-bottom:12px}
+.fel{color:var(--warn);font-size:13.5px;margin-bottom:10px;min-height:1em}
+.not{font-size:12.5px;color:var(--muted);margin-top:28px}
+.not a{color:inherit}
+.dold{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="lasRuta" class="las dold">
+  <h2>Skörda statistik</h2>
+  <p>Ange koden till statistiken. Den sparas i den här webbläsaren så du slipper skriva den igen.</p>
+  <input id="kodFalt" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Kod">
+  <div class="fel" id="kodFel"></div>
+  <button class="btn prim" id="kodKnapp">Visa statistik</button>
+</div>
+
+<div id="sida" class="dold">
+  <header>
+    <div class="brand"><img src="ikon.png" alt=""><div><h1>Skörda statistik</h1><div class="tid" id="tid">Hämtar…</div></div></div>
+    <button class="btn" id="uppdatera">Uppdatera</button>
+  </header>
+
+  <div class="tiles" id="topp"></div>
+
+  <h2>Senaste 30 dagarna</h2>
+  <div class="grid2">
+    <div class="card"><div class="ch"><span class="ct">Nya konton per dag</span><span class="cs" id="s_konton"></span></div><div id="d_konton"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Nya annonser och fynd per dag</span><span class="cs" id="s_annonser"></span></div><div id="d_annonser"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Meddelanden per dag</span><span class="cs" id="s_medd"></span></div><div id="d_medd"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Beställningar per dag</span><span class="cs" id="s_best"></span></div><div id="d_best"></div></div>
+  </div>
+
+  <h2>Användare</h2>
+  <div class="tiles" id="anvandare"></div>
+  <div class="grid2" style="margin-top:12px">
+    <div class="card"><div class="ch"><span class="ct">Inloggning</span><span class="cs">alla konton</span></div><div id="l_metod"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Premium per källa</span><span class="cs">aktiva</span></div><div id="l_premium"></div></div>
+  </div>
+
+  <h2>Annonser och fynd</h2>
+  <div class="tiles" id="annonser"></div>
+  <div class="grid2" style="margin-top:12px">
+    <div class="card"><div class="ch"><span class="ct">Vanligaste sorterna</span><span class="cs">aktiva</span></div><div id="l_sorter"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Per län</span><span class="cs">aktiva</span></div><div id="l_lan"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Per typ</span><span class="cs">aktiva</span></div><div id="l_typ"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Beställningar per status</span><span class="cs">alla</span></div><div id="l_status"></div></div>
+  </div>
+
+  <h2>Efterfrågan</h2>
+  <div class="tiles" id="efterfragan"></div>
+  <div class="grid2" style="margin-top:12px">
+    <div class="card"><div class="ch"><span class="ct">Mest bevakade sorter</span><span class="cs">det folk letar efter</span></div><div id="l_bevak"></div></div>
+    <div class="card"><div class="ch"><span class="ct">Privata ställen per sort</span><span class="cs">bara antal</span></div><div id="l_privata"></div></div>
+  </div>
+
+  <h2>Allmänna träd och gemenskap</h2>
+  <div class="tiles" id="allmanna"></div>
+
+  <h2>Anmälningar</h2>
+  <div class="tiles" id="anmalningar"></div>
+
+  <h2>Senast upplagt</h2>
+  <div class="card"><table id="senaste"></table></div>
+
+  <p class="not">Siffrorna räknas direkt ur databasen varje gång sidan hämtas. Kontot som äger de importerade träden räknas inte.
+     "Aktiva" bygger på när någon senast öppnade appen inloggad. <a href="#" id="glom">Glöm koden i den här webbläsaren</a></p>
+</div>
+
+</div>
+<div class="tips" id="tips"></div>
+
+<script>
+var SUPABASE_URL='https://takonarqndfdctlizufu.supabase.co';
+var SUPABASE_KEY='sb_publishable_YYwczPwRGZI2_WvXDj-LrA_oiELiVaT';
+var KOD_NYCKEL='skorda_statistik_kod';
+
+function lasKod(){ try{ return localStorage.getItem(KOD_NYCKEL)||''; }catch(e){ return ''; } }
+function sparaKod(k){ try{ localStorage.setItem(KOD_NYCKEL,k); }catch(e){} }
+function glomKod(){ try{ localStorage.removeItem(KOD_NYCKEL); }catch(e){} }
+var aktuellKod=lasKod();
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function tal(n){ return (Number(n)||0).toLocaleString('sv-SE'); }
+
+var MANAD=['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+function kortDatum(d){ var p=String(d).slice(0,10).split('-'); return (+p[2])+' '+MANAD[(+p[1])-1]; }
+
+var NAMN={
+  apple:'Apple (iPhone)', google:'Google (Android)', email:'E-post',
+  requested:'Förfrågade', accepted:'Accepterade', declined:'Nekade', picked_up:'Hämtade', cancelled:'Avbrutna', canceled:'Avbrutna',
+  listing:'Annonser', spot:'Fynd', user:'Användare', message:'Meddelanden',
+  app_store:'App Store', play_store:'Google Play', founder:'Grundsäljare', promotional:'Kampanj', 'okänd':'Okänd'
+};
+function namn(n){ return NAMN[n]||n; }
+
+function visaLas(fel){
+  $('sida').classList.add('dold'); $('lasRuta').classList.remove('dold');
+  $('kodFel').textContent=fel||''; $('kodFalt').value=''; $('kodFalt').focus();
+}
+
+function hamta(){
+  if(!aktuellKod){ visaLas(''); return; }
+  $('tid').textContent='Hämtar…';
+  fetch(SUPABASE_URL+'/rest/v1/rpc/skorda_statistik',{
+    method:'POST',
+    headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({in_kod:aktuellKod})
+  }).then(function(r){
+    return r.json().then(function(j){ return {ok:r.ok,j:j}; });
+  }).then(function(svar){
+    if(!svar.ok){
+      var m=(svar.j&&svar.j.message)||'';
+      if(m.indexOf('fel kod')>=0){ glomKod(); aktuellKod=''; visaLas('Fel kod. Försök igen.'); return; }
+      if(m.indexOf('skorda_statistik')>=0||m.indexOf('function')>=0){ visaFel('Funktionen saknas i databasen. Kör skorda-v52.sql i Supabase.'); return; }
+      visaFel('Kunde inte hämta: '+(m||'okänt fel')); return;
+    }
+    $('lasRuta').classList.add('dold'); $('sida').classList.remove('dold');
+    rita(svar.j);
+  }).catch(function(){ visaFel('Ingen kontakt med servern. Kontrollera nätet och tryck Uppdatera.'); });
+}
+function visaFel(t){ $('lasRuta').classList.add('dold'); $('sida').classList.remove('dold'); $('tid').textContent=t; }
+
+function ruta(v,l,s,varn){
+  return '<div class="tile'+(varn?' varn':'')+'"><div class="v">'+tal(v)+'</div><div class="l">'+esc(l)+'</div>'+(s?'<div class="s">'+esc(s)+'</div>':'')+'</div>';
+}
+
+function dagDiagram(id,sumId,rader,enhet){
+  var el=$(id); rader=rader||[];
+  var max=0, summa=0;
+  rader.forEach(function(r){ max=Math.max(max,r.n); summa+=r.n; });
+  $(sumId).textContent=tal(summa)+' '+enhet;
+  var tak=max<=4?4:(max<=10?10:Math.ceil(max/5)*5);
+  var h='<div class="dag">';
+  [tak, tak/2].forEach(function(v){ h+='<div class="gl" style="bottom:'+(v/tak*100*0.88)+'%"><span>'+tal(v)+'</span></div>'; });
+  rader.forEach(function(r){
+    var p=r.n? Math.max(3, r.n/tak*88) : 0;
+    h+='<div class="k'+(r.n?'':' noll')+'" data-t="'+esc(kortDatum(r.d)+': '+tal(r.n)+' '+enhet)+'"><i style="height:'+p+'%"></i></div>';
+  });
+  h+='</div>';
+  if(rader.length){
+    var mitt=rader[Math.floor(rader.length/2)];
+    h+='<div class="axel"><span>'+kortDatum(rader[0].d)+'</span><span>'+kortDatum(mitt.d)+'</span><span>'+kortDatum(rader[rader.length-1].d)+'</span></div>';
+  }
+  el.innerHTML=h;
+}
+
+function lista(id,rader,oversatt){
+  rader=rader||[];
+  if(!rader.length){ $(id).innerHTML='<div class="tom">Inget ännu</div>'; return; }
+  var max=rader.reduce(function(m,r){ return Math.max(m,r.n); },0)||1;
+  $(id).innerHTML=rader.map(function(r){
+    var n=oversatt?namn(r.namn):r.namn;
+    return '<div class="rad" data-t="'+esc(n+': '+tal(r.n))+'"><span class="n">'+esc(n)+'</span><span class="b"><i style="width:'+(r.n/max*100)+'%"></i></span><span class="t">'+tal(r.n)+'</span></div>';
+  }).join('');
+}
+
+function rita(d){
+  var k=d.konton||{}, p=d.premium||{}, g=d.gardar||{}, a=d.annonser||{}, b=d.bestallningar||{}, m=d.meddelanden||{},
+      bv=d.bevakningar||{}, pr=d.privata||{}, al=d.allmanna||{}, so=d.socialt||{}, an=d.anmalningar||{};
+  var t=new Date(d.genererad);
+  $('tid').textContent='Uppdaterad '+t.toLocaleString('sv-SE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+
+  $('topp').innerHTML=
+    ruta(k.totalt,'Konton',(k.nya_7?'+'+tal(k.nya_7)+' senaste veckan':'Inga nya senaste veckan'))+
+    ruta(k.aktiva_7,'Aktiva senaste 7 dagarna',tal(k.aktiva_1)+' senaste dygnet')+
+    ruta(a.aktiva,'Aktiva annonser och fynd',(a.nya_7?'+'+tal(a.nya_7)+' senaste veckan':'Inga nya senaste veckan'))+
+    ruta(b.nya_30,'Beställningar, 30 dagar',tal(b.totalt)+' totalt')+
+    ruta(p.aktiva,'Premium just nu',tal(p.grundsaljare)+' grundsäljare');
+
+  dagDiagram('d_konton','s_konton',k.per_dag,'nya');
+  dagDiagram('d_annonser','s_annonser',a.per_dag,'nya');
+  dagDiagram('d_medd','s_medd',m.per_dag,'skickade');
+  dagDiagram('d_best','s_best',b.per_dag,'nya');
+
+  $('anvandare').innerHTML=
+    ruta(k.nya_30,'Nya konton, 30 dagar')+
+    ruta(k.aktiva_30,'Aktiva senaste 30 dagarna')+
+    ruta(k.notiser_ios,'Notiser på, iPhone')+
+    ruta(k.notiser_android,'Notiser på, Android')+
+    ruta(g.med_plats,'Har satt gårdens plats')+
+    ruta(g.med_sida,'Har en gårdssida')+
+    ruta(g.saljare_med_aktiv_annons,'Säljare med aktiv annons');
+  lista('l_metod',k.per_metod,true);
+  lista('l_premium',p.per_kalla,true);
+
+  $('annonser').innerHTML=
+    ruta(a.nya_30,'Nya, 30 dagar')+
+    ruta(a.salda_30,'Markerade sålda, 30 dagar')+
+    ruta(a.boostade,'Boostade just nu')+
+    ruta(a.totalt,'Upplagda totalt')+
+    ruta(m.tradar_30,'Nya samtal, 30 dagar',tal(m.tradar)+' totalt')+
+    ruta(m.nya_30,'Meddelanden, 30 dagar',tal(m.totalt)+' totalt');
+  lista('l_sorter',a.topp_sorter,false);
+  lista('l_lan',a.per_lan,false);
+  lista('l_typ',a.per_typ,false);
+  lista('l_status',b.per_status,true);
+
+  $('efterfragan').innerHTML=
+    ruta(bv.totalt,'Bevakningar',tal(bv.anvandare)+' användare')+
+    ruta(pr.totalt,'Privata ställen',tal(pr.anvandare)+' användare')+
+    ruta(pr.nya_30,'Nya privata ställen, 30 dagar')+
+    ruta(so.foljare,'Följer en gård');
+  lista('l_bevak',bv.topp_sorter,false);
+  lista('l_privata',pr.topp_sorter,false);
+
+  $('allmanna').innerHTML=
+    ruta(al.importerade,'Allmänna träd på kartan',tal(al.obekraftade)+' väntar på bekräftelse')+
+    ruta(al.bekraftade,'Bekräftade av användare',(al.bekraftade_30?'+'+tal(al.bekraftade_30)+' senaste 30 dagarna':''))+
+    ruta(al.kommentarer,'Kommentarer på fynd',(al.kommentarer_30?'+'+tal(al.kommentarer_30)+' senaste 30 dagarna':''))+
+    ruta(al.betyg,'Betyg på fynd')+
+    ruta(so.omdomen,'Omdömen på säljare',(so.snittbetyg!=null?'Snitt '+String(so.snittbetyg).replace('.',','):''));
+
+  $('anmalningar').innerHTML=
+    ruta(an.ohanterade,'Ohanterade anmälningar',(an.per_typ||[]).map(function(r){ return namn(r.namn)+' '+r.n; }).join(', '),an.ohanterade>0)+
+    ruta(an.totalt,'Anmälningar totalt')+
+    ruta(an.flaggade_annonser,'Flaggade annonser')+
+    ruta(an.blockeringar,'Blockeringar');
+
+  var s=a.senaste||[];
+  $('senaste').innerHTML=s.length? s.map(function(r){
+    var tt=new Date(r.tid);
+    return '<tr><td>'+esc(r.sort||'')+'</td><td>'+esc(r.typ)+(r.kommun?' · '+esc(r.kommun):'')+'</td><td class="d">'+
+           tt.toLocaleString('sv-SE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</td></tr>';
+  }).join('') : '<tr><td class="tom">Inget ännu</td></tr>';
+}
+
+// Hovra eller tryck på en stapel för att se värdet
+var tips=$('tips'), vald=null;
+function visaTips(el,x,y){
+  tips.textContent=el.getAttribute('data-t'); tips.classList.add('on');
+  var w=tips.offsetWidth, vx=Math.min(window.innerWidth-w-8, Math.max(8, x-w/2));
+  tips.style.left=vx+'px'; tips.style.top=Math.max(8,y-38)+'px';
+  if(vald&&vald!==el) vald.classList.remove('vald');
+  vald=el; el.classList.add('vald');
+}
+function doljTips(){ tips.classList.remove('on'); if(vald){ vald.classList.remove('vald'); vald=null; } }
+document.addEventListener('mousemove',function(e){
+  var el=e.target.closest&&e.target.closest('[data-t]');
+  if(el) visaTips(el,e.clientX,e.clientY); else doljTips();
+});
+document.addEventListener('touchstart',function(e){
+  var el=e.target.closest&&e.target.closest('[data-t]'), t=e.touches[0];
+  if(el) visaTips(el,t.clientX,t.clientY); else doljTips();
+},{passive:true});
+window.addEventListener('scroll',doljTips,{passive:true});
+
+$('kodKnapp').addEventListener('click',function(){
+  var k=$('kodFalt').value.trim();
+  if(!k){ $('kodFel').textContent='Skriv in koden.'; return; }
+  aktuellKod=k; sparaKod(k); hamta();
+});
+$('kodFalt').addEventListener('keydown',function(e){ if(e.key==='Enter') $('kodKnapp').click(); });
+$('uppdatera').addEventListener('click',hamta);
+$('glom').addEventListener('click',function(e){ e.preventDefault(); glomKod(); aktuellKod=''; visaLas(''); });
+
+hamta();
+</script>
+</body>
+</html>
