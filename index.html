@@ -122,6 +122,14 @@
     },
     {
      "@type": "Question",
+     "name": "Får jag plocka äpplen gratis?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Det beror på var trädet står. Allemansrätten gäller inte frukt från planterade fruktträd. På kommunens mark är det kommunen som bestämmer, och många kommuner låter vem som helst plocka i parker och grönområden för eget bruk. Står trädet på en tomt behöver du fråga ägaren. I Skörda ser du fruktträd och äppelträd på allmän mark på kartan."
+     }
+    },
+    {
+     "@type": "Question",
      "name": "Var kommer skogstypen ifrån?",
      "acceptedAnswer": {
       "@type": "Answer",
@@ -272,6 +280,18 @@ h1,h2,h3{font-family:'Bricolage Grotesque',Inter,sans-serif;line-height:1.08;mar
 .villkor{font-size:14px;color:var(--grå);margin-top:22px;max-width:48em}
 .grund{margin-top:22px;background:#FBF3DA;border:1px solid #E7D59A;border-radius:16px;padding:16px 18px;font-size:15.5px}
 @media(max-width:760px){.planer{grid-template-columns:1fr}}
+/* Guider */
+.guider{padding-top:0}
+.guiderad{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px}
+.guide{display:flex;flex-direction:column;text-decoration:none;border:1px solid var(--linje);border-radius:20px;padding:22px 20px;background:var(--vit);transition:border-color .15s,transform .15s}
+.guide:hover{border-color:var(--blad);transform:translateY(-2px)}
+.guide .etikett{color:var(--blad);font-weight:700;font-size:13.5px;margin-bottom:8px}
+.guide h3{font-size:21px;margin-bottom:8px}
+.guide p{margin:0 0 16px;font-size:15px;color:var(--grå);line-height:1.5}
+.guide .las{margin-top:auto;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
+.allaguider{margin:22px 0 0;font-weight:700}
+@media(max-width:1000px){.guiderad{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.guiderad{grid-template-columns:1fr}}
 /* Frågor */
 .fragor .bredd{max-width:860px}
 details{border-bottom:1px solid var(--linje);padding:4px 0}
@@ -368,8 +388,8 @@ footer .copy{grid-column:1/-1;border-top:1px solid var(--linje);padding-top:22px
       <div class="text">
         <p class="fore">Kartan</p>
         <h2>Se vad som finns nära dig</h2>
-        <p class="under">Allt som läggs upp hamnar på kartan. Zooma in på grannskapet eller ut över hela landet, och välj det du letar efter.</p>
-        <ul class="bock"><li>Säljs, skänkes eller allmänning</li><li>Välj sort, från kantarell till krusbär</li><li>Sök på en gröda eller en ort</li><li>Vägbeskrivning dit med ett tryck</li></ul>
+        <p class="under">Allt som läggs upp hamnar på kartan. Där finns också över 25 000 platser med fruktträd och bär på allmän mark, från äppelträd i parken till bärbuskar längs gångvägen. Zooma in på grannskapet eller ut över hela landet, och välj det du letar efter.</p>
+        <ul class="bock"><li>Säljs, skänkes eller allmänning</li><li>Äppelträd och andra fruktträd på allmän mark</li><li>Välj sort, från kantarell till krusbär</li><li>Sök på en gröda eller en ort</li><li>Vägbeskrivning dit med ett tryck</li></ul>
       </div>
       <div class="ram" aria-hidden="true">
         <div class="karta">
@@ -460,6 +480,20 @@ footer .copy{grid-column:1/-1;border-top:1px solid var(--linje);padding-top:22px
   </div>
 </section>
 
+<section class="avsnitt guider" id="guider">
+  <div class="bredd">
+    <h2>Läs innan du går ut och plockar</h2>
+    <p class="under">Guider från bloggen om det som är i säsong just nu.</p>
+    <div class="guiderad">
+      <a class="guide" href="/blogg/plocka-applen-gratis/"><span class="etikett">Äpplen</span><h3>Plocka äpplen gratis</h3><p>Var du hittar fruktträd i parker och på allmän mark, och vad som gäller på kommunens mark.</p><span class="las">Läs guiden</span></a>
+      <a class="guide" href="/blogg/forvara-applen/"><span class="etikett">Äpplen</span><h3>Förvara äpplen så de håller</h3><p>Hur äpplen, päron, potatis och rotfrukter ska ligga för att räcka långt in på vintern.</p><span class="las">Läs guiden</span></a>
+      <a class="guide" href="/blogg/var-vaxer-kantareller/"><span class="etikett">Svamp</span><h3>Var växer kantareller?</h3><p>Vilken skog de trivs i, när säsongen börjar och hur du undviker förväxlingar.</p><span class="las">Läs guiden</span></a>
+      <a class="guide" href="/blogg/allemansratten-bar-och-svamp/"><span class="etikett">Bär och svamp</span><h3>Allemansrätten för bär och svamp</h3><p>Vad du får plocka, hur nära hus du får gå och vad som gäller i naturreservat.</p><span class="las">Läs guiden</span></a>
+    </div>
+    <p class="allaguider"><a href="/blogg/">Alla artiklar på bloggen</a></p>
+  </div>
+</section>
+
 <section class="avsnitt pris" id="pris" style="background:var(--vit);border-top:1px solid var(--linje)">
   <div class="bredd">
     <h2>Gratis och Premium</h2>
@@ -498,6 +532,7 @@ footer .copy{grid-column:1/-1;border-top:1px solid var(--linje);padding-top:22px
     <details><summary>Hur betalar man?</summary><p>På plats, med Swish eller kontant, precis som vid ett vägstånd. Appen hanterar inga betalningar och har ingen kortinlösen.</p></details>
     <details><summary>Måste jag ha företag för att sälja?</summary><p>Att sälja överskott från den egna trädgården i liten skala kräver normalt inget företag, men reglerna beror på vad du säljer och hur mycket. Livsmedelsverket och Skatteverket har den aktuella informationen. Du ansvarar själv för att följa dem.</p></details>
     <details><summary>Vad är fynd på allmänning?</summary><p>Tips om bär, svamp eller fruktträd på mark där allemansrätten gäller. Ingen äger det och ingen tjänar pengar, den som lägger upp tipset delar bara med sig. Andra kan kommentera och betygsätta om tipset stämde.</p></details>
+    <details><summary>Får jag plocka äpplen gratis?</summary><p>Det beror på var trädet står. Allemansrätten gäller inte frukt från planterade fruktträd. På kommunens mark är det kommunen som bestämmer, och många kommuner låter vem som helst plocka i parker och grönområden för eget bruk. Står trädet på en tomt behöver du fråga ägaren. I Skörda ser du fruktträd och äppelträd på allmän mark på kartan. Mer om vad som gäller i guiden <a href="/blogg/plocka-applen-gratis/">Plocka äpplen gratis</a>.</p></details>
     <details><summary>Var kommer skogstypen ifrån?</summary><p>Från Naturvårdsverkets nationella marktäckedata. Den visar vilken sorts skog eller mark det är, inte om det finns svamp just nu. Tipsen om vad som brukar växa där är allmänna.</p></details>
     <details><summary>Vilka orter finns med?</summary><p>Hela Sverige. Redan från start finns över 25 000 platser med frukt och bär på allmän mark. Hur mycket du hittar beror på hur många som lagt upp saker i just din trakt. Appen växer underifrån, kommun för kommun.</p></details>
   </div>
@@ -519,9 +554,9 @@ footer .copy{grid-column:1/-1;border-top:1px solid var(--linje);padding-top:22px
 <footer>
   <div class="bredd">
     <div><a class="logga" href="/" style="margin:0 0 10px"><img src="ikon.png" alt="">Skörda</a>Närodlat nära dig. Karta över hemodlat och närproducerat i hela Sverige.</div>
-    <div><h4>Appen</h4><a href="#funktioner">Funktioner</a><a href="#lagen">Så funkar det</a><a href="#sorter">Sorter</a><a href="#pris">Pris</a><a href="#fragor">Frågor</a><a href="/blogg/">Blogg</a></div>
+    <div><h4>Appen</h4><a href="#funktioner">Funktioner</a><a href="#lagen">Så funkar det</a><a href="#sorter">Sorter</a><a href="#pris">Pris</a><a href="#fragor">Frågor</a><a href="#guider">Guider</a><a href="/blogg/">Blogg</a></div>
     <div><h4>Ladda ner</h4><a href="https://apps.apple.com/app/id6791316408">App Store</a><a href="https://play.google.com/store/apps/details?id=app.skorda.app">Google Play</a></div>
-    <div><h4>Övrigt</h4><a href="mailto:support@skorda.app">Support</a><a href="mailto:info@skorda.app">Kontakt</a><a href="/integritet.html">Integritetspolicy</a><a href="/villkor.html">Användarvillkor</a></div>
+    <div><h4>Övrigt</h4><a href="mailto:support@skorda.app">Support</a><a href="mailto:info@skorda.app">Kontakt</a><a href="/integritet.html">Integritetspolicy</a><a href="/villkor.html">Användarvillkor</a><a href="/radera.html">Radera konto</a></div>
     <div class="copy">© <span id="ar">2026</span> Skörda. Appen förmedlar kontakt mellan köpare och säljare. Alla affärer görs upp direkt mellan parterna.</div>
   </div>
 </footer>
